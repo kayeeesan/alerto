@@ -13,7 +13,7 @@ const toggleDrawer = (val) => {
   { title: "River Status", icon: "mdi-wave", route: "/river-status" },
     { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
     { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
-    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "/earthquake-monitoring" },
+    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "earthquake" },
     { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
     { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
   ];
