@@ -48,35 +48,43 @@ class UserController extends Controller
         }
     }
 
-    // public function storeUserRoles($user_id, $user_roles)
-    // {
-    //     try {
-    //         $user = User::findOrFail($user_id);
-    //         $user->roles()->sync($user_roles);
-    //         $user->update();
-    //     } catch (\Exception $e) {
-    //         return response()->json(['message' => $e->getMessage()]);
-    //     }
-    // }
-
-    public function storeUserRoles($user_id, $user_roles)
+    public function register(UserRequest $request)
 {
     try {
-        $user = User::findOrFail($user_id);
+        // Default password or allow user to set their own password
+        $default_password = "*1234#";
 
-        // If no roles are provided, assign the "Clerk" role
-        if (empty($user_roles)) {
-            $clerkRoleId = \App\Models\Role::where('name', 'Clerk')->first()->id;
-            $user_roles = [$clerkRoleId];
-        }
+        // Create a new user instance
+        $user = new User();
+        $user->username = $request->username;
+        $user->first_name = ucwords($request->first_name);
+        $user->middle_name = ucwords($request->middle_name);
+        $user->last_name = ucwords($request->last_name);
+        $user->password = bcrypt($default_password); // Or use bcrypt($request->password) for custom password
+        $user->save();
 
-        $user->roles()->sync($user_roles);
-        $user->update();
+        // If no roles are provided, assign the 'user' role by default
+        $roles = $request->user_roles ?: ['user']; // Default to 'user' role if none provided
+        $this->storeUserRoles($user->id, $roles);
+
+        return response()->json(['message' => 'User has been successfully registered.'], Response::HTTP_CREATED);
     } catch (\Exception $e) {
-        return response()->json(['message' => $e->getMessage()]);
+        return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
 
+
+
+    public function storeUserRoles($user_id, $user_roles)
+    {
+        try {
+            $user = User::findOrFail($user_id);
+            $user->roles()->sync($user_roles);
+            $user->update();
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
 
     public function update($id, UserRequest $request)
     {
