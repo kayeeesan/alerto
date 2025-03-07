@@ -1,0 +1,36 @@
+body {
+    background: #eceef1 !important;
+}
+
+.v-main {
+    background-color: white;
+    margin-left: 80px;
+    margin-top: 90px;
+    margin-right: 25px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.swal2-styled {
+    color: white !important;
+}
+
+.multiselect__tags {
+    border: 1px solid rgb(171, 169, 169) !important;
+    border-radius: 3px !important;
+    min-height: 55px !important;
+}
+
+.multiselect__tag {
+    background: #4b9ad1 !important;
+}
+
+.multiselect__option--highlight {
+    background-color: #1867C0 !important;
+}
+
+.error-msg {
+    color: rgb(184 0 33);
+    font-size: 12px;
+    margin-left: 15px;
+}
