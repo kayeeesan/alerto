@@ -10,10 +10,10 @@ const toggleDrawer = (val) => {
 
   // Dashboard items
   const itemsInDashboard = [
-  { title: "River Status", icon: "mdi-wave", route: "/river-status" },
+    { title: "River Status", icon: "mdi-wave", route: "/river-status" },
     { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
     { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
-    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "/earthquake-monitoring" },
+    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "earthquake" },
     { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
     { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
   ];
@@ -26,7 +26,7 @@ const toggleDrawer = (val) => {
   
   // Libraries
   const libraries = [
-  { title: "General Actions",icon: "mdi-cog",  route: "" },
+    { title: "General Actions",icon: "mdi-cog",  route: "" },
     { title: "Threshold",icon: "mdi-arrow-split-horizontal",  route: "/thresholds" },
     { title: "Province", icon: "mdi-city",  route: "/provinces" },
     { title: "Municipality", icon: "mdi-city",  route: "/municipalities" },
@@ -113,7 +113,7 @@ const toggleDrawer = (val) => {
             <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
           </v-list-item>
         </v-list-group>
-      </v-list>
+    </v-list>
 
       <v-footer class="d-flex flex-column align-center" style="background: #001A6E; padding: 10px; color: white;">
       <p class="text-center mb-2">Partners: Region 9</p>

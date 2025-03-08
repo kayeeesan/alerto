@@ -14,6 +14,14 @@ import Registration from "../views/clientRegistration/Registration.vue";
 import Welcome from '../views/welcomeGuest/Welcome.vue';
 import Dashboard from '../views/welcomeGuest/dashboard/dashboard.vue';
 import RiverStatus from '../components/dashboard/river/form.vue';
+import Weather from '../components/dashboard/weather/form.vue';
+import AdzuWeather from '../components/dashboard/adzuWeatherStation/form.vue';
+import Earthquake from '../components/dashboard/earthQuake/form.vue';
+import HistoryDataExtraction from '../components/dashboard/historyDataExtraction/form.vue';
+import VisualizationMap from '../components/dashboard/visualizationMap/form.vue';
+
+import AboutUs from "../views/aboutUs/aboutUs.vue";
+import ContactUs from "../views/contactUs/contactUs.vue";
 
 const routes = [
     {
@@ -34,6 +42,41 @@ const routes = [
                 path: 'river-status',
                 name: 'River Status',
                 component: RiverStatus
+            },
+            {
+                path: 'weather-updates',
+                name: 'Weather',
+                component: Weather
+            },
+            {
+                path: 'adzu-weather',
+                name: 'Adzu Weather',
+                component: AdzuWeather
+            },
+            {
+                path: 'earthquake',
+                name: 'Earthquak',
+                component: Earthquake
+            },
+            {
+                path: 'visualization-map',
+                name: 'Visualization Map',
+                component: VisualizationMap
+            },
+            {
+                path: 'history-data-extraction',
+                name: 'History Data Extraction',
+                component: HistoryDataExtraction
+            },
+            {
+                path: 'contact-us',
+                name: 'Contact Us',
+                component: ContactUs
+            },
+            {
+                path: 'about-us',
+                name: 'About Us',
+                component: AboutUs
             }
         ],
         meta: {
