@@ -38,6 +38,7 @@ class UserController extends Controller
             $user->middle_name = ucwords($request->middle_name);
             $user->last_name = ucwords($request->last_name);
             $user->password = bcrypt($default_password);
+            $user->status = 'pending';
             $user->save();
             
             $this->storeUserRoles($user->id, $request->user_roles);

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('middle_name')->nullable();
             $table->string('password');
+            $table->enum('status', ['pending', 'approved', 'disabled']);
             $table->timestamps();
         });
 
