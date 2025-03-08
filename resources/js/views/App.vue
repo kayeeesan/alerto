@@ -1,45 +1,62 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import Sidebar from "../components/layouts/Sidebar.vue";
 import useAuth from "../composables/auth.js";
 import store from "@/store";
 
 const { logout } = useAuth();
-
 const user = store.state.auth.user;
 
-const drawer = ref(false);
+const drawer = ref(true); // Controls the sidebar visibility
+let interval = null; // Define interval variable
 
 const cleanUpExpiredItems = () => {
     const expiry = localStorage.getItem("expiry");
 
-    if (!expiry) {
-        return null;
-    }
+    if (!expiry) return;
 
-    const now = new Date();
+    const now = new Date().getTime();
 
-    if (now.getTime() > expiry) {
+    if (now > expiry) {
         logout();
-        return null;
     }
 };
 
 onMounted(() => {
-    setInterval(cleanUpExpiredItems(), 28800000); //restart every 8hours
+    interval = setInterval(cleanUpExpiredItems, 28800000); // Restart every 8 hours
 });
 
 onUnmounted(() => {
     clearInterval(interval);
 });
-</script>
-<template>
-    <v-app>
-        <sidebar :drawer="drawer"/>
 
-        <v-app-bar app>
+// Dynamically adjust main content margin
+const mainContentClass = computed(() => ({
+  "expanded": drawer.value, // Add 'expanded' class when sidebar is open
+}));
+</script>
+
+<template>
+  <v-app>
+    <div class="layout-wrapper">
+      <!-- Sidebar -->
+      <Sidebar v-model:drawer="drawer" class="sidebar" />
+
+      <!-- Main Content (Responsive) -->
+      <div class="main-content" :class="mainContentClass">
+        <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>QMS</v-toolbar-title>
+            <v-responsive>
+                <v-text-field
+                    density="compact"
+                    label="Search"
+                    rounded="lg"
+                    variant="solo-filled"
+                    flat
+                    hide-details
+                    single-line
+                ></v-text-field>
+            </v-responsive>
             <v-spacer></v-spacer>
             
             <v-badge
@@ -47,20 +64,46 @@ onUnmounted(() => {
                 :content="user.full_name"
                 inline
             ></v-badge>
-            <v-btn icon="mdi-logout" variant="text" @click="logout()"></v-btn>
+            <v-btn icon="mdi-logout" variant="text" @click="logout()" color="white"></v-btn>
         </v-app-bar>
 
         <v-main>
-            <v-container>
-                <router-view />
-            </v-container>
+          <v-container fluid>
+            <router-view />
+          </v-container>
         </v-main>
-    </v-app>
+      </div>
+    </div>
+  </v-app>
 </template>
-<style>
-#app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+
+<style scoped>
+/* Base layout */
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar styling */
+.sidebar {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Main content responsiveness */
+.main-content {
+  flex-grow: 1;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* When Sidebar is expanded */
+.main-content.expanded {
+  margin-left: 250px; /* Same width as sidebar */
+}
+
+/* Responsive for small screens */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important; /* No offset when sidebar is temporary */
+  }
 }
 </style>

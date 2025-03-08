@@ -20,6 +20,9 @@ import Earthquake from '../components/dashboard/earthQuake/form.vue';
 import HistoryDataExtraction from '../components/dashboard/historyDataExtraction/form.vue';
 import VisualizationMap from '../components/dashboard/visualizationMap/form.vue';
 
+import AboutUs from "../views/aboutUs/aboutUs.vue";
+import ContactUs from "../views/contactUs/contactUs.vue";
+
 const routes = [
     {
         path: '/:pathMatch(.*)*',
@@ -64,6 +67,16 @@ const routes = [
                 path: 'history-data-extraction',
                 name: 'History Data Extraction',
                 component: HistoryDataExtraction
+            },
+            {
+                path: 'contact-us',
+                name: 'Contact Us',
+                component: ContactUs
+            },
+            {
+                path: 'about-us',
+                name: 'About Us',
+                component: AboutUs
             }
         ],
         meta: {

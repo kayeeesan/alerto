@@ -23,7 +23,7 @@ const mainContentClass = computed(() => ({
           @toggle-sidebar="drawer = !drawer"
           class="toggle-button"
         />
-        <v-main>
+          <v-main>
           <v-container fluid>
             <router-view />
           </v-container>
