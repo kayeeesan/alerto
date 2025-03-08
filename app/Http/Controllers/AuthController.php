@@ -15,6 +15,13 @@ class AuthController extends Controller
         $credentials = $request->only('username', 'password');
         if(Auth::attempt($credentials)) {
             $user = Auth::user();
+
+            if ($user->status === 'pending') {
+                Auth::logout();
+                return response([
+                    'message' => 'Account is pending'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
             
             return response([
                 'user' => new ResourcesUser($user),

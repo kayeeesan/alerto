@@ -22,6 +22,7 @@ class User extends JsonResource
             'middle_name' => $this->middle_name,
             'full_name' => $this->full_name,
             'password_reset' => $this->password_reset,
+            'status' => $this->status,
             'roles' => $this->roles ? Role::collection($this->roles) : [],
         ];
     }

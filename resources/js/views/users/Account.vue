@@ -12,6 +12,7 @@ const headers = [
     { title: "Name", key: "full_name" },
     { title: "Username", key: "username" },
     { title: "Role", key: "user_roles" },
+    { title: "Status", key: "status" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 

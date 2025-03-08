@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
         $user->first_name = 'Super';
         $user->last_name = 'Admin';
         $user->password = Hash::make('superadmin');
+        $user->status = 'approved';
         $user->save();
         $user->roles()->sync([1]);
     }
