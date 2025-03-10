@@ -1,12 +1,12 @@
 <script setup>
 import { ref, reactive, watch } from "vue";
-import useRoles from "../../composables/roles.js";
+import useRivers from "../../../composables/river";
 
-const { errors, is_loading, is_success, storeRole, updateRole } = useRoles();
+const { errors, is_loading, is_success, storeRiver, updateRiver } = useRivers();
 
-const emit = defineEmits(["input", "reloadRoles"]);
+const emit = defineEmits(["input", "reloadRivers"]);
 const props = defineProps({
-    role: {
+    river: {
         type: Object,
         default: null
     },
@@ -19,14 +19,30 @@ const props = defineProps({
 const initialState = {
     id: null,
     name: null,
+    river_code: null,
 }
 const form = reactive({ ...initialState });
 
 watch(
-    () => props.role,
+    () => props.river,
     (value)  => {
         form.id = value.id;
         form.name = value.name;
+        form.river_code = value.river_code;
+    }
+);
+
+watch(
+    () => form.name,
+    (name) => {
+        if (name) {
+            form.river_code = name
+                .toLowerCase()
+                .replace(/ /g, '_')  // Replace spaces with hyphens
+                .replace(/[^\w-]+/g, '');  // Remove special characters
+        } else {
+            form.river_code = null;
+        }
     }
 );
 
@@ -45,14 +61,14 @@ const close = () => {
 }
 
 const save = async () => {
-    if(props.role && props.role.id) {
-        await updateRole({ ...form });
+    if(props.river && props.river.id) {
+        await updateRiver({ ...form });
     } else {
-        await storeRole({ ...form });
+        await storeRiver({ ...form });
     }
 
     if (is_success.value == true){
-        emit("reloadRoles");
+        emit("reloadRivers");
         emit("input", false);
     }
 }
@@ -61,7 +77,7 @@ const save = async () => {
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Role</span>
+                <span class="text-h5">New River</span>
             </v-card-title>
     
             <v-card-text>
@@ -69,12 +85,22 @@ const save = async () => {
                     <v-row>
                         <v-text-field
                             v-model="form.name"
-                            label="Role name"
+                            label="River name"
                             variant="outlined"
                             :error-messages="
                                 errors['name'] ? errors['name'] : []
                             "
                             @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.river_code"
+                            label="River code"
+                            variant="outlined"
+                            :error-messages="errors['river_code'] ? errors['river_code'] : []"
+                            @keyup.enter="save()"
+                            readonly
                         ></v-text-field>
                     </v-row>
                 </v-container>

@@ -79,7 +79,7 @@ const save = async () => {
                     <v-row>
                         <v-text-field
                             v-model="form.name"
-                            label="River name"
+                            label="Sensor name"
                             variant="outlined"
                             :error-messages="errors['name'] ? errors['name'] : []"
                             @keyup.enter="save()"

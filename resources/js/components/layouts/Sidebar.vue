@@ -10,32 +10,32 @@ const props = defineProps({
 
   // Dashboard items
   const itemsInDashboard = [
-  { title: "River Status", icon: "mdi-wave", route: "/river-status" },
-    { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
-    { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
-    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "earthquake" },
-    { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
-    { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
-  ];
+    { title: "River Status", icon: "mdi-wave", route: "/home/river-status" },
+    { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/home/weather-updates" },
+    { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/home/adzu-weather" },
+    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "/home/earthquake" },
+    { title: "Visualization Map", icon: "mdi-map", route: "/home/visualization-map" },
+    { title: "Historical Data Extraction", icon: "mdi-database", route: "/home/history-data-extraction" },
+];
 
-  const items = [
-  { title: "About Us", icon: "mdi-information", route: "/about-us" },
-  { title: "Contact Us", icon: "mdi-phone", route: "/contact-us" },
-  ];
+const items = [
+    { title: "About Us", icon: "mdi-information", route: "/about-us" },
+    { title: "Contact Us", icon: "mdi-phone", route: "/contact-us" },
+];
 
 const libraries = [
-    { title: "General Actions",icon: "mdi-cog",  route: "" },
-    { title: "Threshold",icon: "mdi-arrow-split-horizontal",  route: "/thresholds" },
-    { title: "Province", icon: "mdi-city",  route: "/provinces" },
-    { title: "Municipality", icon: "mdi-city",  route: "/municipalities" },
-    { title: "Rivers", icon: "mdi-waves",  route: "/rivers" },
-    { title: "Sensors under ALerTO", icon: "mdi-signal-variant",  route: "/sensors_under_alerto" },
-    { title: "Sensors in PH", icon: "mdi-signal-variant",  route: "" },
-    { title: "Mobile Prefix", icon: "mdi-cellphone",  route: "" },
-    { title: "Recipients Data", icon: "mdi-account-circle-outline",  route: "/recipients-data" },
-    { title: "User Restrictions", icon: "mdi-account-cog",  route: "" },
-    { title: 'Role', route: "/roles" },
-    { title: 'Accounts', route: "/users" },
+    { title: "General Actions", icon: "mdi-cog", route: "" },
+    { title: "Threshold", icon: "mdi-arrow-split-horizontal", route: "/home/thresholds" },
+    { title: "Province", icon: "mdi-city", route: "/home/provinces" },
+    { title: "Municipality", icon: "mdi-city", route: "/home/municipalities" },
+    { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
+    { title: "Sensors under ALerTO", icon: "mdi-signal-variant", route: "/home/sensors-under-alerto" },
+    { title: "Sensors in PH", icon: "mdi-signal-variant", route: "" },
+    { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
+    { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/recipients-data" },
+    { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
+    { title: "Role", icon: "mdi-account", route: "/home/roles" },
+    { title: "Accounts", icon: "mdi-account", route: "/home/users" },
 ];
 
 const rail = ref(true);
@@ -68,7 +68,7 @@ watch(
         <v-list>
             <v-list-group>
                 <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" class="sidebar-item" :to="'/'">
+                    <v-list-item v-bind="props" class="sidebar-item" :to="'/home'">
                     <v-icon class="sidebar-icon mr-2" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-view-dashboard</v-icon>
                     <span class="sidebar-text" style="color: white;">Dashboard</span>
                     </v-list-item>

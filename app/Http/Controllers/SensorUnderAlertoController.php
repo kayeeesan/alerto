@@ -61,7 +61,7 @@ class SensorUnderAlertoController extends Controller
     {
         try {
             $sensor_under_alerto = SensorUnderAlerto::findOrFail($id);
-            $sensor_under_alerto->delete();
+            $sensor_under_alerto->forceDelete();
             return response(['message' => 'Sensor has been successfully deleted'], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
