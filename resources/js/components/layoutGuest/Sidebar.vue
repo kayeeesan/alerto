@@ -24,20 +24,6 @@ const toggleDrawer = (val) => {
   { title: "Contact Us", icon: "mdi-phone", route: "/contact-us" }
   ];
   
-  // Libraries
-  const libraries = [
-    { title: "General Actions",icon: "mdi-cog",  route: "" },
-    { title: "Threshold",icon: "mdi-arrow-split-horizontal",  route: "/thresholds" },
-    { title: "Province", icon: "mdi-city",  route: "/provinces" },
-    { title: "Municipality", icon: "mdi-city",  route: "/municipalities" },
-    { title: "Rivers", icon: "mdi-waves",  route: "/rivers" },
-    { title: "Sensors under ALerTO", icon: "mdi-signal-variant",  route: "/sensors-under-alerto" },
-    { title: "Sensors in PH", icon: "mdi-signal-variant",  route: "" },
-    { title: "Mobile Prefix", icon: "mdi-cellphone",  route: "" },
-    { title: "Recipients Data", icon: "mdi-account-circle-outline",  route: "/recipients-data" },
-    { title: "User Restrictions", icon: "mdi-account-cog",  route: "" },
-
-  ];
 </script>
 
 <template>
@@ -94,25 +80,6 @@ const toggleDrawer = (val) => {
           <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
         </v-list-item>
   
-        <v-list-group>
-          <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" class="sidebar-item">
-              <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-folder</v-icon>
-              <span class="sidebar-text" style="color: white;">Libraries</span>
-            </v-list-item>
-          </template>
-  
-          <v-list-item
-            v-for="item in libraries"
-            :key="item.title"
-            :to="item.route"
-            class="sidebar-subitem"
-            link
-          >
-            <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
-            <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
-          </v-list-item>
-        </v-list-group>
     </v-list>
 
       <v-footer class="d-flex flex-column align-center" style="background: #001A6E; padding: 10px; color: white;">
