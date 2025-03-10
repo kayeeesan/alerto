@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import RoleForm from "../../components/settings/roles/Form.vue";
-import useRoles from "../../composables/roles.js";
+import ProvinceForm from "../../components/settings/provinces/Form.vue";
+import useProvinces from "../../composables/province";
 
-const { roles, pagination, query, is_loading, getRoles, destoryRole } = useRoles();
+const { provinces, pagination, query, is_loading, getProvinces, destoryProvince } = useProvinces();
 
-const role = ref({});
+const province = ref({});
 const show_form_modal = ref(false);
 
 const headers = [
@@ -18,29 +18,29 @@ const showModalForm = (val) => {
 };
 
 onMounted(() => {
-    getRoles();
+    getProvinces();
 });
 
 const editItem = (value) => {
-    role.value = value;
+    province.value = value;
     showModalForm(true);
 };
 
 const deleteItem = async (value) => {
-    await destoryRole(value.id);
+    await destoryProvince(value.id);
 };
 
-const reloadRoles = async () => {
-    await getRoles();
-    role.value = {};
+const reloadProvinces = async () => {
+    await getProvinces();
+    province.value = {};
 };
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Roles</h5>
+        <h5 class="fw-bold p-3">List of Provinces</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Role
+            New Province
         </v-btn>
     </v-row>
     <v-card>
@@ -56,7 +56,7 @@ const reloadRoles = async () => {
             </v-card-title>
             <v-data-table 
                 :headers="headers" 
-                :items="roles"
+                :items="provinces"
                 :search="query.search"
                 class="elevation-1 p-2"
                 :loading="is_loading"
@@ -93,7 +93,7 @@ const reloadRoles = async () => {
                                 v-model="query.page"
                                 :length="pagination.last_page"
                                 circle
-                                @click="getRoles"
+                                @click="getProvinces"
                             >
                             </v-pagination>
                         </div>
@@ -103,10 +103,10 @@ const reloadRoles = async () => {
         </div>
     </v-card>
 
-    <role-form
+    <province-form
         :value="show_form_modal"
-        :role="role"
+        :province="province"
         @input="showModalForm"
-        @reloadRoles="reloadRoles"
+        @reloadProvinces="reloadProvinces"
     />
 </template>

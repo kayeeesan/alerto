@@ -1,15 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import RoleForm from "../../components/settings/roles/Form.vue";
-import useRoles from "../../composables/roles.js";
+import RiverForm from "../../components/settings/rivers/Form.vue";
+import useRivers from "../../composables/river";
 
-const { roles, pagination, query, is_loading, getRoles, destoryRole } = useRoles();
+const { rivers, pagination, query, is_loading, getRivers, destoryRiver } = useRivers();
 
-const role = ref({});
+const river = ref({});
 const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", key: "name" },
+    { title: "River Code", key: "river_code" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
@@ -18,29 +19,29 @@ const showModalForm = (val) => {
 };
 
 onMounted(() => {
-    getRoles();
+    getRivers();
 });
 
 const editItem = (value) => {
-    role.value = value;
+    river.value = value;
     showModalForm(true);
 };
 
 const deleteItem = async (value) => {
-    await destoryRole(value.id);
+    await destoryRiver(value.id);
 };
 
-const reloadRoles = async () => {
-    await getRoles();
-    role.value = {};
+const reloadRivers = async () => {
+    await getRivers();
+    river.value = {};
 };
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Roles</h5>
+        <h5 class="fw-bold p-3">List of Rivers</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Role
+            New River
         </v-btn>
     </v-row>
     <v-card>
@@ -56,7 +57,7 @@ const reloadRoles = async () => {
             </v-card-title>
             <v-data-table 
                 :headers="headers" 
-                :items="roles"
+                :items="rivers"
                 :search="query.search"
                 class="elevation-1 p-2"
                 :loading="is_loading"
@@ -93,7 +94,7 @@ const reloadRoles = async () => {
                                 v-model="query.page"
                                 :length="pagination.last_page"
                                 circle
-                                @click="getRoles"
+                                @click="getRivers"
                             >
                             </v-pagination>
                         </div>
@@ -103,10 +104,10 @@ const reloadRoles = async () => {
         </div>
     </v-card>
 
-    <role-form
+    <river-form
         :value="show_form_modal"
-        :role="role"
+        :river="river"
         @input="showModalForm"
-        @reloadRoles="reloadRoles"
+        @reloadRivers="reloadRivers"
     />
 </template>
