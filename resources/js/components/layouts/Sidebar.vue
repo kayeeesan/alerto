@@ -29,7 +29,7 @@ const libraries = [
     { title: "Province", icon: "mdi-city",  route: "/provinces" },
     { title: "Municipality", icon: "mdi-city",  route: "/municipalities" },
     { title: "Rivers", icon: "mdi-waves",  route: "/rivers" },
-    { title: "Sensors under ALerTO", icon: "mdi-signal-variant",  route: "/sensors-under-alerto" },
+    { title: "Sensors under ALerTO", icon: "mdi-signal-variant",  route: "/sensors_under_alerto" },
     { title: "Sensors in PH", icon: "mdi-signal-variant",  route: "" },
     { title: "Mobile Prefix", icon: "mdi-cellphone",  route: "" },
     { title: "Recipients Data", icon: "mdi-account-circle-outline",  route: "/recipients-data" },
@@ -80,38 +80,61 @@ watch(
                     :to="item.route"
                     class="sidebar-subitem pt-2"
                     link
-                    style="padding-left: 30px !important;"
+                    style="padding-left: 40px !important;"
                 >
                     <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
                     <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
                 </v-list-item>
                 </v-list-group>
                 <v-list-item
-                v-for="item in items"
-                :key="item.title"
-                :to="item.route"
-                class="sidebar-item"
-                link
-                >
-                <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
-                <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
-        </v-list-item>
-            <v-list-group value="Actions">
-                <template v-slot:activator="{ props }">
+                    v-for="item in items"
+                    :key="item.title"
+                    :to="item.route"
+                    class="sidebar-item"
+                    link
+                    >
+                    <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
+                    <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
+                </v-list-item>
+                <v-list-group>
+                    <template v-slot:activator="{ props }">
+                        <v-list-item v-bind="props" class="sidebar-item">
+                        <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-folder</v-icon>
+                        <span class="sidebar-text" style="color: white;">Libraries</span>
+                        </v-list-item>
+                    </template>
+            
                     <v-list-item
-                        prepend-icon="mdi-format-list-bulleted-type"
-                        v-bind="props"
-                        title="Libraries"
-                    ></v-list-item>
-                </template>
-
-                <v-list-item
-                    v-for="library in libraries"
-                    :title="library.title"
-                    :to="library.route"
-                ></v-list-item>
-            </v-list-group>
+                        v-for="item in libraries"
+                        :key="item.title"
+                        :to="item.route"
+                        class="sidebar-subitem"
+                        link
+                        style="padding-left: 40px !important;"
+                    >
+                        <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
+                        <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
+                    </v-list-item>
+                </v-list-group>
         </v-list>
+
+            <v-footer class="d-flex flex-column align-center" style="background: #001A6E; padding: 10px; color: white;">
+                <p class="text-center mb-2">Partners: Region 9</p>
+                <v-row class="d-flex justify-center" no-gutters>
+                    <v-col cols="3" class="d-flex justify-center">
+                    <img src="https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" height="40" contain alt="">
+                    </v-col>
+                    <v-col cols="3" class="d-flex justify-center">
+                    <img src="https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" height="40" contain alt="">
+                    </v-col>
+                    <v-col cols="3" class="d-flex justify-center">
+                    <img src="https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" height="40" contain alt="">
+                    </v-col>
+                    <v-col cols="3" class="d-flex justify-center">
+                    <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" height="40" contain alt="">
+                    </v-col>
+                </v-row>
+            </v-footer>                                                                
       </v-navigation-drawer>
 </template>
 <style>

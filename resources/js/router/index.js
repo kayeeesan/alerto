@@ -23,6 +23,8 @@ import VisualizationMap from '../components/dashboard/visualizationMap/form.vue'
 import AboutUs from "../views/aboutUs/aboutUs.vue";
 import ContactUs from "../views/contactUs/contactUs.vue";
 
+//SETTINGS
+import SensorsUnderAlerto from "../views/libraries/SensorUnderAlerto.vue";
 const routes = [
     {
         path: '/:pathMatch(.*)*',
@@ -124,6 +126,11 @@ const routes = [
                 path: '/roles',
                 name: 'roles',
                 component: Roles
+            },
+            {
+                path: '/sensors_under_alerto',
+                name: 'sensors under alerto',
+                component: SensorsUnderAlerto
             },
         ]
     },
