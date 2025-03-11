@@ -19,8 +19,8 @@ const props = defineProps({
 ];
 
 const items = [
-    { title: "About Us", icon: "mdi-information", route: "/about-us" },
-    { title: "Contact Us", icon: "mdi-phone", route: "/contact-us" },
+    { title: "About Us", icon: "mdi-information", route: "/home/about-us" },
+    { title: "Contact Us", icon: "mdi-phone", route: "/home/contact-us" },
 ];
 
 const libraries = [
@@ -30,7 +30,7 @@ const libraries = [
     { title: "Municipality", icon: "mdi-city", route: "/home/municipalities" },
     { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
     { title: "Sensors under ALerTO", icon: "mdi-signal-variant", route: "/home/sensors-under-alerto" },
-    { title: "Sensors in PH", icon: "mdi-signal-variant", route: "" },
+    { title: "Sensors in PH", icon: "mdi-signal-variant", route: "/home/sensors-under-ph" },
     { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
     { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/recipients-data" },
     { title: "User Restrictions", icon: "mdi-account-cog", route: "" },

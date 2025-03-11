@@ -31,6 +31,7 @@ import VisualizationMap from '../components/dashboard/visualizationMap/form.vue'
 
 // Settings and Libraries
 import SensorsUnderAlerto from "../views/libraries/SensorUnderAlerto.vue";
+import SensorsUnderPh from "../views/libraries/SensorUnderPh.vue";
 import Provinces from "../views/libraries/Province.vue";
 import Rivers from "../views/libraries/River.vue";
 
@@ -83,12 +84,12 @@ const routes = [
             },
             {
                 path: 'contact-us',
-                name: 'contact-us',
+                name: 'public-contact-us',
                 component: ContactUs
             },
             {
                 path: 'about-us',
-                name: 'about-us',
+                name: 'public-about-us',
                 component: AboutUs
             }
         ],
@@ -145,6 +146,11 @@ const routes = [
                 component: SensorsUnderAlerto
             },
             {
+                path: 'sensors-under-ph',
+                name: 'sensors-under-ph',
+                component: SensorsUnderPh
+            },
+            {
                 path: 'provinces',
                 name: 'provinces',
                 component: Provinces
@@ -163,7 +169,37 @@ const routes = [
                 path: 'weather-updates',
                 name: 'private-weather-updates',
                 component: Weather
-            }
+            },
+            {
+                path: 'adzu-weather',
+                name: 'private-adzu-weather',
+                component: AdzuWeather
+            },
+            {
+                path: 'earthquake',
+                name: 'private-earthquake',
+                component: Earthquake
+            },
+            {
+                path: 'visualization-map',
+                name: 'private-visualization-map',
+                component: VisualizationMap
+            },
+            {
+                path: 'history-data-extraction',
+                name: 'private-history-data-extraction',
+                component: HistoryDataExtraction
+            },
+            {
+                path: 'contact-us',
+                name: 'private-contact-us',
+                component: ContactUs
+            },
+            {
+                path: 'about-us',
+                name: 'private-about-us',
+                component: AboutUs
+            },
         ]
     }
 ];
