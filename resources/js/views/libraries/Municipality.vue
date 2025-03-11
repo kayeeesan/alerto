@@ -10,6 +10,7 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", key: "name" },
+    { title: "Province", key: "name" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
