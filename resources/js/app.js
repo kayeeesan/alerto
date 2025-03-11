@@ -6,6 +6,7 @@ import store from './store/index.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import "../css/app.css";
+import "../css/main.css"
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css';
 
