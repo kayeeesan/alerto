@@ -35,6 +35,7 @@ import SensorsUnderPh from "../views/libraries/SensorUnderPh.vue";
 import Provinces from "../views/libraries/Province.vue";
 import Rivers from "../views/libraries/River.vue";
 import Municipalities from "../views/libraries/Municipality.vue";
+import Thresholds from "../views/libraries/Threshold.vue";
 
 const routes = [
     // Catch-all for 404
@@ -205,6 +206,11 @@ const routes = [
                 path: 'municipalities',
                 name: 'private-municipalities',
                 component: Municipalities
+            },
+            {
+                path: 'thresholds',
+                name: 'private-thresholds',
+                component: Thresholds
             },
         ]
     }

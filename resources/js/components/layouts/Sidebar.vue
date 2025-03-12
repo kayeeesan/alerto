@@ -32,10 +32,9 @@ const libraries = [
     { title: "Sensors under ALerTO", icon: "mdi-signal-variant", route: "/home/sensors-under-alerto" },
     { title: "Sensors in PH", icon: "mdi-signal-variant", route: "/home/sensors-under-ph" },
     { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
-    { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/recipients-data" },
     { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
     { title: "Role", icon: "mdi-account", route: "/home/roles" },
-    { title: "Accounts", icon: "mdi-account", route: "/home/users" },
+    { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/users" },
 ];
 
 const rail = ref(true);
