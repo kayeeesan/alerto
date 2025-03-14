@@ -39,7 +39,7 @@ const toggleDrawer = (val) => {
         style="padding: 15px; background: #001A6E;"
         width="100%"
       >
-        <RouterLink to="/" class="sidebar-logo">
+        <RouterLink to="/" class="sidebar-logo d-flex align-center" style="text-decoration: none;">
           <v-avatar
             size="64"
             image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
