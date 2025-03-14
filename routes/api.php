@@ -9,6 +9,7 @@ use App\Http\Controllers\RiverController;
 use App\Http\Controllers\SensorUnderPhController;
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\ThresholdController;
+use App\Http\Controllers\UserLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
@@ -26,4 +27,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/rivers', RiverController::class);
     Route::resource('/municipalities', MunicipalityController::class);
     Route::resource('/thresholds', ThresholdController::class);
+    Route::get('/user-logs', [UserLogController::class, 'index']);
 });

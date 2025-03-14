@@ -8,11 +8,19 @@ use Illuminate\Http\Request;
 use App\Http\Requests\SensorUnderPhRequest;
 use App\Http\Resources\SensorUnderPh as ResourcesSensorUnderPh;
 use App\Models\SensorUnderPh;
+use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
 class SensorUnderPhController extends Controller
 {
+    protected $logService;
+
+    public function __construct(UserLogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
     public function index()
     {
         $sensors_under_ph = [];
@@ -35,6 +43,8 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph->one_hundred_percent = $request->one_hundred_percent;
             $sensor_under_ph->save();
 
+            $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'create', $sensor_under_ph->toArray());
+
             return response()->json(['message' => 'Sensor has been successfully saved.']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()]);
@@ -45,12 +55,19 @@ class SensorUnderPhController extends Controller
     {
         try {
             $sensor_under_ph = SensorUnderPh::findOrFail($id);
+            $oldData = $sensor_under_ph->toArray();
             $sensor_under_ph->name = ucwords($request->name);
             $sensor_under_ph->baseline = $request->baseline;
             $sensor_under_ph->sixty_percent = $request->sixty_percent;
             $sensor_under_ph->eighty_percent = $request->eighty_percent;
             $sensor_under_ph->one_hundred_percent = $request->one_hundred_percent;
             $sensor_under_ph->update();
+
+            $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'update', [
+                'old' => $oldData,
+                'new' => $sensor_under_ph->toArray(),
+            ]);
+
             return response(['message' => 'Sensor has been successfully updated.']);
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -60,9 +77,17 @@ class SensorUnderPhController extends Controller
     public function destroy($id)
     {
         try {
-            $sensor_under_ph = SensorUnderPh::findOrFail($id);
-            $sensor_under_ph->forceDelete();
-            return response(['message' => 'Sensor has been successfully deleted'], Response::HTTP_OK);
+            $sensor_under_ph = SensorUnderPh::find($id);
+
+            if (!$sensor_under_ph) {
+                return response()->json(['message' => 'Sensor not found.'], Response::HTTP_NOT_FOUND);
+            }
+
+            $sensor_under_ph->forceDelete(); 
+
+            $this->logService->logAction('Sensor Under Ph', $id, 'delete');
+
+            return response()->json(['message' => 'Sensor has been successfully deleted!'], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

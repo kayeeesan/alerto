@@ -5,11 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\User as ResourcesUser;
 use App\Models\User;
+use App\Services\UserLogService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
+
+    
+    protected $logService;
+
+    public function __construct(UserLogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
+
     public function index(Request $request)
     {
         $users = User::when($request->search, function ($db, $search) {
@@ -40,6 +51,8 @@ class UserController extends Controller
             $user->password = bcrypt($default_password);
             $user->status = 'pending';
             $user->save();
+
+            $this->logService->logAction('User', $user->id, 'create', $user->toArray());
             
             $this->storeUserRoles($user->id, $request->user_roles);
 
@@ -80,8 +93,14 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($user_id);
+            $oldRoles = $user->roles()->pluck('id')->toArray(); 
             $user->roles()->sync($user_roles);
             $user->update();
+
+            $this->logService->logAction('User', $user->id, 'update_roles', [
+                'old_roles' => $oldRoles,
+                'new_roles' => $user_roles,
+            ]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()]);
         }
@@ -91,13 +110,20 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+            $oldData = $user->toArray();
             $user->username = $request->username;
             $user->first_name = ucwords($request->first_name);
             $user->middle_name = ucwords($request->middle_name);
             $user->last_name = ucwords($request->last_name);
             $this->storeUserRoles($user->id, $request->user_roles);
-
             $user->update();
+            
+            $this->logService->logAction('User', $user->id, 'update', [
+                'old' => $oldData,
+                'new' => $user->toArray(),
+            ]);
+
+
             return response(['message' => 'User has been successfully updated.']);
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -107,6 +133,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::findOrFail($id)->delete();
+        $this->logService->logAction('User', $id, 'delete');
         return response(['message' => 'User has been successfully deleted!']);
     }
 }
