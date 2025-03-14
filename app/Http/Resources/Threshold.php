@@ -16,9 +16,11 @@ class Threshold extends JsonResource
     {
         return [
             'id' => $this->id,
-            'river' => $this->river ? $this->river->name : null,
             'sensor' => $this->sensor ? $this->sensor->name : null,
-            'municipality' => $this->municipality ? $this->municipality->name : null,
+            'baseline' => $this->baseline, 
+            'sixty_percent' => $this->sixty_percent, 
+            'eighty_percent' => $this->eighty_percent, 
+            'one_hundred_percent' => $this->one_hundred_percent, 
             'xs_date' => $this->xs_date, 
         ];
     }

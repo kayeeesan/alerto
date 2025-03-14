@@ -1,14 +1,10 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
 import useThresholds from "../../../composables/threshold";
-import useRivers from "../../../composables/river";
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
-import useMunicipalities from "../../../composables/municipality";
 
 const { errors, is_loading, is_success, storeThreshold, updateThreshold } = useThresholds();
-const {rivers, getRivers} = useRivers();
 const {sensors_under_alerto, getSensorsUnderAlerto} = useSensorsUnderAlerto();
-const {municipalities, getMunicipalities} = useMunicipalities();
 
 
 const emit = defineEmits(["input", "reloadThresholds"]);
@@ -24,9 +20,11 @@ const props = defineProps({
 });
 
 const initialState = {
-    river: null,
     sensor: null,
-    municipality: null,
+    baseline: null,
+    sixty_percent: null,
+    eighty_percent: null,
+    one_hundred_percent: null,
     xs_date: null,
    
 }
@@ -35,9 +33,11 @@ const form = reactive({ ...initialState });
 watch(
     () => props.threshold,
     (value)  => {
-        form.river = value.river;
         form.sensor = value.sensor;
-        form.municipality = value.municipality;
+        form.baseline = value.baseline;
+        form.sixty_percent = value.sixty_percent;
+        form.eighty_percent = value.eighty_percent;
+        form.one_hundred_percent = value.one_hundred_percent;
         form.xs_date = value.xs_date;
     }
 );
@@ -71,9 +71,7 @@ const save = async () => {
 
 
 onMounted(() => {
-    getRivers();
     getSensorsUnderAlerto();
-    getMunicipalities();
 });
 </script>
 <template>
@@ -86,20 +84,6 @@ onMounted(() => {
             <v-card-text>
                 <v-container>
                     <v-row>
-                        <vue-multiselect
-                            v-model="form.river"
-                            :options="rivers"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select River"
-                            label="name"
-                            track-by="id"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
                     </v-row>
                     <v-row>
                         <vue-multiselect
@@ -118,20 +102,36 @@ onMounted(() => {
                         </vue-multiselect>
                     </v-row>
                     <v-row>
-                        <vue-multiselect
-                            v-model="form.municipality"
-                            :options="municipalities"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select River"
-                            label="name"
-                            track-by="id"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
+                        <v-text-field
+                            v-model="form.baseline"
+                            label="baseline"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.sixty_percent"
+                            label="sixty_percent"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.eighty_percent"
+                            label="eighty_percent"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.one_hundred_percent"
+                            label="one_hundred_percent"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
                     </v-row>
                     <v-row>
                         <v-text-field

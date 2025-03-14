@@ -15,9 +15,20 @@ class SensorUnderAlerto extends Model
 
     protected $fillable = [
         'name',
-        'baseline',
-        'sixty_percent',
-        'eighty_percent',
-        'one_hundred_percent',
+        'river',
+        'municipality',
+        'long',
+        'lat',
+        'status'
     ];
+
+    public function river()
+    {
+        return $this->belongsTo(River::class);
+    }
+
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class);
+    }
 }
