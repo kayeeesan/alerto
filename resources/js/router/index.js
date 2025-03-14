@@ -30,6 +30,7 @@ import HistoryDataExtraction from '../components/dashboard/historyDataExtraction
 import VisualizationMap from '../components/dashboard/visualizationMap/form.vue';
 
 // Settings and Libraries
+import Responses from "../views/libraries/Response.vue"
 import SensorsUnderAlerto from "../views/libraries/SensorUnderAlerto.vue";
 import SensorsUnderPh from "../views/libraries/SensorUnderPh.vue";
 import Provinces from "../views/libraries/Province.vue";
@@ -211,6 +212,11 @@ const routes = [
                 path: 'thresholds',
                 name: 'private-thresholds',
                 component: Thresholds
+            },
+            {
+                path: 'responses',
+                name: 'private-responses',
+                component: Responses
             },
         ]
     }
