@@ -22,9 +22,11 @@ class ThresholdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'river.id' => 'required|exists:rivers,id',
             'sensor.id' => 'required|exists:sensors_under_alertos,id',
-            'municipality.id' => 'required|exists:municipalities,id',
+            'baseline' => 'required|numeric|min:0',
+            'sixty_percent' => 'required|numeric|min:0',
+            'eighty_percent' => 'required|numeric|min:0',
+            'one_hundred_percent' => 'required|numeric|min:0',
             'xs_date' => 'nullable|date',
         ];
     }

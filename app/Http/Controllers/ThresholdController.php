@@ -36,9 +36,11 @@ class ThresholdController extends Controller
     {
         try {
             $threshold = new Threshold();
-            $threshold->river_id = $request->input('river.id');
             $threshold->sensor_id = $request->input('sensor.id');
-            $threshold->municipality_id = $request->input('municipality.id');
+            $threshold->baseline = $request->baseline;
+            $threshold->sixty_percent = $request->sixty_percent;
+            $threshold->eighty_percent = $request->eighty_percent;
+            $threshold->one_hundred_percent = $request->one_hundred_percent;
             $threshold->xs_date = $request->xs_date;
             $threshold->save();
 
@@ -56,9 +58,11 @@ class ThresholdController extends Controller
 
             $threshold = Threshold::findOrFail($id);
             $oldData = $threshold->toArray();
-            $threshold->river_id = $request->input('river.id');
             $threshold->sensor_id = $request->input('sensor.id');
-            $threshold->municipality_id = $request->input('municipality.id');
+            $threshold->baseline = $request->baseline;
+            $threshold->sixty_percent = $request->sixty_percent;
+            $threshold->eighty_percent = $request->eighty_percent;
+            $threshold->one_hundred_percent = $request->one_hundred_percent;
             $threshold->xs_date = $request->xs_date;
             $threshold->update();
 

@@ -37,10 +37,10 @@ class SensorUnderPhController extends Controller
         try {
             $sensor_under_ph = new SensorUnderPh();
             $sensor_under_ph->name = ucwords($request->name);
-            $sensor_under_ph->baseline = $request->baseline;
-            $sensor_under_ph->sixty_percent = $request->sixty_percent;
-            $sensor_under_ph->eighty_percent = $request->eighty_percent;
-            $sensor_under_ph->one_hundred_percent = $request->one_hundred_percent;
+            $sensor_under_ph->river_id = $request->input('river.id');
+            $sensor_under_ph->municipality_id = $request->input('municipality.id');
+            $sensor_under_ph->long = $request->long;
+            $sensor_under_ph->lat = $request->lat;
             $sensor_under_ph->save();
 
             $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'create', $sensor_under_ph->toArray());
@@ -57,10 +57,10 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph = SensorUnderPh::findOrFail($id);
             $oldData = $sensor_under_ph->toArray();
             $sensor_under_ph->name = ucwords($request->name);
-            $sensor_under_ph->baseline = $request->baseline;
-            $sensor_under_ph->sixty_percent = $request->sixty_percent;
-            $sensor_under_ph->eighty_percent = $request->eighty_percent;
-            $sensor_under_ph->one_hundred_percent = $request->one_hundred_percent;
+            $sensor_under_ph->river_id = $request->input('river.id');
+            $sensor_under_ph->municipality_id = $request->input('municipality.id');
+            $sensor_under_ph->long = $request->long;
+            $sensor_under_ph->lat = $request->lat;
             $sensor_under_ph->update();
 
             $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'update', [

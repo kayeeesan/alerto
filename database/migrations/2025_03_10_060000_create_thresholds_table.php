@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('thresholds', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-               // Foreign keys
-           $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
            $table->foreignId('sensor_id')->constrained('sensors_under_alertos')->onDelete('cascade');
-           $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
+           $table->decimal('baseline', 8, 2);
+           $table->decimal('sixty_percent', 8, 2);
+           $table->decimal('eighty_percent', 8, 2);
+           $table->decimal('one_hundred_percent', 8, 2);
             // Extra fields
             $table->date('xs_date');
             $table->softDeletes();

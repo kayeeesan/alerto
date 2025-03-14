@@ -23,10 +23,10 @@ class SensorUnderAlertoRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'baseline' => 'required|numeric|min:0',
-            'sixty_percent' => 'required|numeric|min:0',
-            'eighty_percent' => 'required|numeric|min:0',
-            'one_hundred_percent' => 'required|numeric|min:0'
+            'river.id' => 'required|exists:rivers,id',
+            'municipality.id' => 'required|exists:municipalities,id',
+            'long' => 'required|numeric|min:0',
+            'lat' => 'required|numeric|min:0'
         ];
     }
 }

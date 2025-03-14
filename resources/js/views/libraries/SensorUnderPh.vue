@@ -10,10 +10,11 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", align: "start", sortable: false, key: "name" },
-    { title: "Basline", key: "baseline" },
-    { title: "60%", key: "sixty_percent" },
-    { title: "80%", key: "eighty_percent" },
-    { title: "100%", key: "one_hundred_percent" },
+    { title: "river", key: "river" },
+    { title: "municipality", key: "municipality" },
+    { title: "long", key: "long" },
+    { title: "lat", key: "lat" },
+    { title: "status", key: "status" },
     { title: "", key: "actions" },
 ];
 

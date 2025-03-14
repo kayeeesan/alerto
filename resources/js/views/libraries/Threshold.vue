@@ -9,10 +9,12 @@ const threshold = ref({});
 const show_form_modal = ref(false);
 
 const headers = [
-    { title: "River", key: "river" },
     { title: "Sensor", key: "sensor" },
-    { title: "Municipality", key: "municipality" },
-    { title: "XS Date", key: "xs_date" },
+    { title: "baseline", key: "baseline" },
+    { title: "sixty_percent", key: "sixty_percent" },
+    { title: "eighty_percent", key: "eighty_percent" },
+    { title: "one_hundred_percent", key: "one_hundred_percent" },
+    { title: "xs_date", key: "xs_date" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 

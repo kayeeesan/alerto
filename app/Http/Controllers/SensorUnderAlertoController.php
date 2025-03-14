@@ -38,10 +38,10 @@ class SensorUnderAlertoController extends Controller
         try {
             $sensor_under_alerto = new SensorUnderAlerto();
             $sensor_under_alerto->name = ucwords($request->name);
-            $sensor_under_alerto->baseline = $request->baseline;
-            $sensor_under_alerto->sixty_percent = $request->sixty_percent;
-            $sensor_under_alerto->eighty_percent = $request->eighty_percent;
-            $sensor_under_alerto->one_hundred_percent = $request->one_hundred_percent;
+            $sensor_under_alerto->river_id = $request->input('river.id');
+            $sensor_under_alerto->municipality_id = $request->input('municipality.id');
+            $sensor_under_alerto->long = $request->long;
+            $sensor_under_alerto->lat = $request->lat;
             $sensor_under_alerto->save();
 
             $this->logService->logAction('Sensor Under Alerto', $sensor_under_alerto->id, 'create', $sensor_under_alerto->toArray());
@@ -59,10 +59,10 @@ class SensorUnderAlertoController extends Controller
             $sensor_under_alerto = SensorUnderAlerto::findOrFail($id);
             $oldData = $sensor_under_alerto->toArray();
             $sensor_under_alerto->name = ucwords($request->name);
-            $sensor_under_alerto->baseline = $request->baseline;
-            $sensor_under_alerto->sixty_percent = $request->sixty_percent;
-            $sensor_under_alerto->eighty_percent = $request->eighty_percent;
-            $sensor_under_alerto->one_hundred_percent = $request->one_hundred_percent;
+            $sensor_under_alerto->river_id = $request->input('river.id');
+            $sensor_under_alerto->municipality_id = $request->input('municipality.id');
+            $sensor_under_alerto->long = $request->long;
+            $sensor_under_alerto->lat = $request->lat;
             $sensor_under_alerto->update();
 
             $this->logService->logAction('Sensor Under Alerto', $sensor_under_alerto->id, 'update', [

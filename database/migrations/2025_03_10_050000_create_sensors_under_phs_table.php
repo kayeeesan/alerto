@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensors_under_alertos', function (Blueprint $table) {
+        Schema::create('sensors_under_phs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->decimal('baseline', 8, 2);
-            $table->decimal('sixty_percent', 8, 2);
-            $table->decimal('eighty_percent', 8, 2);
-            $table->decimal('one_hundred_percent', 8, 2);
+                 // Foreign keys
+           $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
+           $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
+           $table->decimal('long', 8, 2);
+           $table->decimal('lat', 8, 2);
+           $table->enum('status', ['enable','disabled']);
             $table->softDeletes();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensors_under_alertos');
+        Schema::dropIfExists('sensors_under_phs');
     }
 };
