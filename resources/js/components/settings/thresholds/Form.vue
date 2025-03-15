@@ -20,6 +20,7 @@ const props = defineProps({
 });
 
 const initialState = {
+    id: null,
     sensor: null,
     baseline: null,
     sixty_percent: null,
@@ -33,6 +34,7 @@ const form = reactive({ ...initialState });
 watch(
     () => props.threshold,
     (value)  => {
+        form.id = value.id;
         form.sensor = value.sensor;
         form.baseline = value.baseline;
         form.sixty_percent = value.sixty_percent;
@@ -100,6 +102,19 @@ onMounted(() => {
                             deselect-label=""
                         >
                         </vue-multiselect>
+                    </v-row>
+                    <v-row>
+                        <!-- <v-select
+                            v-model="form.sensor"
+                            :items="sensors_under_alerto"
+                            item-value="id"
+                            track-by="id"
+                            item-title="name"
+                            label="Select Sensor"
+                            variant="outlined"
+                            clearable
+                            ></v-select> -->
+
                     </v-row>
                     <v-row>
                         <v-text-field

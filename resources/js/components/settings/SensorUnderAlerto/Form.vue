@@ -38,6 +38,7 @@ watch(
         form.river = value.river;
         form.municipality = value.municipality;
         form.long = value.long;
+        form.lat = value.lat;
         form.status = value.status;
     }
 );

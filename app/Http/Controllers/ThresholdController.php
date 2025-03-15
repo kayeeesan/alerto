@@ -13,7 +13,6 @@ use Illuminate\Support\Str;
 
 class ThresholdController extends Controller
 {
-
     protected $logService;
 
     public function __construct(UserLogService $logService)
@@ -21,15 +20,15 @@ class ThresholdController extends Controller
         $this->logService = $logService;
     }
 
-    public function index(Request $request)
+    public function index()
     {
         $thresholds = [];
         if (isset($request->search)) {
-            $thresholds = Threshold::where('name', 'like', '%' . $request->search . '%');
+            $thresholds = Threshold::where('sensor_id', 'like', '%' . $request->search . '%');
         }
 
         $thresholds = isset($request->search) && $request->search ? $thresholds->paginate(10) : Threshold::paginate(10);
-        return ResourcesThreshold::collection(Threshold::paginate(10));
+        return ResourcesThreshold::collection($thresholds);
     }
 
     public function store(ThresholdRequest $request)
@@ -46,7 +45,7 @@ class ThresholdController extends Controller
 
             $this->logService->logAction('Threshold', $threshold->id, 'create', $threshold->toArray());
 
-            return response()->json(['message' => 'Threshold has been successfully saved.']);
+            return response()->json(['message' => 'threshold has been successfully saved.']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()]);
         }
@@ -55,7 +54,6 @@ class ThresholdController extends Controller
     public function update($id, ThresholdRequest $request)
     {
         try {
-
             $threshold = Threshold::findOrFail($id);
             $oldData = $threshold->toArray();
             $threshold->sensor_id = $request->input('sensor.id');
@@ -71,9 +69,9 @@ class ThresholdController extends Controller
                 'new' => $threshold->toArray(),
             ]);
 
-            return response()->json(['message' => 'Threshold has been successfully updated.']);
+            return response(['message' => 'Threshold has been successfully updated.']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()]);
+            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -95,5 +93,4 @@ class ThresholdController extends Controller
             return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
 }

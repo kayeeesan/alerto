@@ -10,11 +10,11 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "Sensor", key: "sensor" },
-    { title: "baseline", key: "baseline" },
-    { title: "sixty_percent", key: "sixty_percent" },
-    { title: "eighty_percent", key: "eighty_percent" },
-    { title: "one_hundred_percent", key: "one_hundred_percent" },
-    { title: "xs_date", key: "xs_date" },
+    { title: "Baseline", key: "baseline" },
+    { title: "60%", key: "sixty_percent" },
+    { title: "80%", key: "eighty_percent" },
+    { title: "100%", key: "one_hundred_percent" },
+    { title: "XS date", key: "xs_date" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
@@ -39,10 +39,12 @@ const reloadThresholds = async () => {
     await getThresholds();
     threshold.value = {};
 };
+
+
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Thresholds</h5>
+        <h5 class="fw-bold p-3">List of Thresholds </h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Threshold
