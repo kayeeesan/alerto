@@ -17,7 +17,7 @@ class Municipality extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'province' => $this->province ? $this->province->name : null,
+            'province' => $this->province,
         ];
     }
 }

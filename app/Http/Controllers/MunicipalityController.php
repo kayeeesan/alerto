@@ -50,10 +50,11 @@ class MunicipalityController extends Controller
 
     public function update($id, MunicipalityRequest $request)
     {
+       //dd($request->province['id']);
         try {
             $municipality = Municipality::findOrFail($id);
             $oldData = $municipality->toArray();
-            $municipality->province_id = $request->input('province.id');
+            $municipality->province_id = $request->province['id'];
             $municipality->name = ucwords($request->name);
             $municipality->update();
 

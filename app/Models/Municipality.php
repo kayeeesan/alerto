@@ -12,11 +12,11 @@ class Municipality extends Model
     use SoftDeletes;
     protected $fillable = [
         'name',
-        'province'
+        'province_id'
     ];
 
     public function province()
     {
-        return $this->belongsTo(Province::class);
+        return $this->belongsTo(Province::class,'province_id' );
     }
 }

@@ -6,25 +6,29 @@ import useMunicipalities from "../../composables/municipality";
 const { municipalities, pagination, query, is_loading, getMunicipalities, destoryMunicipality } = useMunicipalities();
 
 const municipality = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", key: "name" },
-    { title: "Province", key: "name" },
+    { title: "Province", key: "province.name" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    municipality.value = {};
+
 };
 
 onMounted(() => {
     getMunicipalities();
 });
 
-const editItem = (value) => {
+const editItem = (value , action) => {
     municipality.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -67,7 +71,7 @@ const reloadMunicipalities = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -107,6 +111,7 @@ const reloadMunicipalities = async () => {
     <MunicipalityForm
     :value="show_form_modal"
     :municipality="municipality"
+    :action_type="action_type"
     @input="showModalForm"
     @reloadMunicipalities="reloadMunicipalities"
     />
