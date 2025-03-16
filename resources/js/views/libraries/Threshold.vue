@@ -6,10 +6,11 @@ import useThresholds from "../../composables//threshold";
 const { thresholds, pagination, query, is_loading, getThresholds, destoryThreshold } = useThresholds();
 
 const threshold = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
-    { title: "Sensor", key: "sensor" },
+    { title: "Sensor", key: "sensor.name" },
     { title: "Baseline", key: "baseline" },
     { title: "60%", key: "sixty_percent" },
     { title: "80%", key: "eighty_percent" },
@@ -26,9 +27,10 @@ onMounted(() => {
     getThresholds();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     threshold.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -73,7 +75,7 @@ const reloadThresholds = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -113,6 +115,7 @@ const reloadThresholds = async () => {
     <ThresholdForm
     :value="show_form_modal"
     :threshold="threshold"
+    :action_type="action_type"
     @input="showModalForm"
     @reloadThresholds="reloadThresholds"
     />

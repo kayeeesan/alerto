@@ -57,8 +57,8 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph = SensorUnderPh::findOrFail($id);
             $oldData = $sensor_under_ph->toArray();
             $sensor_under_ph->name = ucwords($request->name);
-            $sensor_under_ph->river_id = $request->input('river.id');
-            $sensor_under_ph->municipality_id = $request->input('municipality.id');
+            $sensor_under_ph->river_id = $request->river['id'];
+            $sensor_under_ph->municipality_id = $request->municipality['id'];
             $sensor_under_ph->long = $request->long;
             $sensor_under_ph->lat = $request->lat;
             $sensor_under_ph->update();

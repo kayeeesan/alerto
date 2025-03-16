@@ -6,6 +6,7 @@ import useMunicipalities from "../../../composables/municipality";
 
 const { errors, is_loading, is_success, storeSensorUnderPh, updateSensorUnderPh } = useSensorsUnderPh();
 const {rivers, getRivers} = useRivers();
+
 const {municipalities, getMunicipalities} = useMunicipalities();
 const emit = defineEmits(["input", "reloadSensorsUnderPh"]);
 const props = defineProps({
@@ -13,6 +14,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    action_type: {
+         type: String,
+         default: null,
+     },
     value: {
         type: Boolean,
         default: false,
@@ -22,8 +27,8 @@ const props = defineProps({
 const initialState = {
     id: null,
     name: null,
-    river: null,
-    municipality: null,
+    river: {},
+    municipality: {},
     long: null,
     lat: null,
     status: null,
@@ -33,12 +38,15 @@ const form = reactive({ ...initialState });
 watch(
     () => props.sensor_under_ph,
     (value) => {
-        form.id = value.id;
-        form.name = value.name;
-        form.river = value.river;
-        form.municipality = value.municipality;
-        form.long = value.long;
-        form.status = value.status;
+        if(value){
+            form.id = value.id;
+            form.name = value.name;
+            form.river = value.river;
+            form.municipality = value.municipality;
+            form.long = value.long;
+            form.lat = value.lat;
+            form.status = value.status;
+         }
     }
 );
 
@@ -52,7 +60,7 @@ watch(
 );
 
 const close = () => {
-    Object.assign(form, initialState);
+    // Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 };
@@ -80,7 +88,9 @@ onMounted(() => {
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable>
         <v-card>
             <v-card-title>
-                <span class="text-h5">{{ props.sensor_under_ph ? 'Edit Sensor' : 'New Sensor' }}</span>
+                <!-- <span class="text-h5">{{ props.sensor_under_ph ? 'Edit Sensor' : 'New Sensor' }}</span> -->
+               <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Sensor</span> 
+                <span class="text-h5" v-else>New Sensor</span>
             </v-card-title>
     
             <v-card-text>
