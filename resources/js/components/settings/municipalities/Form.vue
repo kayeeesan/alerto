@@ -12,6 +12,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    action_type: {
+        type: String,
+        default: null,
+    },
     value: {
         type: Boolean,
         default: false,
@@ -21,18 +25,22 @@ const props = defineProps({
 const initialState = {
     id: null,
     name: null,
-    province: null,
+    province: {},
 }
 const form = reactive({ ...initialState });
 
 watch(
     () => props.municipality,
     (value)  => {
-        form.id = value.id;
-        form.name = value.name;
-        form.province = value.province;
+        if(value){
+            form.id = value.id;
+            form.name = value.name;
+            form.province = value.province;
+        }
+      
     }
 );
+
 
 const show_form_modal = ref(false);
 watch(
@@ -43,7 +51,7 @@ watch(
 );
 
 const close = () => {
-    Object.assign(form, initialState);
+    //Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 }
@@ -69,7 +77,9 @@ onMounted(() => {
     <v-dialog v-model="props.value" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Municipality</span>
+             
+                <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Municipality</span>
+                <span class="text-h5" v-else>New Municipality</span>
             </v-card-title>
     
             <v-card-text>
@@ -100,6 +110,7 @@ onMounted(() => {
                             deselect-label=""
                         >
                         </vue-multiselect>
+                       
                     </v-row>
                 </v-container>
             </v-card-text>
