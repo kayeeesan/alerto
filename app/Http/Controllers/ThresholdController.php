@@ -56,7 +56,7 @@ class ThresholdController extends Controller
         try {
             $threshold = Threshold::findOrFail($id);
             $oldData = $threshold->toArray();
-            $threshold->sensor_id = $request->input('sensor.id');
+            $threshold->sensor_id = $request->sensor['id'];
             $threshold->baseline = $request->baseline;
             $threshold->sixty_percent = $request->sixty_percent;
             $threshold->eighty_percent = $request->eighty_percent;

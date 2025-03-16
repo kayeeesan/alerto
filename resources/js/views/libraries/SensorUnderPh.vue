@@ -6,12 +6,13 @@ import useSensorsUnderPh from "../../composables/sensorsUnderPh";
 const { sensors_under_ph, pagination, query, is_loading, getSensorsUnderPh, destorySensorUnderPh } = useSensorsUnderPh();
 
 const sensor_under_ph = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", align: "start", sortable: false, key: "name" },
-    { title: "river", key: "river" },
-    { title: "municipality", key: "municipality" },
+    { title: "river", key: "river.name" },
+    { title: "municipality", key: "municipality.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
     { title: "status", key: "status" },
@@ -20,15 +21,17 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    sensor_under_ph.value = {};
 };
 
 onMounted(() => {
     getSensorsUnderPh();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     sensor_under_ph.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -74,7 +77,7 @@ const reloadSensorsUnderPh = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -116,6 +119,7 @@ const reloadSensorsUnderPh = async () => {
     <SensorsUnderPhForm
         :value="show_form_modal"
         :sensor_under_ph="sensor_under_ph"
+        :action_type="action_type"
         @input="showModalForm"
         @reloadSensorsUnderPh="reloadSensorsUnderPh"
     />

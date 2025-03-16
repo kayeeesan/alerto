@@ -59,8 +59,8 @@ class SensorUnderAlertoController extends Controller
             $sensor_under_alerto = SensorUnderAlerto::findOrFail($id);
             $oldData = $sensor_under_alerto->toArray();
             $sensor_under_alerto->name = ucwords($request->name);
-            $sensor_under_alerto->river_id = $request->input('river.id');
-            $sensor_under_alerto->municipality_id = $request->input('municipality.id');
+            $sensor_under_alerto->river_id = $request->river['id'];
+            $sensor_under_alerto->municipality_id = $request->municipality['id'];
             $sensor_under_alerto->long = $request->long;
             $sensor_under_alerto->lat = $request->lat;
             $sensor_under_alerto->update();

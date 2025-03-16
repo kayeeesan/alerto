@@ -6,12 +6,13 @@ import useSensorsUnderAlerto from "../../composables/sensorsUnderAlerto";
 const { sensors_under_alerto, pagination, query, is_loading, getSensorsUnderAlerto, destorySensorUnderAlerto } = useSensorsUnderAlerto();
 
 const sensor_under_alerto = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", align: "start", sortable: false, key: "name" },
-    { title: "river", key: "river" },
-    { title: "municipality", key: "municipality" },
+    { title: "river", key: "river.name" },
+    { title: "municipality", key: "municipality.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
     { title: "status", key: "status" },
@@ -20,15 +21,17 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    sensor_under_alerto.value = {};
 };
 
 onMounted(() => {
     getSensorsUnderAlerto();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     sensor_under_alerto.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -74,7 +77,7 @@ const reloadSensorsUnderAlerto = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -116,6 +119,7 @@ const reloadSensorsUnderAlerto = async () => {
     <SensorsUnderAlertoForm
         :value="show_form_modal"
         :sensor_under_alerto="sensor_under_alerto"
+        :action_type="action_type"
         @input="showModalForm"
         @reloadSensorsUnderAlerto="reloadSensorsUnderAlerto"
     />

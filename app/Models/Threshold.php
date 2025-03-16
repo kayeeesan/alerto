@@ -10,7 +10,7 @@ class Threshold extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sensor',
+        'sensor_id',
         'baseline',
         'sixty_percent',
         'eighty_percent',
@@ -20,6 +20,6 @@ class Threshold extends Model
 
     public function sensor()
     {
-        return $this->belongsTo(SensorUnderAlerto::class); //Model name
+        return $this->belongsTo(SensorUnderAlerto::class, 'sensor_id'); //Model name
     }
 }

@@ -13,6 +13,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    action_type: {
+        type: String,
+        default: null,
+    },
     value: {
         type: Boolean,
         default: false,
@@ -21,7 +25,7 @@ const props = defineProps({
 
 const initialState = {
     id: null,
-    sensor: null,
+    sensor: {},
     baseline: null,
     sixty_percent: null,
     eighty_percent: null,
@@ -34,17 +38,20 @@ const form = reactive({ ...initialState });
 watch(
     () => props.threshold,
     (value)  => {
-        form.id = value.id;
-        form.sensor = value.sensor;
-        form.baseline = value.baseline;
-        form.sixty_percent = value.sixty_percent;
-        form.eighty_percent = value.eighty_percent;
-        form.one_hundred_percent = value.one_hundred_percent;
-        form.xs_date = value.xs_date;
+        if(value){
+            form.id = value.id;
+            form.sensor = value.sensor;
+            form.baseline = value.baseline;
+            form.sixty_percent = value.sixty_percent;
+            form.eighty_percent = value.eighty_percent;
+            form.one_hundred_percent = value.one_hundred_percent;
+            form.xs_date = value.xs_date;
+        }
     }
 );
 
 const show_form_modal = ref(false);
+
 watch(
     () => props.value,
     (value)  => {
@@ -53,7 +60,7 @@ watch(
 );
 
 const close = () => {
-    Object.assign(form, initialState);
+    // Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 }
@@ -80,7 +87,9 @@ onMounted(() => {
     <v-dialog v-model="props.value" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Threshold</span>
+                <!-- <span class="text-h5">New Threshold</span> -->
+                <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Threshold</span>
+                <span class="text-h5" v-else>New Threshold</span>
             </v-card-title>
     
             <v-card-text>
