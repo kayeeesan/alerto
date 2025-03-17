@@ -1,57 +1,39 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import ThresholdForm from "../../components/settings/thresholds/Form.vue";
-import useThresholds from "../../composables//threshold";
+import useAlerts from "../../composables/alerts";
 
-const { thresholds, pagination, query, is_loading, getThresholds, destoryThreshold } = useThresholds();
+const { alerts, pagination, query, is_loading, getAlerts, destoryAlert} = useAlerts();
 
-const threshold = ref({});
-const action_type = ref('');
+const alert = ref({});
 const show_form_modal = ref(false);
 
 const headers = [
-    { title: "Sensor", key: "sensor.name" },
-    { title: "Baseline", key: "baseline" },
-    { title: "60%", key: "sixty_percent" },
-    { title: "80%", key: "eighty_percent" },
-    { title: "100%", key: "one_hundred_percent" },
-    { title: "XS date", key: "xs_date" },
-    { title: "Water Level", key: "water_level" },
-    { title: "Actions", key: "actions", sortable: false },
+    { title: "color", key: ""},
+    { title: "details", key: ""},
+    { title: "sensor location", key: ""},
+    { title: "action needed", key: ""},
+    { title: "river", key: ""},// color, alert details, river, date_updated, responder, response in responded
+    { title: "status", key: "status"}
 ];
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    alert.value = {};
+
+};
+
+const reloadAlerts = async () => {
+    await getAlerts();
+    alert.value = {};
 };
 
 onMounted(() => {
-    getThresholds();
-});
-
-const editItem = (value, action) => {
-    threshold.value = value;
-    action_type.value = action;
-    show_form_modal.value = value;
-};
-
-const deleteItem = async (value) => {
-    await destoryThreshold(value.id);
-};
-
-const reloadThresholds = async () => {
-    await getThresholds();
-    threshold.value = {};
-};
-
-
+    getAlerts();
+})
 </script>
 <template>
-    <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Thresholds</h5>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Threshold
-        </v-btn>
+   <v-row class="p-2">
+        <h5 class="fw-bold p-3">List of pending Alerts {{ alerts }}</h5>
     </v-row>
     <v-card>
         <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
@@ -66,7 +48,7 @@ const reloadThresholds = async () => {
             </v-card-title>
             <v-data-table 
                 :headers="headers" 
-                :items="thresholds"
+                :items="alerts"
                 :search="query.search"
                 class="elevation-1 p-2"
                 :loading="is_loading"
@@ -101,9 +83,8 @@ const reloadThresholds = async () => {
                         <div class="text-center">
                             <v-pagination
                                 v-model="query.page"
-                                :length="pagination.last_page"
                                 circle
-                                @click="getThresholds"
+                                @click="getAlerts"
                             >
                             </v-pagination>
                         </div>
@@ -112,13 +93,4 @@ const reloadThresholds = async () => {
             </v-data-table>
         </div>
     </v-card>
-
-    <ThresholdForm
-    :value="show_form_modal"
-    :threshold="threshold"
-    :action_type="action_type"
-    @input="showModalForm"
-    @reloadThresholds="reloadThresholds"
-    />
-
 </template>

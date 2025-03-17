@@ -23,4 +23,8 @@ class Threshold extends Model
     {
         return $this->belongsTo(SensorUnderAlerto::class, 'sensor_id'); //Model name
     }
+    public function alerts()
+    {
+        return $this->hasMany(Alert::class);
+    }
 }

@@ -38,6 +38,9 @@ import Rivers from "../views/libraries/River.vue";
 import Municipalities from "../views/libraries/Municipality.vue";
 import Thresholds from "../views/libraries/Threshold.vue";
 
+//User Settings
+import Pendings from "../views/userSettings/pending.vue";
+
 const routes = [
     // Catch-all for 404
     {
@@ -217,6 +220,11 @@ const routes = [
                 path: 'responses',
                 name: 'private-responses',
                 component: Responses
+            },
+            {
+                path: 'pendings',
+                name: 'private-pendings',
+                component: Pendings
             },
         ]
     }

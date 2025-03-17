@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ThresholdRequest;
 use App\Http\Resources\Threshold as ResourcesThreshold;
 use App\Models\Threshold;
+use App\Models\Alert; 
 use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
@@ -44,6 +45,30 @@ class ThresholdController extends Controller
             $threshold->water_level = $request->water_level;
             $threshold->save();
 
+           // Check if the water level exceeds any threshold value and create an alert
+        if ($threshold->water_level > $threshold->one_hundred_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Water is critical: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        } elseif ($threshold->water_level > $threshold->eighty_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Water is on alert: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        } elseif ($threshold->water_level > $threshold->sixty_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Please monitor water level: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        }
+
             $this->logService->logAction('Threshold', $threshold->id, 'create', $threshold->toArray());
 
             return response()->json(['message' => 'threshold has been successfully saved.']);
@@ -65,6 +90,31 @@ class ThresholdController extends Controller
             $threshold->xs_date = $request->xs_date;
             $threshold->water_level = $request->water_level;
             $threshold->update();
+
+              // Check if the updated water level exceeds any threshold value and create an alert
+        if ($threshold->water_level > $threshold->one_hundred_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Water is critical: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        } elseif ($threshold->water_level > $threshold->eighty_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Water is on alert: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        } elseif ($threshold->water_level > $threshold->sixty_percent) {
+            $alert = new Alert();
+            $alert->threshold_id = $threshold->id;
+            $alert->details = 'Please monitor water level: ' . $threshold->water_level;
+            $alert->status = 'pending';
+            $alert->expired_at = now()->addMinutes(2);
+            $alert->save();
+        }
+
 
             $this->logService->logAction('Threshold', $threshold->id, 'update', [
                 'old' => $oldData,

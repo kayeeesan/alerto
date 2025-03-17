@@ -11,6 +11,7 @@ use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\ThresholdController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\ResponseController;
+use App\Http\Controllers\AlertController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
@@ -30,4 +31,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/thresholds', ThresholdController::class);
     Route::get('/user-logs', [UserLogController::class, 'index']);
     Route::resource('/responses', ResponseController::class);
+    Route::resource('/alerts', AlertController::class);
 });

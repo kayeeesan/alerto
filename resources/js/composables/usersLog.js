@@ -19,7 +19,7 @@ export default function useLogs() {
         } finally {
             is_loading.value = false;
         }
-    };
+    };  
     
     
     return {
