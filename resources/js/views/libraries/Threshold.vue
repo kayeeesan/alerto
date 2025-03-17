@@ -16,6 +16,7 @@ const headers = [
     { title: "80%", key: "eighty_percent" },
     { title: "100%", key: "one_hundred_percent" },
     { title: "XS date", key: "xs_date" },
+    { title: "Water Level", key: "water_level" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 

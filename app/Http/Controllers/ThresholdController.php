@@ -41,6 +41,7 @@ class ThresholdController extends Controller
             $threshold->eighty_percent = $request->eighty_percent;
             $threshold->one_hundred_percent = $request->one_hundred_percent;
             $threshold->xs_date = $request->xs_date;
+            $threshold->water_level = $request->water_level;
             $threshold->save();
 
             $this->logService->logAction('Threshold', $threshold->id, 'create', $threshold->toArray());
@@ -62,6 +63,7 @@ class ThresholdController extends Controller
             $threshold->eighty_percent = $request->eighty_percent;
             $threshold->one_hundred_percent = $request->one_hundred_percent;
             $threshold->xs_date = $request->xs_date;
+            $threshold->water_level = $request->water_level;
             $threshold->update();
 
             $this->logService->logAction('Threshold', $threshold->id, 'update', [

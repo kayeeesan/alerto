@@ -15,7 +15,8 @@ class Threshold extends Model
         'sixty_percent',
         'eighty_percent',
         'one_hundred_percent',
-        'xs_date'
+        'xs_date',
+        'water_level'
     ];
 
     public function sensor()

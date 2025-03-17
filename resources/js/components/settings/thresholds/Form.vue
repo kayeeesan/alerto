@@ -31,6 +31,7 @@ const initialState = {
     eighty_percent: null,
     one_hundred_percent: null,
     xs_date: null,
+    water_level: null
    
 }
 const form = reactive({ ...initialState });
@@ -46,6 +47,7 @@ watch(
             form.eighty_percent = value.eighty_percent;
             form.one_hundred_percent = value.one_hundred_percent;
             form.xs_date = value.xs_date;
+            form.water_level = value.water_level;
         }
     }
 );
@@ -163,6 +165,14 @@ onMounted(() => {
                             label="XS Date"
                             variant="outlined"
                             type="date"
+                            @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.water_level"
+                            label="Water Level"
+                            variant="outlined"
                             @keyup.enter="save()"
                         ></v-text-field>
                     </v-row>

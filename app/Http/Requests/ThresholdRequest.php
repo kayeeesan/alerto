@@ -28,6 +28,7 @@ class ThresholdRequest extends FormRequest
             'eighty_percent' => 'required|numeric|min:0',
             'one_hundred_percent' => 'required|numeric|min:0',
             'xs_date' => 'nullable|date',
+            'water_level' => 'nullable|numeric|min:0'
         ];
     }
 }
