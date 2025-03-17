@@ -46,7 +46,7 @@ const reloadSensorsUnderAlerto = async () => {
 
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Sensors</h5>
+        <h5 class="fw-bold p-3">List of Sensors {{ sensors }}</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Sensor

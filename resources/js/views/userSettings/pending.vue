@@ -9,8 +9,8 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "color", key: ""},
-    { title: "details", key: ""},
-    { title: "sensor location", key: ""},
+    { title: "details", key: "details"},
+    { title: "sensor location", key: "threshold.sensor_id"},
     { title: "action needed", key: ""},
     { title: "river", key: ""},// color, alert details, river, date_updated, responder, response in responded
     { title: "status", key: "status"}

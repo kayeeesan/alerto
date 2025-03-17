@@ -16,8 +16,8 @@ class AlertController extends Controller
      */
     public function index(Request $request)
     {
-        $alerts = Alert::paginate(10); // Paginate the alerts, 10 per page
-        return response()->json($alerts);
+       $alerts = Alert::with('threshold')->paginate(10); // Load threshold details
+    return response()->json($alerts);
     }
 
     /**

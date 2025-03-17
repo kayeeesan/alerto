@@ -42,7 +42,7 @@ const reloadMunicipalities = async () => {
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Municipalities</h5>
+        <h5 class="fw-bold p-3">List of Municipalities </h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Municipality

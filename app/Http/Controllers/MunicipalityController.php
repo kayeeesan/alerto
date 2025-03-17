@@ -26,7 +26,7 @@ class MunicipalityController extends Controller
         $municipalities = [];
         if (isset($request->search)) {
             $municipalities = Municipality::where('name', 'like', '%' . $request->search . '%');
-        }
+        } 
 
         $municipalities = isset($request->search) && $request->search ? $municipalities->paginate(10) : Municipality::paginate(10);
         return ResourcesMunicipality::collection(Municipality::paginate(10));

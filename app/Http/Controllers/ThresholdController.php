@@ -21,14 +21,25 @@ class ThresholdController extends Controller
         $this->logService = $logService;
     }
 
-    public function index()
+    // public function index()
+    // {
+    //     $thresholds = [];
+    //     if (isset($request->search)) {
+    //         $thresholds = Threshold::where('sensor_id', 'like', '%' . $request->search . '%');
+    //     }
+
+    //     $thresholds = isset($request->search) && $request->search ? $thresholds->paginate(10) : Threshold::paginate(10);
+    //     return ResourcesThreshold::collection($thresholds);
+    // }
+    public function index(Request $request)
     {
-        $thresholds = [];
-        if (isset($request->search)) {
-            $thresholds = Threshold::where('sensor_id', 'like', '%' . $request->search . '%');
+        $query = Threshold::with('sensor');
+
+        if ($request->has('search')) {
+            $query->where('sensor_id', 'like', '%' . $request->search . '%');
         }
 
-        $thresholds = isset($request->search) && $request->search ? $thresholds->paginate(10) : Threshold::paginate(10);
+        $thresholds = $query->paginate(10);
         return ResourcesThreshold::collection($thresholds);
     }
 
