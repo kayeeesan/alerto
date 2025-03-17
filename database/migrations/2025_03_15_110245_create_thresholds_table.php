@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('eighty_percent', 8,2);
             $table->decimal('one_hundred_percent', 8,2);
             $table->date('xs_date');
+            $table->decimal('water_level', 8, 2);
             $table->softDeletes();
         });
     }
