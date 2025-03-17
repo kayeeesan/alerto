@@ -23,28 +23,28 @@ class AlertController extends Controller
     /**
      * Store a newly created alert in storage.
      */
-    public function store(AlertRequest $request)
-    {
-        try {
-            $alert = new Alert();
-            $alert->threshold_id = $request->threshold_id;
-            $alert->details = $request->details;
-            $alert->status = $request->status;
-            $alert->expired_at = $request->expired_at;
+    // public function store(AlertRequest $request)
+    // {
+    //     try {
+    //         $alert = new Alert();
+    //         $alert->threshold_id = $request->threshold_id;
+    //         $alert->details = $request->details;
+    //         $alert->status = $request->status;
+    //         $alert->expired_at = $request->expired_at;
 
-            // Check if response_id is provided
-            if ($request->response_id) {
-                $alert->response_id = $request->response_id;
-                $alert->status = 'responded'; // Set status to 'responded' when a response_id is provided
-            }
+    //         // Check if response_id is provided
+    //         if ($request->response_id) {
+    //             $alert->response_id = $request->response_id;
+    //             $alert->status = 'responded'; // Set status to 'responded' when a response_id is provided
+    //         }
 
-            $alert->save();
+    //         $alert->save();
 
-            return response()->json(['message' => 'Alert has been created successfully!', 'data' => $alert], SymfonyResponse::HTTP_CREATED);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+    //         return response()->json(['message' => 'Alert has been created successfully!', 'data' => $alert], SymfonyResponse::HTTP_CREATED);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['message' => $e->getMessage()], SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR);
+    //     }
+    // }
 
     /**
      * Display the specified alert.
@@ -62,7 +62,7 @@ class AlertController extends Controller
     {
         try {
             $alert = Alert::findOrFail($id);
-            $alert->threshold_id = $request->threshold_id;
+            $alert->threshold_id = $request->threshold['id'];
             $alert->details = $request->details;
             $alert->status = $request->status;
             $alert->expired_at = $request->expired_at;
