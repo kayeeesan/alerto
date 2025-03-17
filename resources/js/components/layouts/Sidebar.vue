@@ -37,6 +37,10 @@ const libraries = [
     { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/users" },
 ];
 
+const settings = [
+{ title: "Pendings", icon: "mdi-cog", route: "/home/pendings" },
+]
+
 const rail = ref(true);
 
 watch(
@@ -105,6 +109,26 @@ watch(
             
                     <v-list-item
                         v-for="item in libraries"
+                        :key="item.title"
+                        :to="item.route"
+                        class="sidebar-subitem"
+                        link
+                        style="padding-left: 40px !important;"
+                    >
+                        <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
+                        <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
+                    </v-list-item>
+                </v-list-group>
+                <v-list-group>
+                    <template v-slot:activator="{ props }">
+                        <v-list-item v-bind="props" class="sidebar-item">
+                        <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-folder</v-icon>
+                        <span class="sidebar-text" style="color: white;">User Settings</span>
+                        </v-list-item>
+                    </template>
+            
+                    <v-list-item
+                        v-for="item in settings"
                         :key="item.title"
                         :to="item.route"
                         class="sidebar-subitem"
