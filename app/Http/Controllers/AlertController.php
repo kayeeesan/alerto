@@ -16,7 +16,7 @@ class AlertController extends Controller
      */
     public function index(Request $request)
     {
-       $alerts = Alert::with('threshold')->paginate(10); // Load threshold details
+       $alerts = Alert::with('threshold', 'threshold.sensor.municipality', 'threshold.sensor.river')->paginate(10); // Load threshold details
     return response()->json($alerts);
     }
 

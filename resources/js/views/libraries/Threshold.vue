@@ -10,12 +10,14 @@ const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
+    { title: "River", key: "sensor.river.name" },
     { title: "Sensor", key: "sensor.name" },
-    { title: "River", key: "sensor" },
+    { title: "Sensor", key: "sensor.id" },
     { title: "Baseline", key: "baseline" },
     { title: "60%", key: "sixty_percent" },
     { title: "80%", key: "eighty_percent" },
     { title: "100%", key: "one_hundred_percent" },
+    { title: "municipality", key: "sensor.municipality.name" },
     { title: "XS date", key: "xs_date" },
     { title: "Water Level", key: "water_level" },
     { title: "Actions", key: "actions", sortable: false },
@@ -48,7 +50,7 @@ const reloadThresholds = async () => {
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Thresholds {{ thresholds }}</h5>
+        <h5 class="fw-bold p-3">List of Thresholds</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Threshold

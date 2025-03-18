@@ -33,7 +33,7 @@ class ThresholdController extends Controller
     // }
     public function index(Request $request)
     {
-        $query = Threshold::with('sensor');
+        $query = Threshold::with('sensor.river', 'sensor.municipality');
 
         if ($request->has('search')) {
             $query->where('sensor_id', 'like', '%' . $request->search . '%');
