@@ -10,9 +10,10 @@ const show_form_modal = ref(false);
 const headers = [
     { title: "color", key: ""},
     { title: "details", key: "details"},
-    { title: "sensor location", key: "threshold.sensor_id"},
+    { title: "sensor location", key: "threshold.sensor.municipality.name"},
     { title: "action needed", key: ""},
-    { title: "river", key: ""},// color, alert details, river, date_updated, responder, response in responded
+    { title: "river", key: "threshold.sensor.river.name"},// color, alert details, river, date_updated, responder, response in responded
+    { title: "responder", key: ""},
     { title: "status", key: "status"}
 ];
 
@@ -33,7 +34,7 @@ onMounted(() => {
 </script>
 <template>
    <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of pending Alerts {{ alerts }}</h5>
+        <h5 class="fw-bold p-3">List of pending Alerts</h5>
     </v-row>
     <v-card>
         <div class="overflow-hidden overflow-x-auto min-w-full align-middle">

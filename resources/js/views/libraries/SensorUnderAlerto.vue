@@ -10,9 +10,11 @@ const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
-    { title: "Name", align: "start", sortable: false, key: "name" },
+    { title: "Sensor", align: "start", sortable: false, key: "name" },
+    { title: "Sensor ID", key: "id" },
     { title: "river", key: "river.name" },
     { title: "municipality", key: "municipality.name" },
+    { title: "province", key: "municipality.province.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
     { title: "status", key: "status" },
@@ -46,7 +48,7 @@ const reloadSensorsUnderAlerto = async () => {
 
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Sensors {{ sensors }}</h5>
+        <h5 class="fw-bold p-3">List of Sensors</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Sensor
