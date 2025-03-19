@@ -31,32 +31,6 @@ export default function useAlerts() {
             });
     };
 
-    // Store a new alert
-    const storeAlert = async (data) => {
-        is_loading.value = true;
-        errors.value = {};
-
-        try {
-            await axios
-                .post('/api/alerts', data)
-                .then((response) => {
-                    Swal.fire({
-                        title: "Success",
-                        icon: "success",
-                        text: response.data.message,
-                    });
-                    errors.value = {};
-                    is_loading.value = false;
-                    is_success.value = true;
-                });
-        } catch (e) {
-            if (e.response.status === 422) {
-                errors.value = e.response.data;
-                is_success.value = false;
-                is_loading.value = false;
-            }
-        }
-    };
 
     // Update an alert by its ID
     const updateAlert = async (data) => {
@@ -131,7 +105,6 @@ export default function useAlerts() {
         errors,
         pagination,
         query,
-        storeAlert,
         updateAlert,
         destroyAlert,
         getAlerts,
