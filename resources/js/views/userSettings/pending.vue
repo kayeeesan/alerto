@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import useAlerts from "../../composables/alerts";
+import AlertForm from "../../components/userSettings/Form.vue";
 
 const { alerts, pagination, query, is_loading, getAlerts, destoryAlert} = useAlerts();
 
@@ -13,8 +14,9 @@ const headers = [
     { title: "sensor location", key: "threshold.sensor.municipality.name"},
     { title: "action needed", key: ""},
     { title: "river", key: "threshold.sensor.river.name"},// color, alert details, river, date_updated, responder, response in responded
-    { title: "responder", key: ""},
-    { title: "status", key: "status"}
+    { title: "responder", key: ""},//insert name of responder
+    { title: "status", key: "status"},
+    { title: "Actions", key: "actions", sortable: false },
 ];
 
 const showModalForm = (val) => {
@@ -22,6 +24,15 @@ const showModalForm = (val) => {
     alert.value = {};
 
 };
+
+const editItem = (value) => {
+    alert.value = value;
+    show_form_modal.value = value;
+}
+
+const deleteItem = async (value) => {
+    await destoryAlert(value.id);
+}
 
 const reloadAlerts = async () => {
     await getAlerts();
@@ -63,7 +74,7 @@ onMounted(() => {
                         variant="tonal"
                         size="small"
                     >
-                        <v-icon size="small"> mdi-pencil </v-icon> Edit
+                        <v-icon size="small"> mdi-pencil </v-icon> Respond
                     </v-btn>
                     <v-btn
                         color="error"
@@ -94,4 +105,11 @@ onMounted(() => {
             </v-data-table>
         </div>
     </v-card>
+    <AlertForm
+        :value="show_form_modal"
+        :alert="alert"
+        @input="showModalForm"
+        @reloadAlerts="reloadAlerts"
+    />
 </template>
+

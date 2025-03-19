@@ -22,11 +22,12 @@ class AlertRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'threshold_id' => 'required|exists:thresholds,id',
+            'threshold.id' => 'required|exists:thresholds,id',
             'details' => 'required|string',
             'status' => 'required|in:pending,responded,expired',
             'expired_at' => 'nullable|date',
             'response.id' => 'nullable|exists:responses,id',
+            'user.id' => 'nullable|exist:user,id'
         ];
     }
 }
