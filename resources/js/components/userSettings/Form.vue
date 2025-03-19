@@ -21,7 +21,7 @@ const props = defineProps({
 const initialState = {
     id: null,
     response: {},
-    user: {}
+    user: {},
 }
 
 const form = reactive({ ...initialState });
@@ -43,26 +43,6 @@ const close = () => {
     emit("input", false);
     errors.value = {};
 }
-
-const save = async () => {
-    // Ensure the alert has an ID before updating
-    if (props.alert && props.alert.id) {
-        try {
-            // Pass the updated form data to updateAlert
-            await updateAlert(form.id, form.response.id);
-
-            // If the update is successful, emit reloadAlerts and close the modal
-            if (is_success.value) {
-                emit("reloadAlerts");  // Reload the alerts list
-                emit("input", false);   // Close the modal
-            }
-        } catch (error) {
-            console.error("Error saving alert:", error);
-        }
-    } else {
-        console.error("No valid alert to update.");
-    }
-};
 
 
 onMounted(() => {
@@ -100,7 +80,7 @@ onMounted(() => {
                 <v-btn color="blue-grey-lighten-2" @click="close()" variant="tonal">
                     Cancel
                 </v-btn>
-                <v-btn color="primary" @click="save()" variant="tonal" :loading="is_loading">
+                <v-btn color="primary" variant="tonal" :loading="is_loading">
                     Save
                 </v-btn>
             </v-card-actions>
