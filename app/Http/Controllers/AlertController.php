@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AlertRequest;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Illuminate\Support\Facades\Auth;
+
 
 class AlertController extends Controller
 {
@@ -16,7 +18,7 @@ class AlertController extends Controller
      */
     public function index(Request $request)
     {
-       $alerts = Alert::with('threshold', 'threshold.sensor.municipality', 'threshold.sensor.river')->paginate(10); // Load threshold details
+       $alerts = Alert::with('threshold', 'threshold.sensor.municipality', 'threshold.sensor.river', 'user')->paginate(10); // Load threshold details
     return response()->json($alerts);
     }
 
@@ -62,15 +64,24 @@ class AlertController extends Controller
     {
         try {
             $alert = Alert::findOrFail($id);
-            $alert->threshold_id = $request->threshold['id'];
-            $alert->details = $request->details;
-            $alert->status = $request->status;
-            $alert->expired_at = $request->expired_at;
+            // $alert->threshold_id = $request->threshold['id'];
+            // $alert->details = $request->details;
+            // $alert->status = $request->status;
+            // $alert->expired_at = $request->expired_at;
 
             // Check if response_id is provided and update status to "responded"
             if ($request->response_id) {
+                // $alert->response_id = $request->response['id'];
+                // $alert->status = 'responded'; // Set status to 'responded' when response_id is provided
+
+                $response = Response::findOrFail($id);
+
+                // Fetch the user who created the response (the responder)
                 $alert->response_id = $request->response['id'];
                 $alert->status = 'responded'; // Set status to 'responded' when response_id is provided
+
+                // Save the user_id (the one who responded)
+                $alert->user_id = Auth::id(); // The user who responded to the alert
             }
 
             $alert->save();

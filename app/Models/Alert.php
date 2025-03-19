@@ -15,6 +15,7 @@ class Alert extends Model
         'details',
         'status',
         'expired_at',
+        'user_id'
     ];
 
     public function threshold()
@@ -24,6 +25,11 @@ class Alert extends Model
 
     public function response()
     {
-        return $this->belongsTo(Response::class);
+        return $this->belongsTo(Response::class, 'response_id');
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

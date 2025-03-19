@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('details');
             $table->enum('status', ['pending', 'responded', 'expired'])->default('pending');
             $table->timestamp('expired_at')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); 
             $table->timestamps();
         });
     }

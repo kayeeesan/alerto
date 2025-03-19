@@ -16,10 +16,11 @@ class AlertResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'threshold_id' => $this->threshold_id,
+            'threshold' => $this->threshold,
             'response' => $this->response,
             'details' => $this->details,
             'status' => $this->status,
+            'user' => $this->user,
             'expired_at' => $this->expired_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
