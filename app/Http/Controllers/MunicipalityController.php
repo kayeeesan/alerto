@@ -69,21 +69,6 @@ class MunicipalityController extends Controller
         }
     }
 
-    // public function destroy($id){
-    //     try {
-    //         $municipality = Municipality::findOrFail($id);
-    //         $municipality->delete();
-
-    //          // Log the deletion
-    //          $this->logService->logAction('Municipality', $id, 'delete');
-
-             
-    //         return response(['message' => 'Municipality has been successfully deleted'], Response::HTTP_OK);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-    //     }
-    //  }
-
     public function destroy($id)
     {
         try {

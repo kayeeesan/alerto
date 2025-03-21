@@ -34,6 +34,11 @@ watch(
     }
 );
 
+const colors = [
+    'red',
+    'orange',
+    'yellow'
+];
 
 const show_form_modal = ref(false);
 watch(
@@ -72,12 +77,12 @@ const save = async () => {
             <v-card-text>
                 <v-container>
                     <v-row>
-                        <v-text-field
+                        <vue-multiselect
                             v-model="form.color"
-                            label="COLOR"
-                            variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                            :options="colors"
+                            class="mb-4"
+                            placeholder="Select Color"
+                        ></vue-multiselect>
                     </v-row>
                     <v-row>
                         <v-text-field

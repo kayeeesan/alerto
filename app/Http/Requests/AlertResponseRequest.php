@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AlertRequest extends FormRequest
+class AlertResponseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,8 @@ class AlertRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'threshold.id' => 'required|exists:thresholds,id',
-            'details' => 'required|string',
-            'status' => 'required|in:pending,responded,expired',
-            'expired_at' => 'nullable|date',
-            'response.id' => 'nullable|exists:responses,id',
-            'user.id' => 'nullable|exist:users,id'
+            'response.id' => 'required|exists:responses,id',
+            
         ];
     }
 }

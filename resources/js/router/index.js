@@ -39,7 +39,7 @@ import Municipalities from "../views/libraries/Municipality.vue";
 import Thresholds from "../views/libraries/Threshold.vue";
 
 //User Settings
-import Pendings from "../views/userSettings/pending.vue";
+import Alerts from "../views/userSettings/alert.vue";
 
 const routes = [
     // Catch-all for 404
@@ -222,9 +222,9 @@ const routes = [
                 component: Responses
             },
             {
-                path: 'pendings',
-                name: 'private-pendings',
-                component: Pendings
+                path: 'alerts',
+                name: 'private-alerts',
+                component: Alerts
             },
         ]
     }
