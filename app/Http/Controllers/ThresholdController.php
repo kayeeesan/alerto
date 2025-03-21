@@ -106,21 +106,21 @@ class ThresholdController extends Controller
         if ($threshold->water_level > $threshold->one_hundred_percent) {
             $alert = new Alert();
             $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is critical: ' . $threshold->water_level;
+            $alert->details = 'Water is critical .Water level: ' . $threshold->water_level;
             $alert->status = 'pending';
             $alert->expired_at = now()->addMinutes(2);
             $alert->save();
         } elseif ($threshold->water_level > $threshold->eighty_percent) {
             $alert = new Alert();
             $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is on alert: ' . $threshold->water_level;
+            $alert->details = 'Water is on alert. Water level: ' . $threshold->water_level;
             $alert->status = 'pending';
             $alert->expired_at = now()->addMinutes(2);
             $alert->save();
         } elseif ($threshold->water_level > $threshold->sixty_percent) {
             $alert = new Alert();
             $alert->threshold_id = $threshold->id;
-            $alert->details = 'Please monitor water level: ' . $threshold->water_level;
+            $alert->details = 'Please monitor water level. Water level: ' . $threshold->water_level;
             $alert->status = 'pending';
             $alert->expired_at = now()->addMinutes(2);
             $alert->save();

@@ -15,6 +15,7 @@ const headers = [
     { title: "Actions", key: "actions", sortable: false },
 ];
 
+
 const showModalForm = (val) => {
     show_form_modal.value = val;
 };
@@ -64,6 +65,13 @@ const reloadResponses = async () => {
                 :loading="is_loading"
                 loading-text="Loading... Please wait"
             >
+            <template v-slot:item.color="{ item }">
+            <v-btn
+                class="ma-2"
+                :color="item.color"
+                icon="mdi-alert-circle-outline"
+            ></v-btn>
+            </template>
                 <template v-slot:item.actions="{ item }">
                     <v-btn
                         class="me-2"
