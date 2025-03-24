@@ -21,6 +21,7 @@ const props = defineProps({
 const initialState = {
     id: null,
     response: {}, // You only need to manage response, user_id is not needed
+    action: null
 }
 
 const form = reactive({ ...initialState });
@@ -31,6 +32,7 @@ watch(
         if (value) {
             form.id = value.id;
             form.response = value.response || {}; 
+            form.details = value.details;
         }
     }
 );
@@ -65,10 +67,17 @@ onMounted(() => {
     <v-dialog v-model="props.value" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">Respond</span>
+                <span class="text-h5">Alert Details</span>
             </v-card-title>
 
             <v-card-text>
+                <v-row>
+                    <v-text-field
+                            v-model="form.details"
+                            variant="outlined"
+                            readonly
+                        ></v-text-field>
+                </v-row>
                 <v-row>
                     <vue-multiselect
                         v-model="form.response"
