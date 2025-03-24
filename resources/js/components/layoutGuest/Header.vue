@@ -20,7 +20,7 @@ import { ref } from "vue";
     
     <v-divider></v-divider>
     
-    <div class="mr-1">
+    <div class="ml-0">
       <v-btn
         to="/login"
         text="Log in"

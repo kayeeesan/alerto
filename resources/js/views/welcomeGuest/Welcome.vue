@@ -53,7 +53,7 @@ const mainContentClass = computed(() => ({
 
 /* When Sidebar is expanded */
 .main-content.expanded {
-  margin-left: 250px; /* Same width as sidebar */
+  margin-left: 220px; /* Same width as sidebar */
 }
 
 /* Responsive for small screens */

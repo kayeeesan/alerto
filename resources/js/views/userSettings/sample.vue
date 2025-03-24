@@ -1,0 +1,208 @@
+<script setup>
+    import { ref, onMounted, watch, computed } from "vue";
+    import useAlerts from "../../composables/alerts"; // Importing useAlerts composable
+    import AlertForm from "../../components/userSettings/Form.vue";
+    
+    const { alerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts } = useAlerts();
+    
+    const alert = ref({});
+    const show_form_modal = ref(false);
+    const tab = ref("pending");
+  
+    const alert_tabs = ref([
+      { id: 1, name: "Pending", value: "pending", count: 0 },
+      { id: 2, name: "Responded", value: "responded", count: 0 },
+      { id: 3, name: "Expired", value: "expired", count: 0 }
+    ]);
+    
+    const headers = [
+      { title: "Color", key: "color" },
+      { title: "Details", key: "details" },
+      { title: "Sensor Location", key: "threshold.sensor.municipality.name" },
+      { title: "Action Needed", key: "response.action" },
+      { title: "River", key: "threshold.sensor.river.name" },
+      { title: "Responder", key: "user.username" },
+      { title: "Status", key: "status" },
+      { title: "Actions", key: "actions", sortable: false }
+    ];
+
+    const getColor = (alert) => {
+        if (alert.details.includes("critical")) {
+            return 'red'; // Critical water level
+        } else if (alert.details.includes("alert")) {
+            return 'orange'; // Alert water level
+        } else if (alert.details.includes("monitor")) {
+            return 'yellow'; // Monitor water level
+        }
+        return 'gray'; // Default color if no match
+        };
+    
+        const filteredHeaders = computed(() => {
+        if (tab.value === "pending") {
+            return headers.filter(header => header.key !== 'response.action' && header.key !== 'user.username');
+        }
+        return headers;
+    });
+  
+    const filteredAlerts = computed(() => {
+      if (tab.value === "pending") {
+        return alerts.value.filter(alert => alert.status === "pending");
+      }
+      if (tab.value === "responded") {
+        return alerts.value.filter(alert => alert.status === "responded");
+      }
+      if (tab.value === "expired") {
+        return alerts.value.filter(alert => alert.status === "expired");
+      }
+      return [];
+    });
+  
+    // Watcher to reload alerts based on the active tab
+    watch(() => tab.value, (value) => {
+      alerts.value = [];
+      getAlerts({ status: value });
+    });
+  
+    const reloadAlerts = async () => {
+      await getAlerts({ status: tab.value });
+      alert.value = {};
+    };
+  
+
+
+
+    const showModalForm = (val) => {
+      show_form_modal.value = val;
+      alert.value = {};
+    };
+  
+    const editItem = (value) => {
+      alert.value = value;
+      show_form_modal.value = value;
+    };
+  
+    const deleteItem = async (value) => {
+      await destroyAlert(value.id);
+    };
+  
+    onMounted(() => {
+      getAlerts({ status: tab.value });
+    });
+  
+    const save = async (formData) => {
+      try {
+        await updateAlert(formData);
+        show_form_modal.value = false;
+        reloadAlerts();
+      } catch (error) {
+        console.error("Failed to update alert:", error);
+      }
+    };
+  
+    watch(
+      () => alerts.value,
+      (newAlerts) => {
+        alert_tabs.value.forEach((tabItem) => {
+          tabItem.count = newAlerts.filter(alert => alert.status === tabItem.value).length;
+        });
+      },
+      { immediate: true }
+    );
+</script>
+
+<template>
+    <v-row class="p-2">
+      <h5 class="fw-bold p-3">List of Alerts</h5>
+    </v-row>
+  
+    <!-- Tabs for Pending, Responded, and Expired alerts -->
+    <v-tabs v-model="tab" vertical>
+      <v-tab
+        v-for="tabItem in alert_tabs"
+        :key="tabItem.id"
+        :value="tabItem.value"
+      >
+        {{ tabItem.name }} ({{ tabItem.count }})
+      </v-tab>
+    </v-tabs>
+  
+    <v-card>
+      <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
+        <v-card-title>
+          <v-text-field
+            v-model="query.search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
+  
+        <v-data-table 
+          :headers="filteredHeaders"
+          :items="filteredAlerts"
+          :search="query.search"
+          class="elevation-1 p-2"
+          :loading="is_loading"
+          loading-text="Loading... Please wait"
+        >
+
+        <template v-slot:item.color="{ item }">
+          <v-btn
+            class="ma-2"
+            :color="getColor(item)"
+            icon="mdi-alert-circle-outline"
+        ></v-btn>
+        </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              class="me-2"
+              color="success"
+              @click="editItem(item, 'Update')"
+              variant="tonal"
+              size="small"
+            >
+              <v-icon size="small">mdi-pencil</v-icon> Respond
+            </v-btn>
+            <v-btn
+              color="error"
+              @click="deleteItem(item)"
+              variant="tonal"
+              size="small"
+            >
+              <v-icon>mdi-delete</v-icon> Delete
+            </v-btn>
+          </template>
+  
+          <template v-slot:bottom>
+            <div class="m-2">
+              <span style="color: gray" v-if="pagination">
+                Showing {{ pagination.from }} to
+                {{ pagination.to }} out of
+                <b>{{ pagination.total }} records</b>
+              </span>
+              <div class="text-center">
+                <v-pagination
+                  v-model="query.page"
+                  circle
+                  @click="getAlerts"
+                >
+                </v-pagination>
+              </div>
+            </div>
+          </template>
+        </v-data-table>
+      </div>
+    </v-card>
+  
+    <!-- Alert form modal -->
+    <AlertForm
+      :value="show_form_modal"
+      :alert="alert"
+      @input="showModalForm"
+      @reloadAlerts="reloadAlerts"
+      @save="save" 
+    />
+</template>
+  

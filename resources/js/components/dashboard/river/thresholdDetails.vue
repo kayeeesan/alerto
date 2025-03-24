@@ -11,7 +11,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #C0E3F4;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/rain.svg" alt="" contain width="80" height="80">
+                <img src="../../../../img/riverstatus-icon/rain.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">RAIN</p>
@@ -25,7 +25,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFF9C4;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/monitor-rain.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/monitor-rain.svg" alt="" contain width="45" height="45">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">7.5-15</p>
@@ -40,7 +40,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFCC80;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/warning-rain.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/warning-rain.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">15-30</p>
@@ -55,7 +55,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFCDD2;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/alert-rain.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/alert-rain.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">30+</p>
@@ -72,7 +72,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #C0E3F4;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/water.svg" alt="" contain width="80" height="80">
+                <img src="../../../../img/riverstatus-icon/water.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">RAIN</p>
@@ -86,7 +86,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFF9C4;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/monitor-water.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/monitor-water.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">7.5-15</p>
@@ -101,7 +101,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFCC80;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/warning-water.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/warning-water.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">15-30</p>
@@ -116,7 +116,7 @@
           <v-card class="d-flex align-center" style="height: 100px; background: #FFCDD2;">
             <v-row class="pa-2">
               <v-col cols="5" class="d-flex justify-center align-center">
-                <img src="../../../../img/riverstatus-icon/alert-water.svg" alt="" contain width="70" height="70">
+                <img src="../../../../img/riverstatus-icon/alert-water.svg" alt="" contain width="50" height="50">
               </v-col>
               <v-col cols="7" class="text-dark text-start d-flex flex-column justify-center">
                 <p class="font-weight-bold text-body-2" style="color: #000000;">30+</p>
