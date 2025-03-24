@@ -157,6 +157,7 @@
 
           <template v-slot:item.actions="{ item }">
             <v-btn
+              v-if="tab !== 'responded'"
               class="me-2"
               color="success"
               @click="editItem(item, 'Update')"
