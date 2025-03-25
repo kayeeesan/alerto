@@ -13,9 +13,11 @@ use App\Http\Controllers\ThresholdController;
 use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [UserController::class, 'register']);
+// Route::post('/register', [UserController::class, 'register']);
+Route::post('/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
