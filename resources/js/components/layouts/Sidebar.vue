@@ -28,6 +28,7 @@ const items = [
 const libraries = [
     { title: "General Actions", icon: "mdi-cog", route: "/home/responses" },
     { title: "Threshold", icon: "mdi-arrow-split-horizontal", route: "/home/thresholds" },
+    { title: "Region", icon: "mdi-city", route: "/home/regions" },
     { title: "Province", icon: "mdi-city", route: "/home/provinces" },
     { title: "Municipality", icon: "mdi-city", route: "/home/municipalities" },
     { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
