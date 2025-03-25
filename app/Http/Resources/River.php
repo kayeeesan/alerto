@@ -18,6 +18,7 @@ class River extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'river_code' => $this->river_code,
+            'municipality' => $this->municipality,
         ];
     }
 }

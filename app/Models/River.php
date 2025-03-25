@@ -14,5 +14,10 @@ class River extends Model
     protected $fillable = [
         'name',
         'river_code',
+        'municipality_id'
     ];
+
+    public function municipality(){
+        return $this->belongsTo(Municipality::class,'municipality_id');
+    }
 }

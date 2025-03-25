@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('rivers', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('municipality_id')->contrained('municipality')->onDelete('cascade');
             $table->string('name')->unique();
             $table->string('river_code')->nullable();
             $table->softDeletes();

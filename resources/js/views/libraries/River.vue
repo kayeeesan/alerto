@@ -11,6 +11,7 @@ const show_form_modal = ref(false);
 const headers = [
     { title: "Name", key: "name" },
     { title: "River Code", key: "river_code" },
+    { title: "Municipality", key: "municipality.name" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
