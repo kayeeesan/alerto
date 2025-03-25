@@ -24,15 +24,15 @@ const isDialogActive = ref(false);
     <v-divider></v-divider>
     
     <div class="mr-1">
-      <!-- <v-btn
+      <v-btn
         to="/login"
         text="Log in"
         class="text-none mr-2"
         color="white"
         rounded="4"
         variant="outlined"
-      ></v-btn> -->
-      <v-dialog v-model="isDialogActive" max-width="900">
+      ></v-btn>
+      <!-- <v-dialog v-model="isDialogActive" max-width="900">
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
@@ -45,7 +45,7 @@ const isDialogActive = ref(false);
         </template>
 
         <Login @closeDialog="isDialogActive = false" />
-      </v-dialog>
+      </v-dialog> -->
     </div>
     
     <v-btn
