@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SensorUnderAlertoController;
+use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RiverController;
 use App\Http\Controllers\SensorUnderPhController;
@@ -25,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::post('/set-password', [AuthController::class, 'setPassword']);
     Route::resource('/sensors_under_alerto', SensorUnderAlertoController::class);
     Route::resource('/sensors_under_ph', SensorUnderPhController::class);
+    Route::resource('/regions', RegionController::class);
     Route::resource('/provinces', ProvinceController::class);
     Route::resource('/rivers', RiverController::class);
     Route::resource('/municipalities', MunicipalityController::class);

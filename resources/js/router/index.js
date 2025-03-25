@@ -33,6 +33,7 @@ import VisualizationMap from '../components/dashboard/visualizationMap/form.vue'
 import Responses from "../views/libraries/Response.vue"
 import SensorsUnderAlerto from "../views/libraries/SensorUnderAlerto.vue";
 import SensorsUnderPh from "../views/libraries/SensorUnderPh.vue";
+import Regions from "../views/libraries/Region.vue";
 import Provinces from "../views/libraries/Province.vue";
 import Rivers from "../views/libraries/River.vue";
 import Municipalities from "../views/libraries/Municipality.vue";
@@ -155,6 +156,11 @@ const routes = [
                 path: 'sensors-under-ph',
                 name: 'sensors-under-ph',
                 component: SensorsUnderPh
+            },
+            {
+                path: 'regions',
+                name: 'regions',
+                component: Regions
             },
             {
                 path: 'provinces',
