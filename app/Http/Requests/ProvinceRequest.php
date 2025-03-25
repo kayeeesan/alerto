@@ -23,6 +23,7 @@ class ProvinceRequest extends FormRequest
     {
         if ($this->method() == "POST") {
             return [
+                'region.id' => 'required|exists:regions,id',
                 'name' => 'required|string|max:255'
             ];
            } else {

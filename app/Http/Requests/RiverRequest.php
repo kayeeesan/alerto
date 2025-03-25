@@ -23,6 +23,7 @@ class RiverRequest extends FormRequest
     {
         if ($this->method() == "POST") {
             return [
+                'municipality.id' => 'required|exists:municipalities,id',
                 'name' => 'required|string|max:255'
             ];
            } else {

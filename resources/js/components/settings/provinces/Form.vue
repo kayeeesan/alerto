@@ -1,8 +1,10 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onMounted } from "vue";
 import useProvinces from "../../../composables/province";
+import useRegions from "../../../composables/region";
 
 const { errors, is_loading, is_success, storeProvince, updateProvince } = useProvinces();
+const {regions, getRegions} = useRegions();
 
 const emit = defineEmits(["input", "reloadProvinces"]);
 const props = defineProps({
@@ -19,6 +21,7 @@ const props = defineProps({
 const initialState = {
     id: null,
     name: null,
+    region: {}
 }
 const form = reactive({ ...initialState });
 
@@ -27,6 +30,7 @@ watch(
     (value)  => {
         form.id = value.id;
         form.name = value.name;
+        form.region = value.region;
     }
 );
 
@@ -39,7 +43,7 @@ watch(
 );
 
 const close = () => {
-    Object.assign(form, initialState);
+    // Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 }
@@ -56,6 +60,10 @@ const save = async () => {
         emit("input", false);
     }
 }
+
+onMounted(() => {
+    getRegions();
+});
 </script>
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
@@ -66,6 +74,36 @@ const save = async () => {
     
             <v-card-text>
                 <v-container>
+                    <v-row>
+                        <!-- <vue-multiselect
+                            v-model="form.region"
+                            :options="regions"
+                            :multiple="false"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :preserve-search="true"
+                            placeholder="Select Region"
+                            label="name"
+                            track-by="id"
+                            select-label=""
+                            deselect-label=""
+                        >
+                        </vue-multiselect> -->
+                        <vue-multiselect
+                            v-model="form.region"
+                            :options="regions"
+                            :multiple="false"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :preserve-search="true"
+                            placeholder="Select Region"
+                            label="name"
+                            track-by="id"
+                            select-label=""
+                            deselect-label=""
+                        >
+                        </vue-multiselect>
+                    </v-row>
                     <v-row>
                         <v-text-field
                             v-model="form.name"

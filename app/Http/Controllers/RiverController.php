@@ -36,6 +36,7 @@ class RiverController extends Controller
     {
         try {
             $river = new River();
+            $river->municipality_id = $request->input('municipality.id');
             $river->name = ucwords($request->name);
             $river->river_code = $request->river_code;
             $river->save();
@@ -53,6 +54,7 @@ class RiverController extends Controller
         try {
             $river = River::findOrFail($id);
             $oldData = $river->toArray();
+            $river->municipality_id = $request->input('municipality.id');
             $river->name = ucwords($request->name);
             $river->river_code = $request->river_code;
             $river->update();

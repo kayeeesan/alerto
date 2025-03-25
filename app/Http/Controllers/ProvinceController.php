@@ -36,6 +36,7 @@ class ProvinceController extends Controller
     {
         try {
             $province = new Province();
+            $province->region_id = $request->input('region.id');
             $province->name = ucwords($request->name);
             $province->save();
 
@@ -52,6 +53,7 @@ class ProvinceController extends Controller
         try {
             $province = Province::findOrFail($id);
             $oldData = $province->toArray();
+            $province->region_id = $request->region['id'];
             $province->name = ucwords($request->name);
             $province->update();
 

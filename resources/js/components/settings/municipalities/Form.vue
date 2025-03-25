@@ -86,17 +86,6 @@ onMounted(() => {
             <v-card-text>
                 <v-container>
                     <v-row>
-                        <v-text-field
-                            v-model="form.name"
-                            label="Municipality name"
-                            variant="outlined"
-                            :error-messages="
-                                errors['name'] ? errors['name'] : []
-                            "
-                            @keyup.enter="save()"
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
                         <vue-multiselect
                             v-model="form.province"
                             :options="provinces"
@@ -112,6 +101,17 @@ onMounted(() => {
                         >
                         </vue-multiselect>
                        
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.name"
+                            label="Municipality name"
+                            variant="outlined"
+                            :error-messages="
+                                errors['name'] ? errors['name'] : []
+                            "
+                            @keyup.enter="save()"
+                        ></v-text-field>
                     </v-row>
                 </v-container>
             </v-card-text>

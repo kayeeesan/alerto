@@ -1,8 +1,10 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onMounted } from "vue";
 import useRivers from "../../../composables/river";
+import useMunicialities from "../../../composables/municipality";
 
 const { errors, is_loading, is_success, storeRiver, updateRiver } = useRivers();
+const {municipalities, getMunicipalities} = useMunicialities();
 
 const emit = defineEmits(["input", "reloadRivers"]);
 const props = defineProps({
@@ -20,6 +22,7 @@ const initialState = {
     id: null,
     name: null,
     river_code: null,
+    municipality: {}
 }
 const form = reactive({ ...initialState });
 
@@ -29,6 +32,7 @@ watch(
         form.id = value.id;
         form.name = value.name;
         form.river_code = value.river_code;
+        form.municipality = value.municipality;
     }
 );
 
@@ -72,6 +76,10 @@ const save = async () => {
         emit("input", false);
     }
 }
+
+onMounted(() => {
+    getMunicipalities();
+})
 </script>
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
@@ -82,6 +90,22 @@ const save = async () => {
     
             <v-card-text>
                 <v-container>
+                    <v-row>
+                        <vue-multiselect
+                            v-model="form.municipality"
+                            :options="municipalities"
+                            :multiple="false"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :preserve-search="true"
+                            placeholder="Select Municipality/City"
+                            label="name"
+                            track-by="id"
+                            select-label=""
+                            deselect-label=""
+                        >
+                        </vue-multiselect>
+                    </v-row>
                     <v-row>
                         <v-text-field
                             v-model="form.name"

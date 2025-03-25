@@ -58,6 +58,16 @@ const save = async () => {
         emit("input", false);
     }
 }
+
+watch(
+    () => form.name,
+    (value) => {
+        if (value) {
+            form.name = value.toUpperCase();
+        }
+    }
+);
+
 </script>
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
@@ -73,11 +83,11 @@ const save = async () => {
                             v-model="form.name"
                             label="Region name"
                             variant="outlined"
-                            :error-messages="
-                                errors['name'] ? errors['name'] : []
-                            "
+                            :error-messages="errors['name'] ? errors['name'] : []"
                             @keyup.enter="save()"
-                        ></v-text-field>
+                            @input="form.name = form.name.toUpperCase()"
+                        />
+
                     </v-row>
                 </v-container>
             </v-card-text>
