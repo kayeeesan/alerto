@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name')->unique();
-            $table->foreignId('region_id')->contrained('region')->onDelete('cascade');
+            $table->foreignId('region_id')->contrained('regions')->onDelete('cascade');
             $table->softDeletes();
         });
     }

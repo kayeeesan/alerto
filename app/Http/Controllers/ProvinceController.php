@@ -11,6 +11,7 @@ use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
+
 class ProvinceController extends Controller
 {
 
@@ -21,7 +22,7 @@ class ProvinceController extends Controller
         $this->logService = $logService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $provinces = [];
         if (isset($request->search)) {

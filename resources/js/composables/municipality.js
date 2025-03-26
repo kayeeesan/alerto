@@ -14,12 +14,15 @@ export default function useMunicipalities() {
         page: 1,
     });
 
-    const getMunicipalities = async (params = {}) => {
+    const getMunicipalities = async (params = {}, type = "") => {
         is_loading.value = true;
 
         let query_str = { ...query.value, ...params };
+        let url = type === "/municipalities" ? "/api/municipalities" : "/api/form/municipalities"; 
+
         await axios
-            .get('/api/municipalities?page=' + query.value.page, query_str)
+            // .get('/api/municipalities?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 municipalities.value = response.data.data;
                 pagination.value = response.data.meta;

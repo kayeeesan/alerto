@@ -14,18 +14,20 @@ export default function useRivers() {
         page: 1,
     });
 
-    const getRivers = async (params = {}) => {
+    const getRivers = async (params = {}, type = "") => {
         is_loading.value = true;
 
         let query_str = { ...query.value, ...params };
+        let url = type === "/rivers" ? "/api/rivers" : "/api/form/rivers";
         await axios
-            .get('/api/rivers?page=' + query.value.page, query_str)
+            // .get('/api/rivers?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 rivers.value = response.data.data;
                 pagination.value = response.data.meta;
                 is_loading.value = false;
-            })
-    }
+            });
+    };
 
     const storeRiver = async (data) => {
         is_loading.value = true;
