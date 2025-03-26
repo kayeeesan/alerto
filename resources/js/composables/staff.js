@@ -34,7 +34,7 @@ export default function useStaffs() {
         
         try{
             await axios
-                .post(`/api/staffs`, data)
+                .post(`/api/form/staffs`, data)
                 .then((response) => {
                     Swal.fire({
                         title: "Success",
