@@ -14,18 +14,60 @@ export default function useRoles() {
         page: 1,
     });
 
-    const getRoles = async (params = {}) => {
-        is_loading.value = true;
+    // const getRoles = async (params = {}) => {
+    //     is_loading.value = true;
 
+    //     let query_str = { ...query.value, ...params };
+    //     let url = type == "/roles" ? "/roles" : "/form/roles"
+    //     // let url = params.type && params.type === "/roles" ? "/roles" : "/form/roles";
+
+    //     await axios
+    //         // .get('/api/roles?page=' + query.value.page, query_str)
+    //         .get(`${url}?page=${query.value.page}` , {params: query_str})
+    //         .then((response) => {
+    //             roles.value = response.data.data;
+    //             pagination.value = response.data.meta;
+    //             is_loading.value = false;
+    //         });
+    // };
+
+    // const getRoles = async (params = {}, type = "") => {
+    //     is_loading.value = true;
+
+    //     let query_str = { ...query.value, ...params};
+    //     let url = type == "/roles" ? "/roles" : "/form/roles";
+
+    //     await axios
+    //         .get(`${url}?page=${query.value.page}`, { params: query_str})
+    //         .then((response) => {
+    //             roles.value = response.data.data;
+    //             pagination.value = response.data.meta;
+    //             is_loading.value = false;
+    //         });
+    // };
+
+    const getRoles = async (params = {}, type = "") => {
+        is_loading.value = true;
+    
         let query_str = { ...query.value, ...params };
+        let url = type === "/roles" ? "/api/roles" : "/api/form/roles";  // Make sure this is correct
+    
+        console.log("Fetching roles from:", `${url}?page=${query.value.page}`, query_str);
+    
         await axios
-            .get('/api/roles?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
+                console.log("API Response:", response.data);
                 roles.value = response.data.data;
                 pagination.value = response.data.meta;
                 is_loading.value = false;
             })
-    }
+            .catch((error) => {
+                console.error("Error fetching roles:", error.response);
+                is_loading.value = false;
+            });
+    };
+    
 
     const storeRole = async (data) => {
         is_loading.value = true;

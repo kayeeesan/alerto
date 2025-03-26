@@ -20,7 +20,7 @@ class RegionController extends Controller
         $this->logService = $logService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $regions = [];
         if (isset($request->search)) {

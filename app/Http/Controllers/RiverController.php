@@ -21,7 +21,7 @@ class RiverController extends Controller
         $this->logService = $logService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $rivers = [];
         if (isset($request->search)) {

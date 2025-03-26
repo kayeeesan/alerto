@@ -14,12 +14,14 @@ export default function useProvinces() {
         page: 1,
     });
 
-    const getProvinces = async (params = {}) => {
+    const getProvinces = async (params = {}, type = "") => {
         is_loading.value = true;
 
         let query_str = { ...query.value, ...params };
+        let url = type === "/provinces" ? "/api/provinces" : "/api/form/provinces";
         await axios
-            .get('/api/provinces?page=' + query.value.page, query_str)
+            // .get('/api/provinces?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 provinces.value = response.data.data;
                 pagination.value = response.data.meta;

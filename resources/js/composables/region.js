@@ -14,18 +14,20 @@ export default function useRegions() {
         page: 1,
     });
 
-    const getRegions = async (params = {}) => {
+    const getRegions = async (params = {}, type = "") => {
         is_loading.value = true;
 
         let query_str = { ...query.value, ...params };
+        let url = type === "/regions" ? "/api/regions" : "/api/form/regions";
         await axios
-            .get('/api/regions?page=' + query.value.page, query_str)
+            // .get('/api/regions?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str})
             .then((response) => {
                 regions.value = response.data.data;
                 pagination.value = response.data.meta;
                 is_loading.value = false;
-            })
-    }
+            });
+    };
 
     const storeRegion = async (data) => {
         is_loading.value = true;

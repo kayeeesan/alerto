@@ -7,13 +7,15 @@ use App\Http\Resources\Role as ResourcesRole;
 use App\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+
 
 class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $roles = [];
         if (isset($request->search)) {
@@ -21,8 +23,10 @@ class RoleController extends Controller
         }
 
         $roles = isset($request->search) && $request->search ? $roles->paginate(10) : Role::paginate(10);
-        return ResourcesRole::collection($roles);
+        // return ResourcesRole::collection($roles);
+        return ResourcesRole::collection(Role::paginate(10));
     }
+
 
     /**
      * Show the form for creating a new resource.

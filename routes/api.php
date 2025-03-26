@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+Route::get('/form/roles', [RoleController::class, 'index']);
+Route::get('/form/regions', [RegionController::class, 'index']);
+Route::get('/form/provinces', [ProvinceController::class, 'index']);
+Route::get('/form/municipalities', [MunicipalityController::class, 'index']);
+Route::get('/form/rivers', [RiverController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    
