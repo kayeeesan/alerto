@@ -17,7 +17,7 @@ use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
-Route::post('/staffs', [StaffController::class, 'store']);
+Route::post('/form/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/form/roles', [RoleController::class, 'index']);
