@@ -47,7 +47,8 @@ export default function useAuth() {
             store.dispatch('auth/logout');
             
             is_loading.value = false;
-            location.reload();
+            // location.reload();
+            router.push("/");
         })
     }
 

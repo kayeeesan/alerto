@@ -30,8 +30,16 @@ const initialState = {
     middle_name: null,
     selected_roles: [],
     user_roles: [],
+    status: null,
 }
 const form = reactive({ ...initialState });
+
+const status = 
+[
+    'pending',
+    'approved',
+    'disabled'
+];
 
 watch(
     () => props.user,
@@ -42,6 +50,7 @@ watch(
         form.last_name = value.last_name;
         form.middle_name = value.middle_name;
         form.selected_roles = value.roles;
+        form.status = value.status;
     }
 );
 
@@ -167,6 +176,20 @@ const save = async () => {
                         >
                         </vue-multiselect>
                         <span v-if="errors['user_roles']" class="error-msg">{{ errors['user_roles'][0] }}</span>
+                    </v-row>
+                    <v-row>
+                        <vue-multiselect
+                            v-model="form.status"
+                            :options="status"
+                            :multiple="false"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :preserve-search="true"
+                            placeholder="Status"
+                            select-label=""
+                            deselect-label=""
+                        >
+                        </vue-multiselect>
                     </v-row>
                 </v-container>
             </v-card-text>

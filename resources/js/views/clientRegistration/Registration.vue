@@ -71,11 +71,7 @@ onMounted(() => {
     getRivers();
 });
 
-const router = useRouter();
 
-const cancel = () => {
-    router.push('/');
-}
 </script>
 
 <template>

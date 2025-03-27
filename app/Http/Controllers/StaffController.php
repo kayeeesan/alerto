@@ -120,6 +120,8 @@ class StaffController extends Controller
             $staff->river_id = $request->input('river.id');
             $staff->update();
 
+            $user = User::findOrFail($id);
+
             return response(['message' => 'Staff has been successfully updated.']);
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);

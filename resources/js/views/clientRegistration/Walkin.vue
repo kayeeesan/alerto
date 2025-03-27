@@ -10,6 +10,8 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", key: "username" },
+    { title: "contact No.", key: "mobile_number" },
+    { title: "Status", key: "status" },
     { title: "Actions", key: "actions", sortable: false },
 ];
 
@@ -37,10 +39,10 @@ const reloadStaffs = async () => {
 </script>
 <template>
     <v-row class="p-2">
-        <h5 class="fw-bold p-3">List of Staffs</h5>
+        <h5 class="fw-bold p-3">List of Members</h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Staff
+            New Member
         </v-btn>
     </v-row>
     <v-card>
