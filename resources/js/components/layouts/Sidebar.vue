@@ -37,7 +37,8 @@ const libraries = [
     { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
     { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
     { title: "Role", icon: "mdi-account", route: "/home/roles" },
-    { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/users" },
+    { title: "Recipients Data", icon: "mdi-account-circle-outline", route: "/home/staffs" },
+    { title: "Accounts", icon: "mdi-account-circle-outline", route: "/home/users" },
 ];
 
 

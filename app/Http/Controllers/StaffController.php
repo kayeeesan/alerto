@@ -9,6 +9,7 @@ use App\Http\Resources\Staff as ResourcesStaff;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Role; 
+use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
@@ -26,45 +27,82 @@ class StaffController extends Controller
     }
 
     public function store(StaffRequest $request)
-{
-    try {
-        // Validate if the role exists
-        $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
-
-        // Create the Staff entry
-        $staff = new Staff();
-        $staff->username = ucwords($request->username);
-        $staff->first_name = $request->first_name;
-        $staff->last_name = $request->last_name;
-        $staff->mobile_number = $request->mobile_number;
-        $staff->role_id = $role->id;  // Store the role id from the request
-        $staff->region_id = $request->input('region.id');
-        $staff->province_id = $request->input('province.id');
-        $staff->municipality_id = $request->input('municipality.id');
-        $staff->river_id = $request->input('river.id');
-        $staff->save();
-
-        // Now create the User
-        $default_password = "*1234#";
-        $user = new User();
-        $user->username = $request->username;
-        $user->first_name = ucwords($request->first_name);
-        $user->middle_name = null;
-        $user->last_name = ucwords($request->last_name);
-        $user->password = bcrypt($default_password);
-        $user->status = 'pending';
-        $user->save();
-
-        // Assign role to user
-        $user->roles()->sync([$role->id]);  // Sync the role for the user
-
-        return response()->json(['message' => 'Staff has been successfully saved.']);
-    } catch (\Exception $e) {
-        return response()->json(['message' => $e->getMessage()]);
+    {
+        try {
+            // Validate if the role exists
+            $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+    
+            // Create the Staff entry
+            $staff = new Staff();
+            $staff->username = ucwords($request->username);
+            $staff->first_name = $request->first_name;
+            $staff->last_name = $request->last_name;
+            $staff->mobile_number = $request->mobile_number;
+            $staff->role_id = $role->id;  // Store the role id from the request
+            $staff->region_id = $request->input('region.id');
+            $staff->province_id = $request->input('province.id');
+            $staff->municipality_id = $request->input('municipality.id');
+            $staff->river_id = $request->input('river.id');
+            $staff->save();
+    
+            // Now create the User
+            $default_password = "*1234#";
+            $user = new User();
+            $user->username = $request->username;
+            $user->first_name = ucwords($request->first_name);
+            $user->middle_name = null;
+            $user->last_name = ucwords($request->last_name);
+            $user->password = bcrypt($default_password);
+            $user->status = 'pending';
+            $user->save();
+    
+            // Assign role to user
+            $user->roles()->sync([$role->id]);  // Sync the role for the user
+    
+            return response()->json(['message' => 'Staff has been successfully saved.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
-}
 
-
+    public function storeWalkinStaff(StaffRequest $request)
+    {
+        try {
+            // Validate if the role exists
+            $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+    
+            // Create the Staff entry
+            $staff = new Staff();
+            $staff->username = ucwords($request->username);
+            $staff->first_name = $request->first_name;
+            $staff->last_name = $request->last_name;
+            $staff->mobile_number = $request->mobile_number;
+            $staff->role_id = $role->id;  // Store the role id from the request
+            $staff->region_id = $request->input('region.id');
+            $staff->province_id = $request->input('province.id');
+            $staff->municipality_id = $request->input('municipality.id');
+            $staff->river_id = $request->input('river.id');
+            $staff->save();
+    
+            // Now create the User
+            $default_password = "*1234#";
+            $user = new User();
+            $user->username = $request->username;
+            $user->first_name = ucwords($request->first_name);
+            $user->middle_name = null;
+            $user->last_name = ucwords($request->last_name);
+            $user->password = bcrypt($default_password);
+            $user->status = 'pending';
+            $user->save();
+    
+            // Assign role to user
+            $user->roles()->sync([$role->id]);  // Sync the role for the user
+    
+            return response()->json(['message' => 'Staff has been successfully saved.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
     public function update($id, StaffRequest $request)
     {
         try 

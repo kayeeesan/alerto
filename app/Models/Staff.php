@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Staff extends Model
 {
-    protected $table = 'staffs';
-    
+    protected $table = 'staffs'; 
     use HasFactory;
 
     protected $fillable = [
-        // 'user_id',
         'username',
         'first_name',
         'last_name',
@@ -23,11 +21,6 @@ class Staff extends Model
         'municipality_id',
         'river_id'
     ];
-
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
 
     public function role(){
         return $this->belongsTo(Role::class,'role_id');

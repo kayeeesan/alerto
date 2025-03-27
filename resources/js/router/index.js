@@ -38,6 +38,7 @@ import Provinces from "../views/libraries/Province.vue";
 import Rivers from "../views/libraries/River.vue";
 import Municipalities from "../views/libraries/Municipality.vue";
 import Thresholds from "../views/libraries/Threshold.vue";
+import Staffs from "../views/clientRegistration/Walkin.vue";
 
 //User Settings
 import Alerts from "../views/userSettings/alert.vue";
@@ -231,6 +232,11 @@ const routes = [
                 path: 'alerts',
                 name: 'private-alerts',
                 component: Alerts
+            },
+            {
+                path: 'staffs',
+                name: 'private-staffs',
+                component: Staffs
             },
         ]
     }

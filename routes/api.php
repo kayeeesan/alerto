@@ -17,6 +17,7 @@ use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
+
 Route::post('/form/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
@@ -41,4 +42,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::get('/user-logs', [UserLogController::class, 'index']);
     Route::resource('/responses', ResponseController::class);
     Route::resource('/alerts', AlertController::class);
+    Route::resource('/staffs', StaffController::class);
 });
