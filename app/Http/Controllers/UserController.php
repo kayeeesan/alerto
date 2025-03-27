@@ -115,6 +115,7 @@ class UserController extends Controller
             $user->first_name = ucwords($request->first_name);
             $user->middle_name = ucwords($request->middle_name);
             $user->last_name = ucwords($request->last_name);
+            $user->status = $request->status;
             $this->storeUserRoles($user->id, $request->user_roles);
             $user->update();
             

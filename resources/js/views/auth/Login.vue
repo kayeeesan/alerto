@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import useAuth from '../../composables/auth.js';
+import { useRouter } from 'vue-router';
 
 const { error, is_loading, login } = useAuth();
 
@@ -64,18 +65,34 @@ const handleSubmit = async () => {
                 @keyup.enter="handleSubmit()"
             ></v-text-field>
 
-      
-            <v-btn
-              class="mb-15"
-              color="primary"
-              size="large"
-              variant="tonal"
-              block
-              @click="handleSubmit()"
-              :loading="is_loading"
-            >
-              Log In
-            </v-btn>
+            <v-row>
+              <v-col>
+                <v-btn
+                  class="mb-15"
+                  color="red darken-1"
+                  size="large"
+                  variant="tonal"
+                  block
+                  :to="'/'"
+                >
+                  Cancel
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  class="mb-15"
+                  color="primary"
+                  size="large"
+                  variant="tonal"
+                  block
+                  @click="handleSubmit()"
+                  :loading="is_loading"
+                >
+                  Log In
+                </v-btn>
+              </v-col>
+            </v-row>
+        
           </v-card>
         </div>
       </v-main>
