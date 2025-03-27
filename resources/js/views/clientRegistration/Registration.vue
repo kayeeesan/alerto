@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
+import { useRouter } from 'vue-router';
 import useStaffs from "../../composables/staff";
 import useRegions from "../../composables/region";
 import useProvinces from "../../composables/province";
@@ -13,7 +14,6 @@ const props = defineProps({
 
 const emit = defineEmits(["reloadStaffs", "input"]);
 
-
 const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
 const { roles, getRoles } = useRoles();
 const { regions, getRegions } = useRegions();
@@ -23,15 +23,15 @@ const { rivers, getRivers } = useRivers();
 
 const initialState = {
     id: null,
-    username: null,
-    first_name: null,
-    last_name: null,
-    mobile_number: null,
-    role: {},
-    region: {},
-    province: {},
-    municipality: {},
-    river: {}
+    username: "",
+    first_name: "",
+    last_name: "",
+    mobile_number: "",
+    role: null,
+    region: null,
+    province: null,
+    municipality: null,
+    river: null
 };
 const form = reactive({ ...initialState });
 
@@ -39,31 +39,27 @@ watch(
     () => props.staff,
     (value) => {
         if (value) {
-            form.id = value.id;
-            form.username = value.username;
-            form.first_name = value.first_name;
-            form.last_name = value.last_name;
-            form.mobile_number = value.mobile_number;
-            form.role = value.role;
-            form.region = value.region;
-            form.province = value.province;
-            form.municipality = value.municipality;
-            form.river = value.river;
+            Object.assign(form, { ...value });
         }
     },
     { deep: true }
 );
 
+const resetForm = () => {
+    Object.assign(form, { ...initialState });
+};
+
 const save = async () => {
-    if (props.staff && props.staff.id) {
+    if (props.staff?.id) {
         await updateStaff({ ...form });
     } else {
         await storeWalkinStaff({ ...form });
     }
 
-    if (is_success.value == true) {
+    if (is_success.value) {
         emit("reloadStaffs");
         emit("input", false);
+        resetForm();
     }
 };
 
@@ -74,149 +70,101 @@ onMounted(() => {
     getMunicipalities();
     getRivers();
 });
+
+const router = useRouter();
+
+const cancel = () => {
+    router.push('/');
+}
 </script>
+
 <template>
-     <div>
-        <v-card>
-            <v-card-title class="mt-2">
-                <span class="text-h5">Register</span>
-            </v-card-title>
-    
-            <v-card-text>
-                <v-container>
-                    <v-row>
-                        <v-text-field
-                            v-model="form.first_name"
-                            label="First Name*"
-                            variant="outlined"
-                            :error-messages="
-                                errors['first_name'] ? errors['first_name'] : []
-                            "
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <v-text-field
-                            v-model="form.last_name"
-                            label="Last Name*"
-                            variant="outlined"
-                            @keydown="generateUsername"
-                            :error-messages="
-                                errors['last_name'] ? errors['last_name'] : []
-                            "
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <v-text-field
-                            v-model="form.username"
-                            label="Username*"
-                            variant="outlined"
-                            :error-messages="
-                                errors['username'] ? errors['username'] : []
-                            "
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <v-text-field
-                            v-model="form.mobile_number"
-                            label="Mobile Number*"
-                            variant="outlined"
-                            :error-messages="
-                                errors['mobile_number'] ? errors['mobile_number'] : []
-                            "
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.role"
-                            :options="roles"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select Role/s"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.region"
-                            :options="regions"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select Region"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.province"
-                            :options="provinces"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select province"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.municipality"
-                            :options="municipalities"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select municipality"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.river"
-                            :options="rivers"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select River"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                </v-container>
-            </v-card-text>
-    
-            <v-card-actions class="mb-4 mr-5">
-                <v-spacer></v-spacer>
-                <v-btn color="blue-grey-lighten-2" @click="close()" variant="tonal">
-                    Cancel
-                </v-btn>
-                <v-btn color="primary" @click="save()" variant="tonal" :loading="is_loading">
-                    Save
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </div>
+    <v-app>
+        <v-layout class="bg-indigo-darken-1">
+            <v-container class="fill-height d-flex align-center justify-center">
+                <v-card class="pa-8" elevation="8" width="600px" rounded="lg">
+                    <v-card-title class="text-h5 text-center font-weight-bold"> Register Staff </v-card-title>
+
+                    <v-card-text>
+                        <v-form>
+                            <!-- Name Fields -->
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="form.first_name" label="First Name*" variant="outlined"
+                                        :error-messages="errors.first_name || []">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field v-model="form.last_name" label="Last Name*" variant="outlined"
+                                        :error-messages="errors.last_name || []">
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- Username & Mobile -->
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="form.username" label="Username*" variant="outlined"
+                                        :error-messages="errors.username || []">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field v-model="form.mobile_number" label="Mobile Number*" variant="outlined"
+                                        :error-messages="errors.mobile_number || []">
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- Role -->
+                            <v-row>
+                                <v-col>
+                                    <vue-multiselect v-model="form.role" :options="roles" placeholder="Select Role" label="name"
+                                        track-by="name">
+                                    </vue-multiselect>
+                                </v-col>
+                            </v-row>
+
+                            <!-- Location Fields -->
+                            <v-row>
+                                <v-col>
+                                    <vue-multiselect v-model="form.region" :options="regions" placeholder="Select Region"
+                                        label="name" track-by="name">
+                                    </vue-multiselect>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <vue-multiselect v-model="form.province" :options="provinces" placeholder="Select Province"
+                                        label="name" track-by="name">
+                                    </vue-multiselect>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <vue-multiselect v-model="form.municipality" :options="municipalities"
+                                        placeholder="Select Municipality" label="name" track-by="name">
+                                    </vue-multiselect>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <vue-multiselect v-model="form.river" :options="rivers" placeholder="Select River" label="name"
+                                        track-by="name">
+                                    </vue-multiselect>
+                                </v-col>
+                            </v-row>
+                        </v-form>
+                    </v-card-text>
+
+                    <v-card-actions class="justify-end">
+                        <v-btn color="grey darken-1" variant="tonal" @click="resetForm"> Reset </v-btn>
+                        <v-btn color="red darken-1" variant="tonal" :to="'/'"> Cancel </v-btn>
+
+                        <v-btn color="primary" :loading="is_loading" @click="save"> Save </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-container>
+        </v-layout>
+    </v-app>
+   
 </template>
