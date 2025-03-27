@@ -22,7 +22,6 @@ class StaffRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'user_id' => 'required|exists:users,id',
             'username' => 'required|string|max:255|unique:staffs,username',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -31,7 +30,6 @@ class StaffRequest extends FormRequest
             'region.id' => 'required|exists:regions,id',
             'province.id' => 'required|exists:provinces,id',
             'municipality.id' => 'required|exists:municipalities,id',
-
             'river.id' => 'required|exists:rivers,id',
         ];
     }

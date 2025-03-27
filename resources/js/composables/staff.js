@@ -14,21 +14,58 @@ export default function useStaffs() {
         page: 1,
     });
 
-    const getStaffs = async (params = {}, type = "") => {
-        is_loading.value = true;
+   
 
-        let query_str = { ...query.value, ...params };
-        let url = type === "/staffs" ? "/api/staffs" : "/api/form/staffs";
-        await axios
-            .get(`${url}?page=${query.value.page}`, { params: query_str })
-            .then((response) => {
+    const getStaffs = async (params = {}) => {
+        is_loading.value = true;
+    
+        let url = "/api/staffs"; 
+    
+        try {
+            const response = await axios.get(url, { params: { ...query.value, ...params } });
+    
+            if (response.data.data) {
                 staffs.value = response.data.data;
-                pagination.value = response.data.meta;
-                is_loading.value = false;
-            })
-    }
+                pagination.value = response.data.meta || {};
+            } else {
+                staffs.value = response.data; // Handle cases where API returns plain array
+            }
+    
+            is_loading.value = false;
+        } catch (error) {
+            console.error("Error fetching staff:", error);
+            is_loading.value = false;
+        }
+    };
+    
 
     const storeStaff = async (data) => {
+        is_loading.value = true;
+        errors.value = "";
+        
+        try{
+            await axios
+                .post(`/api/staffs`, data)
+                .then((response) => {
+                    Swal.fire({
+                        title: "Success",
+                        icon: "success",
+                        text: response.data.message,
+                    });
+                    errors.value = {};
+                    is_loading.value = false;
+                    is_success.value = true;                
+                });
+        } catch (e) {
+            if(e.response.status == 422) {
+                errors.value = e.response.data;
+                is_success.value = false;
+                is_loading.value = false;
+            }
+        }
+    }
+
+    const storeWalkinStaff = async (data) => {
         is_loading.value = true;
         errors.value = "";
         
@@ -122,5 +159,6 @@ export default function useStaffs() {
         updateStaff,
         destoryStaff,
         getStaffs,
+        storeWalkinStaff
     }
 }

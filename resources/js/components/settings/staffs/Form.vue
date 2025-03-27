@@ -1,25 +1,30 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
-import useStaffs from "../../composables/staff";
-import useRegions from "../../composables/region";
-import useProvinces from "../../composables/province";
-import useMunicipalities from "../../composables/municipality";
-import useRivers from "../../composables/river";
-import useRoles from "../../composables/roles";
+import useStaffs from "../../../composables/staff";
+import useRegions from "../../../composables/region";
+import useProvinces from "../../../composables/province";
+import useMunicipalities from "../../../composables/municipality";
+import useRivers from "../../../composables/river";
+import useRoles from "../../../composables/roles";
 
-const props = defineProps({
-    staff: Object
-});
-
-const emit = defineEmits(["reloadStaffs", "input"]);
-
-
-const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
+const { errors, is_loading, is_success, storeStaff, updateStaff } = useStaffs();
 const { roles, getRoles } = useRoles();
 const { regions, getRegions } = useRegions();
 const { provinces, getProvinces } = useProvinces();
 const { municipalities, getMunicipalities } = useMunicipalities();
 const { rivers, getRivers } = useRivers();
+
+const emit = defineEmits(["input", "reloadStaffs"]);
+const props = defineProps({
+    staff: {
+        type: Object,
+        default: null
+    },
+    value: {
+        type: Boolean,
+        default: false,
+    }
+});
 
 const initialState = {
     id: null,
@@ -32,14 +37,13 @@ const initialState = {
     province: {},
     municipality: {},
     river: {}
-};
+}
 const form = reactive({ ...initialState });
 
 watch(
     () => props.staff,
-    (value) => {
-        if (value) {
-            form.id = value.id;
+    (value)  => {
+        form.id = value.id;
             form.username = value.username;
             form.first_name = value.first_name;
             form.last_name = value.last_name;
@@ -49,23 +53,37 @@ watch(
             form.province = value.province;
             form.municipality = value.municipality;
             form.river = value.river;
-        }
-    },
-    { deep: true }
+    }
 );
 
+
+
+const show_form_modal = ref(false);
+watch(
+    () => props.value,
+    (value)  => {
+        show_form_modal.value = value;
+    }
+);
+
+const close = () => {
+    Object.assign(form, initialState);
+    emit("input", false);
+    errors.value = {};
+}
+
 const save = async () => {
-    if (props.staff && props.staff.id) {
+    if(props.staff && props.staff.id) {
         await updateStaff({ ...form });
     } else {
-        await storeWalkinStaff({ ...form });
+        await storeStaff({ ...form });
     }
 
-    if (is_success.value == true) {
+    if (is_success.value == true){
         emit("reloadStaffs");
         emit("input", false);
     }
-};
+}
 
 onMounted(() => {
     getRoles();
@@ -74,12 +92,13 @@ onMounted(() => {
     getMunicipalities();
     getRivers();
 });
+
 </script>
 <template>
-     <div>
+    <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
-            <v-card-title class="mt-2">
-                <span class="text-h5">Register</span>
+            <v-card-title>
+                <span class="text-h5">New Staff</span>
             </v-card-title>
     
             <v-card-text>
@@ -218,5 +237,5 @@ onMounted(() => {
                 </v-btn>
             </v-card-actions>
         </v-card>
-    </div>
+    </v-dialog>
 </template>
