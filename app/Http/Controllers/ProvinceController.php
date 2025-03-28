@@ -11,7 +11,6 @@ use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-
 class ProvinceController extends Controller
 {
 

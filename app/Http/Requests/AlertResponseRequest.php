@@ -23,7 +23,6 @@ class AlertResponseRequest extends FormRequest
     {
         return [
             'response.id' => 'required|exists:responses,id',
-            
         ];
     }
 }

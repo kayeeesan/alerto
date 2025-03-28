@@ -80,6 +80,31 @@ export default function useUsers() {
         }
     }
 
+    const resetPassword = async (id) => {
+            errors.value = "";
+            is_loading.value = true;
+    
+            try{
+                await axios
+                    .patch(`/api/users/${id}/reset-password`)
+                    .then((response) => {
+                        Swal.fire({
+                            title: "Success",
+                            icon: "success",
+                            text: response.data.message,
+                        });
+                        is_loading.value = false;
+                        is_success.value = true;
+                    });
+            } catch (e) {
+                if(e.response.status == 422) {
+                    errors.value = e.response.data;
+                    is_success.value = false;
+                    is_loading.value = false;
+                }
+            }
+        }
+
     const destoryUser = async (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -121,5 +146,6 @@ export default function useUsers() {
         updateUser,
         destoryUser,
         getUsers,
+        resetPassword
     }
 }

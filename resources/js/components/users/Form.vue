@@ -3,7 +3,7 @@ import { ref, reactive, watch, onMounted } from "vue";
 import useUsers from "../../composables/users.js";
 import useRoles from "../../composables/roles.js";
 
-const { errors, is_loading, is_success, storeUser, updateUser } = useUsers();
+const { errors, is_loading, is_success, storeUser, updateUser, resetPassword } = useUsers();
 const { roles, getRoles } = useRoles();
 
 const emit = defineEmits(["input", "reloadUsers"]);
@@ -109,6 +109,17 @@ const save = async () => {
         emit("input", false);
     }
 }
+
+const ResetPassword = async () => {
+    if (form.id) {
+        await resetPassword(form.id);
+    }
+
+    if (is_success.value){
+        emit("reloadUsers");
+        emit("input", false);
+    }
+}
 </script>
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
@@ -190,6 +201,12 @@ const save = async () => {
                             deselect-label=""
                         >
                         </vue-multiselect>
+                    </v-row>
+                    <v-row>
+                        
+                <v-btn color="primary" @click="ResetPassword()" variant="tonal" class="mt-2">
+                    RESET PASSWORD
+                </v-btn>
                     </v-row>
                 </v-container>
             </v-card-text>
