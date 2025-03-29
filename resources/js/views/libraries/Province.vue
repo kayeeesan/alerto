@@ -6,6 +6,7 @@ import useProvinces from "../../composables/province";
 const { provinces, pagination, query, is_loading, getProvinces, destoryProvince } = useProvinces();
 
 const province = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
@@ -16,15 +17,17 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    province.value = {};
 };
 
 onMounted(() => {
     getProvinces();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     province.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -67,7 +70,7 @@ const reloadProvinces = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -107,6 +110,7 @@ const reloadProvinces = async () => {
     <province-form
         :value="show_form_modal"
         :province="province"
+        :action_type="action_type"
         @input="showModalForm"
         @reloadProvinces="reloadProvinces"
     />
