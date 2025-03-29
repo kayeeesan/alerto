@@ -133,19 +133,21 @@ class UserController extends Controller
     }
 
     public function resetPassword($id){
-        try{
+        try {
             $default_password = "*1234#";
-
+    
             $user = User::findOrFail($id);
             $user->password = bcrypt($default_password);
+            $user->password_reset = true; // Set password_reset to true
             $user->update();
-
+    
             return response(['message' => 'Password has been successfully reset.']);
             
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
+    
 
     public function destroy($id)
     {
