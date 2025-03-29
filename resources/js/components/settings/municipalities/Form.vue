@@ -78,7 +78,6 @@ onMounted(() => {
     <v-dialog v-model="props.value" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-             
                 <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Municipality</span>
                 <span class="text-h5" v-else>New Municipality</span>
             </v-card-title>
