@@ -25,6 +25,7 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    threshold.value = {};
 };
 
 onMounted(() => {

@@ -10,6 +10,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    action_type: {
+        type: String,
+        default: null,
+    },
     value: {
         type: Boolean,
         default: false,
@@ -41,7 +45,7 @@ watch(
 );
 
 const close = () => {
-    Object.assign(form, initialState);
+    // Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 }
@@ -73,7 +77,8 @@ watch(
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Region</span>
+                <span v-if="action_type == 'Update'">{{ action_type }} Region</span>
+                <span v-else class="text-h5">New Region</span>
             </v-card-title>
     
             <v-card-text>
