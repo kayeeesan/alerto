@@ -98,7 +98,7 @@ onMounted(() => {
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Staff</span>
+                <span class="text-h5">New Staff </span>
             </v-card-title>
     
             <v-card-text>

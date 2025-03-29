@@ -105,13 +105,20 @@ class StaffController extends Controller
     }
     public function update($id, StaffRequest $request)
     {
-        try 
-        {
+        try {
             $staff = Staff::findOrFail($id);
+            $user = User::where('username', $staff->username)->first();
+    
+            // Check if the new username already exists in users (excluding current user)
+            $existingUser = User::where('username', $request->username)->where('id', '!=', $user->id)->first();
+            if ($existingUser) {
+                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+    
+            // Update Staff details
             $staff->username = ucwords($request->username);
             $staff->first_name = $request->first_name;
             $staff->last_name = $request->last_name;
-            $staff->first_name = $request->first_name;
             $staff->mobile_number = $request->mobile_number;
             $staff->role_id = $request->input('role.id');
             $staff->region_id = $request->input('region.id');
@@ -119,14 +126,22 @@ class StaffController extends Controller
             $staff->municipality_id = $request->input('municipality.id');
             $staff->river_id = $request->input('river.id');
             $staff->update();
-
-            $user = User::findOrFail($id);
-
+    
+            // Update User details
+            if ($user) {
+                $user->username = $request->username;
+                $user->first_name = ucwords($request->first_name);
+                $user->middle_name = null;
+                $user->last_name = ucwords($request->last_name);
+                $user->update();
+            }
+    
             return response(['message' => 'Staff has been successfully updated.']);
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
+    
 
     public function destroy($id)
     {

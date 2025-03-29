@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\User as ResourcesUser;
 use App\Models\User;
 use App\Services\UserLogService;
@@ -74,11 +75,11 @@ class UserController extends Controller
         $user->first_name = ucwords($request->first_name);
         $user->middle_name = ucwords($request->middle_name);
         $user->last_name = ucwords($request->last_name);
-        $user->password = bcrypt($default_password); // Or use bcrypt($request->password) for custom password
+        $user->password = bcrypt($default_password);
         $user->save();
 
-        // If no roles are provided, assign the 'user' role by default
-        $roles = $request->user_roles ?: ['user']; // Default to 'user' role if none provided
+        
+        $roles = $request->user_roles ?: ['user']; 
         $this->storeUserRoles($user->id, $roles);
 
         return response()->json(['message' => 'User has been successfully registered.'], Response::HTTP_CREATED);
@@ -126,6 +127,21 @@ class UserController extends Controller
 
 
             return response(['message' => 'User has been successfully updated.']);
+        } catch (\Exception $e) {
+            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function resetPassword($id){
+        try{
+            $default_password = "*1234#";
+
+            $user = User::findOrFail($id);
+            $user->password = bcrypt($default_password);
+            $user->update();
+
+            return response(['message' => 'Password has been successfully reset.']);
+            
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }

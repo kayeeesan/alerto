@@ -43,4 +43,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/responses', ResponseController::class);
     Route::resource('/alerts', AlertController::class);
     Route::resource('/staffs', StaffController::class);
+    Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
 });

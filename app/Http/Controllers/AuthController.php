@@ -22,6 +22,13 @@ class AuthController extends Controller
                     'message' => 'Account is pending'
                 ], Response::HTTP_UNAUTHORIZED);
             }
+
+            if ($user->status === 'disabled') {
+                Auth::logout();
+                return response([
+                    'message' => 'Account is disabled'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
             
             return response([
                 'user' => new ResourcesUser($user),

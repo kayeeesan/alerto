@@ -98,7 +98,7 @@ const reloadUsers = async () => {
                         variant="tonal"
                         size="small"
                     >
-                        <v-icon size="small"> mdi-pencil </v-icon> Edit
+                        <v-icon size="small"> mdi-pencil </v-icon> Update
                     </v-btn>
                     <v-btn
                         color="error"
