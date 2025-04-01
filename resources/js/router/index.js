@@ -20,6 +20,7 @@ import Welcome from '../views/welcomeGuest/Welcome.vue';
 import Dashboard from '../views/welcomeGuest/dashboard/dashboard.vue';
 import AboutUs from "../views/aboutUs/aboutUs.vue";
 import ContactUs from "../views/contactUs/contactUs.vue";
+import Messages from "../views/messages/MessageTemp.vue";
 
 // Dashboard Components
 import RiverStatus from '../components/dashboard/river/form.vue';
@@ -237,6 +238,11 @@ const routes = [
                 path: 'staffs',
                 name: 'private-staffs',
                 component: Staffs
+            },
+            {
+                path: 'messages',
+                name: 'private-messages',
+                component: Messages
             },
         ]
     }

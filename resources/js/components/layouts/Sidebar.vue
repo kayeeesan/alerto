@@ -22,6 +22,7 @@ const itemsInDashboard = [
 const items = [
     { title: "About Us", icon: "mdi-information", route: "/home/about-us" },
     { title: "Contact Us", icon: "mdi-phone", route: "/home/contact-us" },
+    { title: "Messages", icon: "mdi-message", route: "/home/messages" },
 ];
 
 // Libraries section
@@ -42,7 +43,7 @@ const libraries = [
 ];
 
 
-// Pendings item (should be the last item)
+
 const alerts = [
     { title: "User Settings", icon: "mdi-cog", route: "/home/alerts" },
 ];
@@ -59,7 +60,7 @@ watch(
 </script>
 
 <template>
-    <v-navigation-drawer v-model="rail" app style="background: #003092; color: white;" width="350">
+    <v-navigation-drawer v-model="rail" app style="background: #003092; color: white;" width="300">
         <v-sheet
             class="d-flex flex-row align-center"
             style="padding: 15px; background: #001A6E;"
@@ -91,7 +92,7 @@ watch(
                     :to="item.route"
                     class="sidebar-subitem pt-2"
                     link
-                    style="padding-left: 40px !important;"
+                    style="padding-left: 30px !important;"
                 >
                     <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
                     <span class="sidebar-text" style="color: white;">{{ item.title }}</span>

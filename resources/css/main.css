@@ -1,3 +1,7 @@
 :root{
     --primary-color: #003092
 }
+/* Custom style for SweetAlert modal */
+.swal2-container {
+    z-index: 9999 !important; /* Ensure it's on top of everything */
+}

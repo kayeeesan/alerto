@@ -34,9 +34,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-sheet class="pa-4 mt-4" rounded="lg" style="position: relative; width: 100%; height: 450px; background: #F8FAF0; border: 1px solid #E0E0E0;">
+  <v-sheet class="pa-4 " rounded="lg" style="position: relative; width: 100%; height: 450px; background: #F8FAF0; border: 1px solid #E0E0E0;">
     <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; 
-    border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;">.</span>
+    border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;">.</span>
     <h1>RAIN LEVEL MONITORING</h1>
     <hr style="border: 2px solid var(--primary-color); margin: 10px 0;">
     

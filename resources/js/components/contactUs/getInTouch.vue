@@ -1,5 +1,5 @@
 <template>
-    <v-col cols="12" class="p-10 ">
+    <v-col cols="12" class="p-10 ml-5">
       <v-sheet
       class="pa-8 rounded-lg shadow-lg elevation-3"
       style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;"
@@ -8,83 +8,42 @@
         <span
         style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;"
       ></span>
+       
         
-        <v-row class="mt-5 ml-5">
+        <v-row class="mt-1 ml-5">
           <v-col cols="5">
-            <v-row class="d-flex flex-column  text-center">
+            <v-row class="d-flex flex-column text-center mb-2">
                 <v-img
                     style="height: 120px;"
                     src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
                 ></v-img>
-                <p class="text-lg font-bold text-gray-800">ALeRTO</p>
-                <p class="text-sm text-gray-600">Ateneo Center for Environment and Sustainability</p>
-                <p class="text-sm text-gray-600">Ateneo de Zamboanga University</p>
-          </v-row>
-            <v-divider :thickness="2" class="border-opacity-75 mt-10 mb-5"></v-divider>
-            <v-row class="gap-4 justify-center">
-
-              <v-col cols="12" md="5">
-                <v-card class="pa-4 rounded-lg shadow-md bg-gray-100 hover:shadow-lg transition-all">
-                  <v-row align="center">
-                    <v-col cols="2" class="text-center">
-                      <v-icon size="32" color="blue-darken-3">mdi-phone</v-icon>
-                    </v-col>
-                    <v-col>
-                      <p class="text-base font-semibold text-gray-800">Phone</p>
-                      <p class="text-sm text-gray-600">(63) 991-0871 local 2020-2022</p>
-                    </v-col>
-                  </v-row>
-                </v-card>
+                <p class="text-lg font-bold text-gray-800" style="margin-bottom: 0 !important;">ALeRTO</p>
+                <p class="text-sm text-gray-600" style="margin-bottom: 0 !important;">Ateneo Center for Environment and Sustainability</p>
+                <p class="text-s text-gray-600">Ateneo de Zamboanga University</p>
+        </v-row>
+        <v-divider :thickness="2" class="border-opacity-75 mt-1 mb-4"></v-divider>
+            <v-row class="my-4">
+              <v-col cols="12" class="d-flex align-center">
+                <v-icon class="mr-4" style="font-size: 28px; color: #3b5998;">mdi-facebook</v-icon>
+                <span class="text-lg font-bold">facebook.com/alerto</span>
               </v-col>
-
-              <v-col cols="12" md="5">
-                <v-card class="pa-4 rounded-lg shadow-md bg-gray-100 hover:shadow-lg transition-all">
-                  <v-row align="center">
-                    <v-col cols="2" class="text-center">
-                      <v-icon size="32" color="blue-darken-3">mdi-email</v-icon>
-                    </v-col>
-                    <v-col>
-                      <p class="text-base font-semibold text-gray-800">Email</p>
-                      <p class="text-sm text-gray-600">alertoinnov@gmail.com</p>
-                      <p class="text-sm text-gray-600">aces@adzu.edu.ph</p>
-                    </v-col>
-                  </v-row>
-                </v-card>
+              <v-col cols="12" class="d-flex align-center ">
+                <v-icon class="mr-4" style="font-size: 28px; color: #d32f2f;">mdi-email</v-icon>
+                <span class="text-lg font-bold">alerto@ateneo.edu</span>
               </v-col>
-
-              <v-col cols="12" md="5">
-                <v-card class="pa-4 rounded-lg shadow-md bg-gray-100 hover:shadow-lg transition-all">
-                  <v-row align="center">
-                    <v-col cols="2" class="text-center">
-                      <v-icon size="32" color="blue-darken-3">mdi-map-marker</v-icon>
-                    </v-col>
-                    <v-col>
-                      <p class="text-base font-semibold text-gray-800">Address</p>
-                      <p class="text-sm text-gray-600">123 Main Street</p>
-                    </v-col>
-                  </v-row>
-                </v-card>
+              <v-col cols="12" class="d-flex align-center ">
+                <v-icon class="mr-4" style="font-size: 28px; color: #388e3c;">mdi-phone</v-icon>
+                <span class="text-lg font-bold">+63 912 345 6789</span>
               </v-col>
-
-              <v-col cols="12" md="5">
-                <v-card class="pa-4 rounded-lg shadow-md bg-gray-100 hover:shadow-lg transition-all">
-                  <v-row align="center">
-                    <v-col cols="2" class="text-center">
-                      <v-icon size="32" color="blue-darken-3">mdi-facebook</v-icon>
-                    </v-col>
-                    <v-col>
-                      <p class="text-base font-semibold text-gray-800">Facebook</p>
-                      <p class="text-sm text-gray-600">@alertodost9</p>
-                    </v-col>
-                  </v-row>
-                </v-card>
+              <v-col cols="12" class="d-flex align-center ">
+                <v-icon class="mr-4" style="font-size: 28px; color: #1976d2;">mdi-map-marker</v-icon>
+                <span class="text-lg font-bold">Ateneo de Zamboanga University, Zamboanga City</span>
               </v-col>
-              
             </v-row>
 
           </v-col>
 
-          <v-col class="shadow-md bg-gray-100 border border-gray-300 rounded-lg" style="background: lightgrey; margin: 25px; margin-top: 5px;">
+          <v-col class="shadow-md bg-gray-100 border border-gray-300 rounded-lg" style="background: lightgrey; margin: 15px; margin-top: 1px; ">
             <v-row>
                 <v-col cols="6">
                     <v-text-field
@@ -142,7 +101,7 @@
                     <v-card class="py-6 px-4 text-center rounded-lg">
                         <!-- Success Icon (Centered) -->
                         <div class="flex justify-center">
-                        <v-icon size="180" class="text-green-darken-2 mb-3">
+                        <v-icon size="180" class="text-blue-darken-2 mb-3">
                             mdi-check-circle-outline
                         </v-icon>
                         </div>
@@ -156,7 +115,7 @@
                         <!-- Close Button -->
                         <v-card-actions class="justify-center mt-4">
                         <v-btn 
-                            color="green-darken-2 " 
+                            color="blue-darken-2 " 
                             variant="elevated" 
                             class="text-white px-6"
                             width="100%"
