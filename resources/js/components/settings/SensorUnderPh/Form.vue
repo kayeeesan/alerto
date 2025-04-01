@@ -117,6 +117,7 @@ onMounted(() => {
                             track-by="id"
                             select-label=""
                             deselect-label=""
+                            class="mb-3"
                         >
                         </vue-multiselect>
                     </v-row>
@@ -133,6 +134,7 @@ onMounted(() => {
                             track-by="id"
                             select-label=""
                             deselect-label=""
+                            class="mb-3"
                         >
                         </vue-multiselect>
                     </v-row>

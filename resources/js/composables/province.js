@@ -51,7 +51,21 @@ export default function useProvinces() {
                 errors.value = e.response.data;
                 is_success.value = false;
                 is_loading.value = false;
-            }
+
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+            }else {
+                                        // Handle other types of error
+            Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "An unexpected error occurred. Please try again later.",
+            });
+                    is_loading.value = false;
+}
         }
     }
 

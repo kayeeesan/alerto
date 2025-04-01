@@ -30,7 +30,7 @@ const toggleDrawer = (val) => {
   <v-navigation-drawer
     :model-value="drawer"
     @update:model-value="toggleDrawer"
-    width="350"
+    width="300"
     style="background: #003092;"
   >
     <v-list style="padding: 0 !important;">

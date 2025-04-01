@@ -8,7 +8,7 @@ import dataExtraction from './dataExtraction.vue';
   <div class="mt-24 mr-12 animate__animated animate__fadeIn">
     <!-- Title Section -->
     <v-row>
-      <p class="text-h4 font-weight-bold text-blue-darken-4 mt-3 ml-6">History Data Extraction</p>
+      <p class="text-h4 font-weight-bold text-blue-darken-4 ml-6">History Data Extraction</p>
     </v-row>
 
     <!-- Main Content Section -->

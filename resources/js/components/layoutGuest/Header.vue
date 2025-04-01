@@ -7,20 +7,7 @@ const isDialogActive = ref(false);
 
 <template>
   <v-app-bar style="background: #003092;">
-    <v-app-bar-nav-icon @click="$emit('toggle-sidebar')"></v-app-bar-nav-icon>
-
-    <v-responsive width="260">
-      <v-text-field
-        density="compact"
-        label="Search"
-        rounded="lg"
-        variant="solo-filled"
-        flat
-        hide-details
-        single-line
-      ></v-text-field>
-    </v-responsive>
-    
+    <v-app-bar-nav-icon @click="$emit('toggle-sidebar')" color="white"></v-app-bar-nav-icon>
     <v-divider></v-divider>
     
     <div class="mr-1">

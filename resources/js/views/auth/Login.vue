@@ -28,12 +28,12 @@ const handleSubmit = async () => {
             rounded="lg"
           >
             <v-img
-                class="mx-auto mb-10"
+                class="mx-auto mb-3"
                 max-width="120"
                 src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
             ></v-img>
 
-            <h3 class="text-center mb-5">Log In</h3>
+            <h3 class="text-center mb-2">Log In</h3>
 
             <div v-if="error" class="alert alert-danger" role="alert">
                 {{  error.message }}

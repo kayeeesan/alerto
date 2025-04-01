@@ -11,7 +11,7 @@ const texts = ref(['lorem', 'lorem', 'lorem']);
 </script>
 
 <template>
-    <v-container fluid class="px-4 py-8">
+    <v-container fluid class="px-4 py-1">
         <v-row>
             <!-- Left Column -->
             <v-col cols="12" lg="8" >

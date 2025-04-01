@@ -23,7 +23,7 @@ const mainContentClass = computed(() => ({
           @toggle-sidebar="drawer = !drawer"
           class="toggle-button"
         />
-          <v-main>
+          <v-main style="margin-left: 0 !important;">
           <v-container fluid>
             <router-view />
           </v-container>
@@ -53,7 +53,7 @@ const mainContentClass = computed(() => ({
 
 /* When Sidebar is expanded */
 .main-content.expanded {
-  margin-left: 250px; /* Same width as sidebar */
+  margin-left: 270px; /* Same width as sidebar */
 }
 
 /* Responsive for small screens */

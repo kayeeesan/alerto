@@ -45,18 +45,7 @@ const mainContentClass = computed(() => ({
       <!-- Main Content (Responsive) -->
       <div class="main-content" :class="mainContentClass">
         <v-app-bar app style="background: #003092;">
-            <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-responsive>
-                <v-text-field
-                    density="compact"
-                    label="Search"
-                    rounded="lg"
-                    variant="solo-filled"
-                    flat
-                    hide-details
-                    single-line
-                ></v-text-field>
-            </v-responsive>
+            <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
             
             <v-badge
@@ -67,7 +56,7 @@ const mainContentClass = computed(() => ({
             <v-btn icon="mdi-logout" variant="text" @click="logout()" color="white"></v-btn>
         </v-app-bar>
 
-        <v-main>
+        <v-main style="margin-left: 0 !important;">
           <v-container fluid>
             <router-view />
           </v-container>
@@ -97,7 +86,7 @@ const mainContentClass = computed(() => ({
 
 /* When Sidebar is expanded */
 .main-content.expanded {
-  margin-left: 250px; /* Same width as sidebar */
+  margin-left: 270px; /* Same width as sidebar */
 }
 
 /* Responsive for small screens */
