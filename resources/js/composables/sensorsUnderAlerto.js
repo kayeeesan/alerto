@@ -24,7 +24,7 @@ export default function useSensorsUnderAlerto() {
                 sensors_under_alerto.value = response.data.data;
                 pagination.value = response.data.meta;
                 is_loading.value = false;
-            })
+            });
     }
 
     const storeSensorUnderAlerto = async (data) => {
