@@ -1,3 +1,49 @@
+<script setup>
+import { ref, reactive, watch, onMounted } from "vue";
+import useContactMessages from "../../composables/contactMessage";
+
+const { errors, is_loading, is_success, storeContactMessage} = useContactMessages();
+
+const emit = defineEmits(["input", "reloadContactMessages"]);
+const props = defineProps({
+    contact_message: Object
+});
+
+const initialState = {
+  id: null,
+  email: "",
+  name: "",
+  contact_number: "",
+  message: ""
+};
+
+const form = reactive({ ...initialState });
+
+watch(
+  () => props.contact_message,
+  (value) => {
+    if (value) {
+      Object.assign(form, { ...value});
+    }
+  },
+  { deep: true}
+);
+
+const resetForm = () => {
+  Object.assign(form, { ...initialState});
+};
+
+const save = async () => {
+  await storeContactMessage({ ...form });
+
+  if (is_success.value) {
+    emit("reloadContactMessages");
+    emit("input", false);
+    resetForm();
+  }
+};
+
+</script>
 <template>
     <v-col cols="12" class="p-10 ml-5">
       <v-sheet
@@ -47,6 +93,7 @@
             <v-row>
                 <v-col cols="6">
                     <v-text-field
+                        v-model="form.email"
                         hint="Email"
                         label="Email"
                          variant="solo"
@@ -54,6 +101,7 @@
                 </v-col>
                 <v-col cols="6">
                     <v-text-field
+                        v-model="form.name"
                         hint="Name"
                         label="Name"
                          variant="solo"
@@ -63,6 +111,7 @@
             <v-row>
                     <v-col cols="12">
                     <v-text-field
+                        v-model="form.contact_number"
                         hint="Phone No."
                         label="Phone No."
                          variant="solo"
@@ -73,7 +122,7 @@
             <v-row>
                 <v-col>
                     <v-textarea
-                        v-model="message"
+                        v-model="form.message"
                         hint="Message"
                         label="Message"
                         maxlength="120"
@@ -85,49 +134,14 @@
             </v-row>
 
             <v-row class="d-flex justify-end pb-6 pr-4">
-                <v-dialog max-width="400">
-                <template v-slot:activator="{ props: activatorProps }">
-                    <v-btn
-                    v-bind="activatorProps"
+                <v-btn
                     color="blue-darken-4"
                     text="SUBMIT"
                     variant="flat"
                     class="text-white"
                     append-icon="mdi-send-outline"
+                    @click="save"
                     ></v-btn>
-                </template>
-
-                <template v-slot:default="{ isActive }">
-                    <v-card class="py-6 px-4 text-center rounded-lg">
-                        <!-- Success Icon (Centered) -->
-                        <div class="flex justify-center">
-                        <v-icon size="180" class="text-blue-darken-2 mb-3">
-                            mdi-check-circle-outline
-                        </v-icon>
-                        </div>
-                    
-                        <!-- Success Message -->
-                       
-                        <v-card-text class="text-gray-600">
-                        Your message has been successfully sent.
-                        </v-card-text>
-                    
-                        <!-- Close Button -->
-                        <v-card-actions class="justify-center mt-4">
-                        <v-btn 
-                            color="blue-darken-2 " 
-                            variant="elevated" 
-                            class="text-white px-6"
-                            width="100%"
-                            @click="isActive.value = false"
-                        >
-                            Close
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </template>
-                </v-dialog>
-
             </v-row>
 
           </v-col>
@@ -135,9 +149,4 @@
       </v-sheet>
     </v-col>
   </template>
-  <script setup>
-  import { ref } from 'vue'
-
-  const dialog = ref(true)
-</script>
   

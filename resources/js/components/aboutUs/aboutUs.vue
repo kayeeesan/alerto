@@ -1,7 +1,7 @@
 <template> 
-  <v-col cols="12" class="p-0 ">
+  <v-col cols="12" class="p-0 ml-5">
     <v-sheet
-      class="pa-8 rounded-lg shadow-lg elevation-3"
+      class="pa-8 rounded-lg shadow-lg elevation-3 mt-3"
       style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;"
     >
       <!-- Top Bar Section -->
@@ -10,7 +10,7 @@
       ></div>
 
       <!-- Title Section -->
-      <v-row class="mb-6 mt-6 text-center">
+      <v-row class="mb-6 mt-1 text-center  ml-5">
         <v-col>
           <h2 class="text-3xl font-semibold text-gray-600 leading-tight">
             Automated Water-Level and Rain Monitoring <br />

@@ -14,10 +14,12 @@ use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
 
+Route::post('/form/messages', [ContactMessageController::class, 'store']);
 Route::post('/form/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
@@ -44,4 +46,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/alerts', AlertController::class);
     Route::resource('/staffs', StaffController::class);
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
+    Route::get('/messages', [ContactMessageController::class, 'index']);
 });
