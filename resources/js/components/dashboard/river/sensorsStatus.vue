@@ -1,32 +1,28 @@
 <script setup>
 import { ref } from 'vue';
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+
+const { sensors_under_alerto, getSensorsUnderAlerto} = useSensorsUnderAlerto();
 
 const tab = ref('ARG'); // Default tab should match one of the items
-const items = ref(['ARG', 'WLMS', 'TANDEM']);
+const items = ref([
+  { id: 1, name: "ARG" },
+  { id: 2, name: "WLMS" },
+  { id: 3, name: "TANDEM" }
+]);
 const search = ref("");
 
 const headers = ref([
-  { align: "start", key: "name", sortable: false, title: "River", class:'header' },
-  { key: "Region", title: "Region" },
-  { key: "SensorName", title: "Sensor Name" },
-  { key: "Type",title: "Type" },
-  { key: "Status", title: "Status" },
-  { key: "LastUpdate", title: "Last Update" },
-  { key: "Rain", title: "Rain(mm)" },
+  { key: "", title: "River" },
+  { key: "", title: "Region" },
+  { key: "", title: "Sensor Name" },
+  { key: "",title: "Type" },
+  { key: "", title: "Status" },
+  { key: "", title: "Last Update" },
+  { key: "", title: "Rain(mm)" },
 ]);
 
-const desserts = ref([
-  { name: "Agusan del Norte", Region: 13, SensorName: 'CABADBARAN', Type: 'ARG', Status: 4.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 13, SensorName: 'MAT-I Evacuation and Training Center', Type: 'ARG', Status: 4.3,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 262, SensorName: 'DUGYAMAN', Type: 'ARG', Status: 6.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 305, SensorName: 'JAGUPIT', Type: 'ARG', Status: 4.3,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Bolong", Region: 356, SensorName: 'BARREDO PMS', Type: 'ARG', Status: 3.9,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 375, SensorName: 'CAMALANIUGAN POLICE STATION', Type: 'ARG', Status: 0.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Cagayan Valley", Region: 392, SensorName: 'BRGY. PINA WESTE', Type: 'ARG', Status: 0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Cagayan Valley", Region: 408, SensorName: 'LASAM MUNICIPAL HALL', Type: 'ARG', Status: 6.5,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 452, SensorName: 'ALLACAPAN MUNICIPAL HALL', Type: 'ARG', Status: 4.9,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 518, SensorName: 'AMULUNG MUNICIPAL DISASTER OPERATION CENTER', Type: 'ARG', Status: 7,LastUpdate: 'Under Preventive Maintenance' },
-]);
+
 </script>
 <template>
     <v-col cols="11.5" style="padding: 0 !important; ">
@@ -40,16 +36,13 @@ const desserts = ref([
         <!-- TABS -->
         <v-tabs v-model="tab">
           <v-tab v-for="item in items" :key="item" :value="item">
-            {{ item }}
+            {{ item.name }}
           </v-tab>
         </v-tabs>
   
         <v-tabs-window v-model="tab">
           <v-tabs-window-item v-for="item in items" :key="item" :value="item">
             <v-card flat>
-              <!-- <div class="d-flex justify-center align-center" style="color: black;">
-                <p class="badge">AUTOMATED RAIN GAUGE</p>
-              </div> -->
   
               <v-text-field
                 v-model="search"

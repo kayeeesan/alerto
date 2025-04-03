@@ -34,7 +34,7 @@ class SensorUnderAlertoController extends Controller
     // }
 
     public function index(Request $request)
-{
+    {
     $query = SensorUnderAlerto::with(['river', 'municipality.province']);
 
     if ($request->has('search')) {
@@ -56,6 +56,7 @@ class SensorUnderAlertoController extends Controller
             $sensor_under_alerto->municipality_id = $request->input('municipality.id');
             $sensor_under_alerto->long = $request->long;
             $sensor_under_alerto->lat = $request->lat;
+            $sensor_under_alerto->sensor_type = $request->sensor_type;
             $sensor_under_alerto->save();
 
             $this->logService->logAction('Sensor Under Alerto', $sensor_under_alerto->id, 'create', $sensor_under_alerto->toArray());
@@ -77,6 +78,7 @@ class SensorUnderAlertoController extends Controller
             $sensor_under_alerto->municipality_id = $request->municipality['id'];
             $sensor_under_alerto->long = $request->long;
             $sensor_under_alerto->lat = $request->lat;
+            $sensor_under_alerto->sensor_type = $request->sensor_type;
             $sensor_under_alerto->update();
 
             $this->logService->logAction('Sensor Under Alerto', $sensor_under_alerto->id, 'update', [

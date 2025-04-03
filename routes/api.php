@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
 
+Route::get('/form/sensors_under_alerto', [SensorUnderAlertoController::class, 'index']);
 Route::post('/form/messages', [ContactMessageController::class, 'store']);
 Route::post('/form/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);

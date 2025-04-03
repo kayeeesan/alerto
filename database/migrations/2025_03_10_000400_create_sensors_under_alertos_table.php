@@ -21,6 +21,7 @@ return new class extends Migration
            $table->decimal('long', 8, 2);
            $table->decimal('lat', 8, 2);
            $table->enum('status', ['enable','disabled']);
+           $table->string('sensor_type');
             $table->softDeletes();
         });
     }

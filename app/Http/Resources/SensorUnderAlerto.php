@@ -21,7 +21,8 @@ class SensorUnderAlerto extends JsonResource
             'municipality' => $this->municipality,
             'long' => $this->long,
             'lat' => $this->lat,
-            'status' => $this->status
+            'status' => $this->status,
+            'sensor_type' => $this->sensor_type
         ];
     }
 }
