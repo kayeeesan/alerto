@@ -80,20 +80,6 @@ onMounted(() => {
             <v-card-text>
                 <v-container>
                     <v-row>
-                        <!-- <vue-multiselect
-                            v-model="form.region"
-                            :options="regions"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select Region"
-                            label="name"
-                            track-by="id"
-                            select-label=""
-                            deselect-label=""
-                        >
-                        </vue-multiselect> -->
                         <vue-multiselect
                             v-model="form.region"
                             :options="regions"
@@ -106,6 +92,7 @@ onMounted(() => {
                             track-by="id"
                             select-label=""
                             deselect-label=""
+                            class="mb-3"
                         >
                         </vue-multiselect>
                     </v-row>

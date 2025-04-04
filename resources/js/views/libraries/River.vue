@@ -6,6 +6,7 @@ import useRivers from "../../composables/river";
 const { rivers, pagination, query, is_loading, getRivers, destoryRiver } = useRivers();
 
 const river = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
@@ -17,15 +18,17 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    river.value = {};
 };
 
 onMounted(() => {
     getRivers();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     river.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -68,7 +71,7 @@ const reloadRivers = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -108,6 +111,7 @@ const reloadRivers = async () => {
     <river-form
         :value="show_form_modal"
         :river="river"
+        :action_type="action_type"
         @input="showModalForm"
         @reloadRivers="reloadRivers"
     />
