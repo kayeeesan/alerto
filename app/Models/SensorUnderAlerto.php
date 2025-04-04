@@ -19,7 +19,8 @@ class SensorUnderAlerto extends Model
         'municipality_id',
         'long',
         'lat',
-        'status'
+        'status',
+        'sensor_type'
     ];
 
     public function river()

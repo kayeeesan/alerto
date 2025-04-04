@@ -14,18 +14,30 @@ export default function useSensorsUnderAlerto() {
         page: 1,
     });
 
-    const getSensorsUnderAlerto = async (params = {}) => {
+    const getSensorsUnderAlerto = async (params = {}, type = "internal") => {
         is_loading.value = true;
-
+    
         let query_str = { ...query.value, ...params };
+        let urls = {
+            internal: "/api/sensors_under_alerto",
+            external: "/api/form/sensors_under_alerto"
+        };
+    
+        let url = urls[type] || urls.internal; // Default to internal if type is invalid
+    
         await axios
-            .get('/api/sensors_under_alerto?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 sensors_under_alerto.value = response.data.data;
-                pagination.value = response.data.meta;
+                pagination.value = response.data.meta || { last_page: 1 };
+                is_loading.value = false;
+            })
+            .catch(() => {
+                pagination.value = { last_page: 1 };
                 is_loading.value = false;
             });
-    }
+    };
+    
 
     const storeSensorUnderAlerto = async (data) => {
         is_loading.value = true;

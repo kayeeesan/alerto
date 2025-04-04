@@ -17,6 +17,7 @@ const headers = [
     { title: "province", key: "municipality.province.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
+    { title: "Sensor type", key: "sensor_type" },
     { title: "status", key: "status" },
     { title: "", key: "actions" },
 ];

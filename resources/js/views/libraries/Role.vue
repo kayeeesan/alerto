@@ -6,6 +6,7 @@ import useRoles from "../../composables/roles.js";
 const { roles, pagination, query, is_loading, getRoles, destoryRole } = useRoles();
 
 const role = ref({});
+const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
@@ -15,15 +16,17 @@ const headers = [
 
 const showModalForm = (val) => {
     show_form_modal.value = val;
+    role.value = {};
 };
 
 onMounted(() => {
     getRoles();
 });
 
-const editItem = (value) => {
+const editItem = (value, action) => {
     role.value = value;
-    showModalForm(true);
+    action_type.value = action;
+    show_form_modal.value = value;
 };
 
 const deleteItem = async (value) => {
@@ -66,7 +69,7 @@ const reloadRoles = async () => {
                     <v-btn
                         class="me-2"
                         color="success"
-                        @click="editItem(item)"
+                        @click="editItem(item, 'Update')"
                         variant="tonal"
                         size="small"
                     >
@@ -106,6 +109,7 @@ const reloadRoles = async () => {
     <role-form
         :value="show_form_modal"
         :role="role"
+        :action_type="action_type"
         @input="showModalForm"
         @reloadRoles="reloadRoles"
     />

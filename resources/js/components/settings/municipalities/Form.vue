@@ -97,6 +97,7 @@ onMounted(() => {
                             track-by="id"
                             select-label=""
                             deselect-label=""
+                            class="mb-4"
                         >
                         </vue-multiselect>
                        

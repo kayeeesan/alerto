@@ -1,84 +1,109 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 
-const tab = ref('ARG'); // Default tab should match one of the items
-const items = ref(['ARG', 'WLMS', 'TANDEM']);
-const search = ref("");
+const { sensors_under_alerto, pagination, query, is_loading, getSensorsUnderAlerto } = useSensorsUnderAlerto();
 
-const headers = ref([
-  { align: "start", key: "name", sortable: false, title: "River", class:'header' },
-  { key: "Region", title: "Region" },
-  { key: "SensorName", title: "Sensor Name" },
-  { key: "Type",title: "Type" },
-  { key: "Status", title: "Status" },
-  { key: "LastUpdate", title: "Last Update" },
-  { key: "Rain", title: "Rain(mm)" },
+const sensor_type = ref("ARG");
+
+const sensor_tabs = ref([
+  { id: 1, name: "ARG", value: "ARG" },
+  { id: 2, name: "WLMS", value: "WLMS" },
+  { id: 3, name: "TANDEM", value: "TANDEM" }
 ]);
 
-const desserts = ref([
-  { name: "Agusan del Norte", Region: 13, SensorName: 'CABADBARAN', Type: 'ARG', Status: 4.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 13, SensorName: 'MAT-I Evacuation and Training Center', Type: 'ARG', Status: 4.3,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 262, SensorName: 'DUGYAMAN', Type: 'ARG', Status: 6.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Agusan del Norte", Region: 305, SensorName: 'JAGUPIT', Type: 'ARG', Status: 4.3,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Bolong", Region: 356, SensorName: 'BARREDO PMS', Type: 'ARG', Status: 3.9,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 375, SensorName: 'CAMALANIUGAN POLICE STATION', Type: 'ARG', Status: 0.0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Cagayan Valley", Region: 392, SensorName: 'BRGY. PINA WESTE', Type: 'ARG', Status: 0,LastUpdate: 'Under Preventive Maintenance' },
-  { name: "Cagayan Valley", Region: 408, SensorName: 'LASAM MUNICIPAL HALL', Type: 'ARG', Status: 6.5,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 452, SensorName: 'ALLACAPAN MUNICIPAL HALL', Type: 'ARG', Status: 4.9,LastUpdate: 'Under Preventive Maintenance'},
-  { name: "Cagayan Valley", Region: 518, SensorName: 'AMULUNG MUNICIPAL DISASTER OPERATION CENTER', Type: 'ARG', Status: 7,LastUpdate: 'Under Preventive Maintenance' },
-]);
+const headers = [
+  { key: "river.name", title: "River" },
+  { key: "municipality.name", title: "Region" },
+  { key: "name", title: "Sensor Name" },
+  { key: "sensor_type", title: "Type" },
+  { key: "status", title: "Status" },
+  { key: "", title: "Last Update" },
+  { key: "rain_mm", title: "Rain (mm)" }, // Assuming "rain_mm" exists in the data
+];
+
+const filteredSensors = computed(() => {
+  return sensors_under_alerto.value.filter(sensor => sensor.sensor_type === sensor_type.value);
+});
+
+// Watch to reload data on sensor type change or search
+watch([() => sensor_type.value, () => query.search], async () => {
+  await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
+});
+
+// Initial load
+onMounted(() => {
+  getSensorsUnderAlerto({ sensor_type: sensor_type.value });
+});
 </script>
+
 <template>
-    <v-col cols="11.5" style="padding: 0 !important; ">
-      <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0; ">
-        <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"></span>
-        <div>
-          <p class="text-black" style="font-size: 20px;">SENSORS STATUS</p>
-        </div>
-        <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
-  
-        <!-- TABS -->
-        <v-tabs v-model="tab">
-          <v-tab v-for="item in items" :key="item" :value="item">
-            {{ item }}
-          </v-tab>
-        </v-tabs>
-  
-        <v-tabs-window v-model="tab">
-          <v-tabs-window-item v-for="item in items" :key="item" :value="item">
-            <v-card flat>
-              <!-- <div class="d-flex justify-center align-center" style="color: black;">
-                <p class="badge">AUTOMATED RAIN GAUGE</p>
-              </div> -->
-  
-              <v-text-field
-                v-model="search"
-                label="Search"
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                hide-details
-                single-line
-              ></v-text-field>
-  
-              <v-data-table :headers="headers" :items="desserts" :search="search"></v-data-table>
-            </v-card>
-          </v-tabs-window-item>
-        </v-tabs-window>
-      </v-sheet>
-    </v-col>
-  </template>
-<style scoped>
-::v-deep(th) {
-  font-weight: bold;
-  font-size: 16px;
-  color: #3E5754;
-  text-transform: uppercase;
-}
-.badge{
-    background: lightyellow;
-    padding: 10px;
-    border: 1px solid #C99D34;
-    border-radius: 11px;
-    margin-bottom: 10px;
-}
-</style>
+  <v-col cols="11.5" style="padding: 0 !important;">
+    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;">
+      <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"></span>
+      <div>
+        <p class="text-black" style="font-size: 20px;">SENSORS STATUS</p>
+      </div>
+      <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
+
+      <!-- Tabs -->
+      <v-tabs v-model="sensor_type" vertical>
+        <v-tab v-for="sensorTab in sensor_tabs" :key="sensorTab.id" :value="sensorTab.value">
+          {{ sensorTab.name }}
+        </v-tab>
+      </v-tabs>
+
+      <v-card class="mt-4">
+        <v-card-title>
+          <v-text-field
+            v-model="query.search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
+
+        <v-data-table
+          :headers="headers"
+          :items="filteredSensors"
+          :search="query.search"
+          class="elevation-1 p-2"
+          :loading="is_loading"
+          loading-text="Loading... Please wait"
+        >
+          <template v-slot:item["river.name"]="{ item }">
+            {{ item.river?.name || 'N/A' }}
+          </template>
+
+          <template v-slot:item["municipality.name"]="{ item }">
+            {{ item.municipality?.name || 'N/A' }}
+          </template>
+
+          <template v-slot:item["updated_at"]="{ item }">
+            {{ new Date(item.updated_at).toLocaleString() }}
+          </template>
+
+          <template v-slot:item["rain_mm"]="{ item }">
+            {{ item.rain_mm || '0' }}
+          </template>
+
+          <template v-slot:bottom>
+            <div class="m-2">
+              <span style="color: gray" v-if="pagination">
+                Showing {{ pagination.from }} to {{ pagination.to }} out of <b>{{ pagination.total }} records</b>
+              </span>
+              <div class="text-center">
+                <v-pagination
+                  v-model="query.page"
+                  circle
+                  @click="getSensorsUnderAlerto"
+                ></v-pagination>
+              </div>
+            </div>
+          </template>
+        </v-data-table>
+      </v-card>
+    </v-sheet>
+  </v-col>
+</template>

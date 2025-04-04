@@ -10,6 +10,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    action_type: {
+        type: String,
+        default: null,
+    },
     value: {
         type: Boolean,
         default: false,
@@ -61,7 +65,8 @@ const save = async () => {
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title>
-                <span class="text-h5">New Role</span>
+                <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Role</span>
+                <span class="text-h5" v-else>New Role</span>
             </v-card-title>
     
             <v-card-text>
