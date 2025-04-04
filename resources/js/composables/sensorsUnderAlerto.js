@@ -14,16 +14,12 @@ export default function useSensorsUnderAlerto() {
         page: 1,
     });
 
-    const getSensorsUnderAlerto = async (params = {}, type = "internal") => {
+    const getSensorsUnderAlerto = async (params = {}, type = "") => {
         is_loading.value = true;
     
         let query_str = { ...query.value, ...params };
-        let urls = {
-            internal: "/api/sensors_under_alerto",
-            external: "/api/form/sensors_under_alerto"
-        };
+        let url = type === "/sensors_under_alerto" ? "/api/sensors_under_alerto" : "/api/form/sensors_under_alerto"
     
-        let url = urls[type] || urls.internal; // Default to internal if type is invalid
     
         await axios
             .get(`${url}?page=${query.value.page}`, { params: query_str })
