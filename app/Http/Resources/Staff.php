@@ -21,8 +21,11 @@ class Staff extends JsonResource
             'last_name' => $this->last_name,
             'mobile_number' => $this->mobile_number,
             'role' => $this->role,
+            'region_id' => $this->region_id, 
             'region' => $this->region,
+            'province_id' => $this->province_id,
             'province' => $this->province,
+            'municipality_id' => $this->municipality_id,
             'municipality' => $this->municipality,
             'river' => $this->river,
         ];
