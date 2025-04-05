@@ -129,7 +129,7 @@ const ResetPassword = async () => {
             </v-card-title>
     
             <v-card-text>
-                <v-container>
+                <v-container fluid>
                     <v-row>
                         <v-text-field
                             v-model="form.first_name"

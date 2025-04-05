@@ -77,7 +77,7 @@ onMounted(() => {
 <template>
     <v-app>
         <v-layout class="bg-indigo-darken-1">
-            <v-container class="fill-height d-flex align-center justify-center">
+            <v-container fluid class="fill-height d-flex align-center justify-center">
                 <v-card class="pa-8" elevation="8" width="600px" rounded="lg">
                     <v-card-title class="text-h5 text-center font-weight-bold"> Member Registration </v-card-title>
 
@@ -154,22 +154,22 @@ onMounted(() => {
 
                     <v-card-actions class="justify-end">
                         <v-btn 
-                            color="red darken-2" 
-                            variant="outlined" 
+                            color="red-darken-2" 
+                            variant="flat" 
                             :to="'/'" 
                             class="mr-2">
                             <v-icon left>mdi-close</v-icon> Cancel
                         </v-btn>
                         <v-btn 
-                            color="orange darken-2" 
-                            variant="outlined" 
+                            color="orange-darken-2" 
+                            variant="flat" 
                             @click="resetForm" 
                             class="mr-2">
                             <v-icon left>mdi-refresh</v-icon> Reset
                         </v-btn>
                         <v-btn 
-                            color="green darken-2" 
-                            variant="outlined" 
+                            color="blue-darken-4" 
+                            variant="flat" 
                             :loading="is_loading" 
                             @click="save">
                             <v-icon left>mdi-content-save</v-icon> Save

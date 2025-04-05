@@ -57,7 +57,7 @@ const save = async () => {
        
         
         <v-row class="mt-1 ml-5">
-          <v-col cols="5">
+          <v-col cols="12" sm="6" >
             <v-row class="d-flex flex-column text-center mb-2">
                 <v-img
                     style="height: 120px;"

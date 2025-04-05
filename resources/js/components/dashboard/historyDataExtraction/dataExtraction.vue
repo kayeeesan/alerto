@@ -54,13 +54,14 @@
         <v-col cols="12" md="2" class="d-flex justify-start mb-5">
           <v-btn
             color="primary"
-            class="px-6 py-3 rounded-lg text-white text-uppercase font-weight-bold"
+            class="d-flex align-center justify-center gap-2 px-6 py-3 rounded-lg text-white text-uppercase font-weight-bold"
             size="large"
             elevation="2"
           >
-            <v-icon start>mdi-magnify</v-icon>
-            Search
+            <v-icon>mdi-magnify</v-icon>
+            <span>Search</span>
           </v-btn>
+
         </v-col>
       </v-row>
   

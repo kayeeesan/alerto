@@ -83,7 +83,7 @@ onMounted(() => {
             </v-card-title>
     
             <v-card-text>
-                <v-container>
+                <v-container fluid>
                     <v-row>
                         <vue-multiselect
                             v-model="form.province"

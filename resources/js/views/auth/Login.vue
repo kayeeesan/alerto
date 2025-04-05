@@ -64,18 +64,24 @@ const handleSubmit = async () => {
                 @click:append-inner="visible = !visible"
                 @keyup.enter="handleSubmit()"
             ></v-text-field>
-
+            <v-row>
+              <v-col>
+                <router-link to="/forgot-password" class="text-sm text-blue-500 hover:underline">
+                Forgot Password?
+              </router-link>
+              </v-col>
+            </v-row>
             <v-row>
               <v-col>
                 <v-btn
                   class="mb-15"
-                  color="red darken-1"
+                  color="red darken-2"
                   size="large"
-                  variant="tonal"
+                  variant="flat"
                   block
                   :to="'/'"
                 >
-                  Cancel
+                 Cancel
                 </v-btn>
               </v-col>
               <v-col>
@@ -83,12 +89,12 @@ const handleSubmit = async () => {
                   class="mb-15"
                   color="primary"
                   size="large"
-                  variant="tonal"
+                  variant="flat"
                   block
                   @click="handleSubmit()"
                   :loading="is_loading"
                 >
-                  Log In
+                Login
                 </v-btn>
               </v-col>
             </v-row>
