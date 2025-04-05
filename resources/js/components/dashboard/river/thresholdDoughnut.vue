@@ -13,9 +13,9 @@ const data = {
     label: 'My First Dataset',
     data: [300, 50, 100],
     backgroundColor: [
-      'rgb(255, 99, 132)',
-      'rgb(219, 208, 55)',
-      'rgb(242, 112, 5)'
+      'rgb(243,252,71)',
+      'rgb(249,128,35)',
+      'rgb(253,54,30)'
     ],
     hoverOffset: 4
   }]

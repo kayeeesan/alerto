@@ -8,7 +8,7 @@ const partners = [
 </script>
 
 <template>
-  <v-container class="py-10">
+  <v-container fluid class="py-10">
     <v-sheet class="pa-8 rounded-lg elevation-3" color="#F8FAF0" border>
       <!-- Section Title -->
       <v-row justify="center" class="mb-6">
