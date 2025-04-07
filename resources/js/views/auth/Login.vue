@@ -66,7 +66,7 @@ const handleSubmit = async () => {
             ></v-text-field>
             <v-row>
               <v-col>
-                <router-link to="/forgot-password" class="text-sm text-blue-500 hover:underline">
+                <router-link to="/email-reset-password" class="text-sm text-blue-500 hover:underline">
                 Forgot Password?
               </router-link>
               </v-col>
