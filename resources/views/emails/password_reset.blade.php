@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Reset Request</title>
+    <title>Password Reset</title>
 </head>
 <body>
-<p>Hello,</p>
-<p>We received a request to reset your password. Please click the link below to reset your password:</p>
-<a href="{{ $url }}">Reset Password</a>
+    <p>Dear {{ $username }},</p>
+    <p>We have received a request to reset your password. Please use the following temporary password to log in:</p>
+    <p><strong>{{ $password }}</strong></p>
+    <p>Once logged in, you can update your password.</p>
+    <p>Click <a href="{{ $loginUrl }}">here</a> to go to the login page.</p>
 </body>
 </html>
