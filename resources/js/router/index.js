@@ -8,7 +8,6 @@ import Login from '../views/auth/Login.vue';
 import Registration from "../views/clientRegistration/Registration.vue";
 import UpdatePassword from "../components/users/UpdatePassword.vue";
 import EmailResetPassword from "../components/users/EmailResetPassword.vue";
-import ResetPassword from "../components/users/ResetPassword.vue";
 import PageNotFound from '../components/layouts/PageNotFound.vue';
 import App from '../views/App.vue';
 import Home from '../components/layouts/Home.vue';
@@ -132,11 +131,6 @@ const routes = [
         meta: {
             middleware: "guest"
         }
-    },
-    {
-        path: '/reset-password',
-        name: 'reset password',
-        component: ResetPassword
     },
     {
         path: '/update-password',

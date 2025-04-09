@@ -16,10 +16,11 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\MailTestController;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
-
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/send-test-email', [MailTestController::class, 'send']);
 Route::get('/form/sensors_under_alerto', [SensorUnderAlertoController::class, 'index']);
 Route::post('/form/messages', [ContactMessageController::class, 'store']);
