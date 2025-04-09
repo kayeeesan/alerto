@@ -19,52 +19,25 @@ class PasswordResetController extends Controller
         $request->validate([
             'username' => 'required|exists:users,username', // Make sure the username exists in the users table
         ]);
-
+        
         $username = $request->input('username');
         
-        // Create a unique token
-        $token = Str::random(60);
-
-        // Store the token in the password_reset_tokens table
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['username' => $username],
-            ['token' => $token, 'created_at' => now()]
-        );
-
-        // Send reset link email to the user
+        // Generate a random password
+        $random_password = Str::random(8); // Generates an 8-character random password
+        
+        // Find the user
         $user = User::where('username', $username)->first();
-        Mail::to($user->username)->send(new PasswordResetMail($token, $username));
-
-        return response()->json(['message' => 'Reset link sent successfully.']);
-    }
-
-    public function resetPassword(Request $request)
-    {
-        // Validate the input
-        $request->validate([
-            'username' => 'required|exists:users,username',
-            'token' => 'required',
-            'password' => 'required|confirmed',
-        ]);
-
-        // Check if the token is valid
-        $tokenData = DB::table('password_reset_tokens')
-            ->where('username', $request->username)
-            ->where('token', $request->token)
-            ->first();
-
-        if (!$tokenData) {
-            return response()->json(['message' => 'Invalid or expired token.'], 400);
-        }
-
-        // Reset the user's password
-        $user = User::where('username', $request->username)->first();
-        $user->password = Hash::make($request->password);
+        
+        // Set the password to the random password
+        $user->password = bcrypt($random_password);
+        $user->password_reset = true; // Set the password_reset flag to true
         $user->save();
-
-        // Delete the token from the table after the password is reset
-        DB::table('password_reset_tokens')->where('username', $request->username)->delete();
-
-        return response()->json(['message' => 'Password reset successfully.']);
+        
+        // Send email with the random password
+        Mail::to($user->username)->send(new PasswordResetMail($random_password, $username));
+        
+        return response()->json(['message' => 'Password reset details sent successfully.']);
     }
+    
+    
 }
