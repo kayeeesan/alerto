@@ -25,7 +25,6 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'
 Route::post('/contact-us', [ContactUsController::class, 'store']);
 Route::post('/send-test-email', [MailTestController::class, 'send']);
 Route::get('/form/sensors_under_alerto', [SensorUnderAlertoController::class, 'index']);
-Route::post('/form/messages', [ContactMessageController::class, 'store']);
 Route::post('/form/staffs', [StaffController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);

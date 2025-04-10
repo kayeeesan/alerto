@@ -22,7 +22,6 @@ const itemsInDashboard = [
 const items = [
     { title: "About Us", icon: "mdi-information", route: "/home/about-us" },
     { title: "Contact Us", icon: "mdi-phone", route: "/home/contact-us" },
-    { title: "Messages", icon: "mdi-message", route: "/home/messages" },
 ];
 
 // Libraries section
