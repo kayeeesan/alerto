@@ -42,14 +42,14 @@ const reloadStaffs = async () => {
 };
 </script>
 <template>
-    <v-row class="p-2">
+    <v-row class="p-2 ml-8">
         <h5 class="fw-bold p-3">List of Members </h5>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="showModalForm(true)" class="m-3">
             New Member
         </v-btn>
     </v-row>
-    <v-card>
+    <v-card class="ml-8">
         <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
             <v-card-title>
                 <v-text-field

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, watch, onMounted, computed } from "vue";
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 import useRivers from "../../../composables/river";
 import useMunicipalities from "../../../composables/municipality";
@@ -95,6 +95,11 @@ onMounted(() => {
     getRivers();
     getMunicipalities();
 });
+
+const filteredRivers = computed(() => {
+    if (!form.municipality || !form.municipality.id) return [];
+    return rivers.value.filter(r => r.municipality.id === form.municipality.id );
+ });
 </script>
 
 <template>
@@ -120,13 +125,13 @@ onMounted(() => {
                     
                     <v-row>
                         <vue-multiselect
-                            v-model="form.river"
-                            :options="rivers"
+                            v-model="form.municipality"
+                            :options="municipalities"
                             :multiple="false"
                             :close-on-select="true"
                             :clear-on-select="true"
                             :preserve-search="true"
-                            placeholder="Select River"
+                            placeholder="Select Municipality"
                             label="name"
                             track-by="id"
                             select-label=""
@@ -137,13 +142,14 @@ onMounted(() => {
                     </v-row>
                     <v-row>
                         <vue-multiselect
-                            v-model="form.municipality"
-                            :options="municipalities"
+                            v-model="form.river"
+                            :options="filteredRivers"                              
+                            :disabled="!form.municipality"
                             :multiple="false"
                             :close-on-select="true"
                             :clear-on-select="true"
                             :preserve-search="true"
-                            placeholder="Select Municipality"
+                            placeholder="Select River"
                             label="name"
                             track-by="id"
                             select-label=""
