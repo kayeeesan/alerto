@@ -1,6 +1,6 @@
 <template>
   <v-col style="padding: 0 !important;">
-    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;">
+    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; border: 1px solid #E0E0E0;">
       <span class="header-bar"></span>
       <h1 class="text-h6">THRESHOLD DETAILS</h1>
       <hr class="section-divider" />

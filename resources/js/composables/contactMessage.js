@@ -15,7 +15,6 @@ export default function useContactMessages() {
         // Make API call to store contact message
         const response = await axios.post(`/api/contact-us`, data);
 
-        // Show success alert
         Swal.fire({
             title: "Success",
             icon: "success",

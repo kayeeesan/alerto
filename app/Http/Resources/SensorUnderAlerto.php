@@ -17,8 +17,10 @@ class SensorUnderAlerto extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'river' => $this->river,
             'municipality' => $this->municipality,
+            'municipality_id' => $this->municipality_id,
+            'river' => $this->river,
+            'river_id' => $this->river_id,
             'long' => $this->long,
             'lat' => $this->lat,
             'status' => $this->status,

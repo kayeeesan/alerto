@@ -43,7 +43,7 @@ const mainContentClass = computed(() => ({
       <Sidebar v-model:drawer="drawer" class="sidebar" />
 
       <!-- Main Content (Responsive) -->
-      <div class="main-content" :class="mainContentClass">
+      <div class="main-content" :class="mainContentClass" style="background: #F8FAF0;">
         <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
@@ -56,7 +56,7 @@ const mainContentClass = computed(() => ({
             <v-btn icon="mdi-logout" variant="text" @click="logout()" color="white"></v-btn>
         </v-app-bar>
 
-        <v-main style="margin-left: 0 !important;">
+        <v-main style="margin-left: 0 !important; background: #F8FAF0; ">
           <v-container fluid>
             <router-view />
           </v-container>
