@@ -11,15 +11,15 @@ class MailTestController extends Controller
     public function send(Request $request)
     {
         $request->validate([
-            'username' => 'required|string',
-            'email' => 'required|email',
+            'first_name' => 'required|string',
+            'username' => 'required|email',
         ]);
 
-        $username = $request->username;
-        $email = $request->email;
+        $first_name = $request->first_name;
+        $username = $request->username; 
 
-        Mail::to($email)->send(new WelcomeUserMail($username));
+        Mail::to($username)->send(new WelcomeUserMail($first_name, $username));
 
-        return response()->json(['message' => 'Email sent successfully to ' . $email]);
+        return response()->json(['message' => 'Email sent successfully to ' . $username]);
     }
 }
