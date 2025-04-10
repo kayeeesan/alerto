@@ -1,88 +1,50 @@
-import { ref } from 'vue';
-import axios from 'axios';
+import { ref } from "vue";
+import axios from "axios";
 import Swal from "sweetalert2";
 
 export default function useContactMessages() {
-    const contact_message = ref(null);
-    const contact_messages = ref([]);
-    const is_loading = ref(false);
-    const is_success = ref(false);
-    const errors = ref({});
-    const pagination = ref({});
-    const query = ref({
-        search: null,
-        page: 1,
-    });
+  const errors = ref({});
+  const is_loading = ref(false);
+  const is_success = ref(false);
 
-    const getContactMessages = async (params = {}) => {
+    const storeContactMessage = async (data = {}) => {
         is_loading.value = true;
-
-        let url = "/api/messages";
+        errors.value = {};
 
         try {
-            const response = await axios.get(url, { params: { ...query.value, ...params } });
+        // Make API call to store contact message
+        const response = await axios.post(`/api/contact-us`, data);
 
-            if (response.data.data) {
-                contact_messages.value = response.data.data;
-                pagination.value = response.data.meta || {};
-            } else {
-                contact_messages.value = response.data;
-            }
-    
-            is_loading.value = false;
-        } catch (error) {
-            console.error("Error fetching message:", error);
-            is_loading.value = false;
-        }
-    }
+        // Show success alert
+        Swal.fire({
+            title: "Success",
+            icon: "success",
+            text: response.data.message,
+        });
 
-    const storeContactMessage = async (data) => {
-        is_loading.value = true;
-        errors.value = "";
+        is_success.value = true;
+        is_loading.value = false;
 
-        try {
-            await axios
-                .post(`/api/form/messages`, data)
-                .then((response) => {
-                 Swal.fire({
-                    title: "Success",
-                    icon: "success",
-                    text: response.data.message,
-                });
-                errors.value = {};
-                is_loading.value = false;
-                is_success.value = true;                
-                });
         } catch (e) {
-            if(e.response.status == 422) {
-                errors.value = e.response.data;
-                is_success.value = false;
-                is_loading.value = false;
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "There was a problem with the information you provided. Please check and try again.",
-                    });
-            }else {
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "An unexpected error occurred. Please try again later.",
-                });
-                    is_loading.value = false;
-                }
+        if (e.response && e.response.status === 422) {
+            errors.value = e.response.data.errors;
+        } else {
+            Swal.fire({
+            title: "Error",
+            icon: "error",
+            text: "An unexpected error occurred. Please try again later.",
+            });
         }
-    }
 
-    return {
-        contact_message,
-        contact_messages,
-        is_loading,
-        is_success,
-        errors,
-        pagination,
-        query,
-        storeContactMessage,
-        getContactMessages
-    }
+        is_loading.value = false;
+        is_success.value = false;
+        }
+    };
+
+  return {
+    errors,
+    is_loading,
+    is_success,
+    storeContactMessage,
+  };
 }
