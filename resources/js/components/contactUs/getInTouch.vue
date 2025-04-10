@@ -92,29 +92,34 @@ const save = async () => {
           <v-col class="shadow-md bg-gray-100 border border-gray-300 rounded-lg" style="background: lightgrey; margin: 15px; margin-top: 1px; ">
             <v-row>
                 <v-col cols="6">
-                    <v-text-field
-                        v-model="form.email"
-                        hint="Email"
-                        label="Email"
-                         variant="solo"
-                    ></v-text-field>
+                  <v-text-field
+                    v-model="form.email"
+                    hint="Email"
+                    label="Email"
+                    variant="solo"
+                    :error="!!errors.email"
+                    :error-messages="errors.email"
+                  ></v-text-field>
+
                 </v-col>
                 <v-col cols="6">
                     <v-text-field
-                        v-model="form.name"
-                        hint="Name"
-                        label="Name"
-                         variant="solo"
+                    v-model="form.name"
+                    label="Name"
+                    variant="solo"
+                    :error="!!errors.name"
+                    :error-messages="errors.name"
                     ></v-text-field>
                 </v-col>
             </v-row>
             <v-row>
                     <v-col cols="12">
                     <v-text-field
-                        v-model="form.contact_number"
-                        hint="Phone No."
-                        label="Phone No."
-                         variant="solo"
+                    v-model="form.contact_number"
+                    label="Phone No."
+                    variant="solo"
+                    :error="!!errors.contact_number"
+                    :error-messages="errors.contact_number"
                     ></v-text-field>
                 </v-col>
             </v-row>
@@ -122,26 +127,38 @@ const save = async () => {
             <v-row>
                 <v-col>
                     <v-textarea
-                        v-model="form.message"
-                        hint="Message"
-                        label="Message"
-                        maxlength="120"
-                        counter
-                        single-line
-                        variant="solo"
+                    v-model="form.message"
+                    label="Message"
+                    maxlength="120"
+                    counter
+                    single-line
+                    variant="solo"
+                    :error="!!errors.message"
+                    :error-messages="errors.message"
                     ></v-textarea>
                 </v-col>
             </v-row>
 
             <v-row class="d-flex justify-end pb-6 pr-4">
-                <v-btn
+                <!-- <v-btn
                     color="blue-darken-4"
                     text="SUBMIT"
                     variant="flat"
                     class="text-white"
                     append-icon="mdi-send-outline"
                     @click="save"
-                    ></v-btn>
+                    ></v-btn> -->
+                    <v-btn
+                    color="blue-darken-4"
+                    text="SUBMIT"
+                    variant="flat"
+                    class="text-white"
+                    append-icon="mdi-send-outline"
+                    @click="save"
+                    :loading="is_loading"
+                    :disabled="is_loading"
+                  ></v-btn>
+
             </v-row>
 
           </v-col>

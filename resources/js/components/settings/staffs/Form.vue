@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, watch, onMounted, computed } from "vue";
 import useStaffs from "../../../composables/staff";
 import useRegions from "../../../composables/region";
 import useProvinces from "../../../composables/province";
@@ -97,6 +97,22 @@ onMounted(() => {
     getRivers();
 });
 
+const filteredProvinces = computed(() => {
+    if (!form.region || !form.region.id) return [];
+    return provinces.value.filter(p => p.region.id === form.region.id);
+});
+
+const filteredMunicipalities = computed(() => {
+    if (!form.province || !form.province.id) return [];
+    return municipalities.value.filter(m => m.province.id === form.province.id);
+});
+
+const filteredRivers = computed(() => {
+    if (!form.municipality || !form.municipality.id) return [];
+    return rivers.value.filter(r => r.municipality.id === form.municipality.id );
+ });
+
+
 </script>
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
@@ -132,7 +148,7 @@ onMounted(() => {
                     <v-row>
                         <v-text-field
                             v-model="form.username"
-                            label="Username*"
+                            label="Email*"
                             variant="outlined"
                             :error-messages="
                                 errors['username'] ? errors['username'] : []
@@ -186,7 +202,8 @@ onMounted(() => {
                     <v-row>
                         <vue-multiselect
                             v-model="form.province"
-                            :options="provinces"
+                            :options="filteredProvinces"
+                            :disabled="!form.region"
                             :multiple="false"
                             :close-on-select="true"
                             :clear-on-select="true"
@@ -202,8 +219,9 @@ onMounted(() => {
                     </v-row>
                     <v-row>
                         <vue-multiselect
-                            v-model="form.municipality"
-                            :options="municipalities"
+                            v-model="form.municipality" 
+                            :options="filteredMunicipalities"
+                             :disabled="!form.province"
                             :multiple="false"
                             :close-on-select="true"
                             :clear-on-select="true"
@@ -220,7 +238,8 @@ onMounted(() => {
                     <v-row>
                         <vue-multiselect
                             v-model="form.river"
-                            :options="rivers"
+                            :options="filteredRivers"                              
+                            :disabled="!form.municipality"
                             :multiple="false"
                             :close-on-select="true"
                             :clear-on-select="true"

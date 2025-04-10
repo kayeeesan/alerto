@@ -164,7 +164,7 @@ const ResetPassword = async () => {
                     <v-row>
                         <v-text-field
                             v-model="form.username"
-                            label="Username*"
+                            label="Email*"
                             variant="outlined"
                             :error-messages="
                                 errors['username'] ? errors['username'] : []

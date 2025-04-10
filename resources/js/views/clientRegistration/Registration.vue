@@ -112,34 +112,63 @@ const filteredRivers = computed(() => {
     <v-app>
         <v-layout class="bg-indigo-darken-1">
             <v-container fluid class="fill-height d-flex align-center justify-center">
-                <v-card class="pa-8" elevation="8" width="600px" rounded="lg">
+                <v-card class="pa-8" elevation="8" width="650px" rounded="lg">
                     <v-card-title class="text-h5 text-center font-weight-bold"> Member Registration </v-card-title>
                     <v-card-text>
                         <v-form>
                             <!-- Name Fields -->
                             <v-row>
-                                <v-col>
-                                    <v-text-field v-model="form.first_name" label="First Name*" variant="outlined"
-                                        :error-messages="errors.first_name || []">
+                                <v-col cols="12" sm="6">
+                                    <v-text-field 
+                                    v-model="form.first_name"
+                                    prepend-icon="mdi-account"
+                                    label="First Name*" 
+                                    variant="outlined"
+                                    :error-messages="errors.first_name || []"
+                                    :rules="[
+                                    (v) => !!v || 'This field is required',
+                                    (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
+                                    ]">
                                     </v-text-field>
                                 </v-col>
-                                <v-col>
-                                    <v-text-field v-model="form.last_name" label="Last Name*" variant="outlined"
-                                        :error-messages="errors.last_name || []">
+                                <v-col cols="12" sm="6">
+                                    <v-text-field 
+                                    v-model="form.last_name" 
+                                    prepend-icon="mdi-account"
+                                    label="Last Name*" 
+                                    variant="outlined"
+                                    :error-messages="errors.last_name || []">
                                     </v-text-field>
                                 </v-col>
                             </v-row>
 
                             <!-- Username & Mobile -->
                             <v-row>
-                                <v-col>
-                                    <v-text-field v-model="form.username" label="Username*" variant="outlined"
-                                        :error-messages="errors.username || []">
-                                    </v-text-field>
-                                </v-col>
-                                <v-col>
-                                    <v-text-field v-model="form.mobile_number" label="Mobile Number*" variant="outlined"
-                                        :error-messages="errors.mobile_number || []">
+                                <v-col cols="12" sm="6">
+                                    <v-text-field
+                                        v-model="form.username"
+                                        prepend-icon="mdi-email"
+                                        :rules="[
+                                        (v) => !!v || 'This field is required',
+                                        (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
+                                        ]"
+                                        label="Email*"
+                                        variant="outlined"
+                                        :error-messages="errors.username || []"
+                                    ></v-text-field>
+                                    </v-col>
+
+                                <v-col cols="12" sm="6">
+                                    <v-text-field 
+                                    v-model="form.mobile_number" 
+                                    prepend-icon="mdi-phone"
+                                    label="Mobile Number*" 
+                                    variant="outlined"
+                                    :error-messages="errors.mobile_number || []"
+                                    :rules="[
+                                    (v) => !!v || 'This field is required',
+                                    (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
+                                    ]">
                                     </v-text-field>
                                 </v-col>
                             </v-row>
@@ -147,55 +176,70 @@ const filteredRivers = computed(() => {
                             <!-- Role -->
                             <v-row>
                                 <v-col>
-                                    <vue-multiselect v-model="form.role" :options="roles" placeholder="Select Role" label="name"
-                                        track-by="name">
-                                    </vue-multiselect>
+                                <v-input prepend-icon="mdi-account-tie" v-model="form.role">
+                                    <vue-multiselect
+                                    v-model="form.role"
+                                    :options="roles"
+                                    placeholder="Select Role"
+                                    label="name"
+                                    track-by="name"
+                                    />
+                                </v-input>
                                 </v-col>
                             </v-row>
 
                             <!-- Location Fields -->
                             <v-row>
                                 <v-col>
-                                    <vue-multiselect v-model="form.region" :options="regions" placeholder="Select Region"
-                                        label="name" track-by="name">
-                                    </vue-multiselect>
+                                    <v-input prepend-icon="mdi-map" v-model="form.region">
+                                        <vue-multiselect 
+                                        v-model="form.region" 
+                                        :options="regions" 
+                                        placeholder="Select Region"
+                                        label="name" 
+                                        track-by="name"/>
+                                    </v-input>
+                                    
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <vue-multiselect
+                                    <v-input prepend-icon="mdi-map" v-model="form.province">
+                                        <vue-multiselect
                                         v-model="form.province"
                                         :options="filteredProvinces"
                                         :disabled="!form.region"
                                         placeholder="Select Province"
                                         label="name"
-                                        track-by="name">
-                                        </vue-multiselect>
+                                        track-by="name"/>      
+                                    </v-input>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-input prepend-icon="mdi-city" v-model="form.municipality" >
+                                        <vue-multiselect 
+                                        v-model="form.municipality" 
+                                        :options="filteredMunicipalities"
+                                        :disabled="!form.province"
+                                        placeholder="Select Municipality" 
+                                        label="name" 
+                                        track-by="name"/>
+                                    </v-input>
 
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <vue-multiselect 
-                                    v-model="form.municipality" 
-                                    :options="filteredMunicipalities"
-                                    :disabled="!form.province"
-                                    placeholder="Select Municipality" 
-                                    label="name" 
-                                    track-by="name">
-                                    </vue-multiselect>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <vue-multiselect 
-                                    v-model="form.river" 
-                                    :options="filteredRivers" 
-                                    :disabled="!form.municipality"
-                                    placeholder="Select River" 
-                                    label="name"
-                                    track-by="name">
-                                    </vue-multiselect>
+                                    <v-input  prepend-icon="mdi-waves" v-model="form.river">
+                                        <vue-multiselect 
+                                        v-model="form.river" 
+                                        :options="filteredRivers" 
+                                        :disabled="!form.municipality"
+                                        placeholder="Select River" 
+                                        label="name"
+                                        track-by="name"/>
+                                    </v-input>
                                 </v-col>
                             </v-row>
                         </v-form>
