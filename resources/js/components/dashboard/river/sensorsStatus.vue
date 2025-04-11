@@ -39,7 +39,7 @@ onMounted(() => {
 
 <template>
   <v-col cols="11.5" style="padding: 0 !important;">
-    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;">
+    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative;  border: 1px solid #E0E0E0;">
       <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"></span>
       <div>
         <p class="text-black" style="font-size: 20px;">SENSORS STATUS</p>
