@@ -11,8 +11,10 @@ const show_form_modal = ref(false);
 
 const headers = [
     { title: "Name", align: "start", sortable: false, key: "name" },
+    { title: "Sensor ID", key: "id" },
     { title: "river", key: "river.name" },
     { title: "municipality", key: "municipality.name" },
+    { title: "province", key: "municipality.province.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
     { title: "status", key: "status" },

@@ -21,20 +21,9 @@ class SensorUnderPhController extends Controller
         $this->logService = $logService;
     }
 
-    // public function index()
-    // {
-    //     $sensors_under_ph = [];
-    //     if (isset($request->search)) {
-    //         $sensors_under_ph = SensorUnderPh::where('name', 'like', '%' . $request->search . '%');
-    //     }
-
-    //     $sensors_under_ph = isset($request->search) && $request->search ? $sensors_under_ph->paginate(10) : SensorUnderPh::paginate(10);
-    //     return ResourcesSensorUnderPh::collection($sensors_under_ph);
-    // }
-
     public function index(Request $request)
     {
-        $query = SensorUnderPh::with(['river', 'municipality']);
+        $query = SensorUnderPh::with(['river', 'municipality.province']);
 
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
