@@ -1,7 +1,6 @@
 <template>
     <v-col cols="12" class="p-0">
-      <v-sheet class="pa-6 rounded-lg shadow-md bg-gray-100 border border-gray-300 relative"
-      style="background: #F8FAF0;">
+      <v-sheet class="pa-6 rounded-lg shadow-md" style="position: relative; border: 1px solid #E0E0E0;">
         <!-- Top Bar -->
         <span
           style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;"

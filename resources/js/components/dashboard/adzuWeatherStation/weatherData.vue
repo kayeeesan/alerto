@@ -2,7 +2,7 @@
     <v-col cols="12" class="p-0">
       <v-sheet
         class="pa-6 rounded-lg shadow-md"
-        style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;"
+        style="position: relative; border: 1px solid #E0E0E0;"
       >
   
         <span

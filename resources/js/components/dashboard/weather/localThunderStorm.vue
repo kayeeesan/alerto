@@ -1,8 +1,8 @@
 <template>
-  <v-col cols="12" class="mb-2" style="padding: 0 !important;">
+  <v-col cols="12" class="mb-3" style="padding: 0 !important;">
     <v-sheet
       class="pa-6 rounded-lg shadow-md elevation-3"
-      style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;"
+      style="position: relative;  border: 1px solid #E0E0E0;"
     >
       <!-- Top Bar -->
       <span
