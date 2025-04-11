@@ -10,7 +10,8 @@ class Threshold extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sensor_id',
+        'sensorable_id',
+        'sensorable_type',
         'baseline',
         'sixty_percent',
         'eighty_percent',
@@ -19,10 +20,11 @@ class Threshold extends Model
         'water_level'
     ];
 
-    public function sensor()
+    public function sensorable()
     {
-        return $this->belongsTo(SensorUnderAlerto::class, 'sensor_id'); //Model name
+        return $this->morphTo();
     }
+
     public function alerts()
     {
         return $this->hasMany(Alert::class);

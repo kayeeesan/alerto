@@ -19,7 +19,8 @@ class SensorUnderPh extends Model
         'municipality_id',
         'long',
         'lat',
-        'status'
+        'status',
+        'sensor_type'
     ];
 
     public function river()
@@ -30,5 +31,10 @@ class SensorUnderPh extends Model
     public function municipality()
     {
         return $this->belongsTo(Municipality::class, 'municipality_id');
+    }
+
+    public function thresholds()
+    {
+        return $this->morphMany(Threshold::class, 'sensorable');
     }
 }

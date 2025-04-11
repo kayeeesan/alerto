@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('thresholds', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('sensor_id')->conastrained('sensors_under_alertos')->onDelete('cascade');
+            // $table->foreignId('sensor_id')->constrained('sensors_under_alertos')->onDelete('cascade');
+            $table->morphs('sensorable');
             $table->decimal('baseline', 8,2);
             $table->decimal('sixty_percent', 8,2);
             $table->decimal('eighty_percent', 8,2);

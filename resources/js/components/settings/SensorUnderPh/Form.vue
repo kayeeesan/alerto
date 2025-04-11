@@ -32,6 +32,7 @@ const initialState = {
     long: null,
     lat: null,
     status: null,
+    sensor_type: null
 };
 const form = reactive({ ...initialState });
 
@@ -46,9 +47,21 @@ watch(
             form.long = value.long;
             form.lat = value.lat;
             form.status = value.status;
+            form.sensor_type = value.sensor_type;
          }
     }
 );
+
+const sensorType = [
+    'ARG',
+    'WLMS',
+    'TANDEM'
+];
+
+const sensorStatus = [
+    'ENABLED',
+    'DISABLED'
+];
 
 const show_form_modal = ref(false);
 
@@ -155,12 +168,19 @@ onMounted(() => {
                         ></v-text-field>
                     </v-row>
                     <v-row>
-                        <v-text-field
+                        <vue-multiselect
                             v-model="form.status"
-                            label="status"
-                            variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                            :options="sensorStatus"
+                            placeholder="Sensor Status"
+                            class="mb-3"
+                        ></vue-multiselect>
+                    </v-row>
+                    <v-row>
+                        <vue-multiselect
+                            v-model="form.sensor_type"
+                            :options="sensorType"
+                            placeholder="Sensor Type"
+                        ></vue-multiselect>
                     </v-row>
                 </v-container>
             </v-card-text>

@@ -32,4 +32,9 @@ class SensorUnderAlerto extends Model
     {
         return $this->belongsTo(Municipality::class, 'municipality_id');
     }
+
+    public function thresholds()
+    {
+        return $this->morphMany(Threshold::class, 'sensorable');
+    }
 }
