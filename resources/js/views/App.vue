@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import Sidebar from "../components/layouts/Sidebar.vue";
+import UserProfile from "../components/users/ProfilePage.vue";
 import useAuth from "../composables/auth.js";
 import store from "@/store";
 
@@ -9,6 +10,12 @@ const user = store.state.auth.user;
 
 const drawer = ref(true); // Controls the sidebar visibility
 let interval = null; // Define interval variable
+const show_form_modal = ref(false);
+
+const ShowModalForm = () => {
+  show_form_modal.value = true;
+}
+
 
 const cleanUpExpiredItems = () => {
     const expiry = localStorage.getItem("expiry");
@@ -34,6 +41,8 @@ onUnmounted(() => {
 const mainContentClass = computed(() => ({
   "expanded": drawer.value, // Add 'expanded' class when sidebar is open
 }));
+
+
 </script>
 
 <template>
@@ -47,13 +56,38 @@ const mainContentClass = computed(() => ({
         <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
-            
-            <v-badge
+
+            <!-- <v-badge
                 color="blue-grey-lighten-5"
                 :content="user.full_name"
                 inline
-            ></v-badge>
-            <v-btn icon="mdi-logout" variant="text" @click="logout()" color="white"></v-btn>
+            ></v-badge> -->
+            <UserProfile v-model="show_form_modal" :user="user" />
+            <div class="d-flex justify-space-around mr-10">
+                <v-menu transition="scale-transition">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                     color="white"
+                      v-bind="props"
+                      variant="flat"
+                      rounded
+                    >
+                    {{ user.full_name }}<v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+
+                  <v-list>
+                      <v-list-item @click="ShowModalForm">
+                        <v-list-item-title>View Profile</v-list-item-title>
+                      </v-list-item>
+
+                      <v-list-item @click="logout">
+                        <v-list-item-title>Logout</v-list-item-title>
+                      </v-list-item>
+                  </v-list>
+                </v-menu>
+            </div>
+
         </v-app-bar>
 
         <v-main style="margin-left: 0 !important; background: #F8FAF0; ">
