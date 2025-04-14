@@ -1,10 +1,15 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted, computed, reactive } from "vue";
 import resetPassword from "../users/ManualResetPassword.vue";
+import useStaffs from "../../composables/staff";
 
 const props = defineProps({
   modelValue: Boolean,
   user: Object,
+  staff: {
+        type: Object,
+        default: null
+    },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -36,7 +41,7 @@ const ShowModalForm = () => {
 
       <!-- Header -->
       <v-card-title class="text-white text-h6 font-weight-bold" style="background-color: #003366">
-        User Info
+        User Info 
       </v-card-title>
 
 
@@ -77,7 +82,7 @@ const ShowModalForm = () => {
             <div class="text-caption text-grey">Contact No.</div>
             <v-sheet class="pa-2 rounded bg-grey-lighten-4 d-flex align-center">
               <v-icon size="18" class="me-2" color="grey-darken-1">mdi-phone</v-icon>
-              
+              {{ staff.contact_no }}
             </v-sheet>
           </v-col>
 
