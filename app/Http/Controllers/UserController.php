@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\UserLogService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -147,6 +148,24 @@ class UserController extends Controller
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
+
+    public function manualResetPassword($id, Request $request){
+        try {
+            $request->validate([
+                'password' => 'required|min:6|confirmed', // if using password + password_confirmation
+            ]);
+    
+            $user = User::findOrFail($id);
+            $user->password = Hash::make($request->password);
+            $user->password_reset = false;
+            $user->update();
+    
+            return response(['message' => 'Password has been successfully reset.']);
+        } catch (\Exception $e) {
+            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+    
     
 
     public function destroy($id)

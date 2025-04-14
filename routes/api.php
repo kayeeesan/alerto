@@ -51,5 +51,6 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/alerts', AlertController::class);
     Route::resource('/staffs', StaffController::class);
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
+    Route::patch('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);
     Route::get('/messages', [ContactMessageController::class, 'index']);
 });

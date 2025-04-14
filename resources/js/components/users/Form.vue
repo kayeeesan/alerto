@@ -125,7 +125,8 @@ const ResetPassword = async () => {
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable persistent>
         <v-card>
             <v-card-title class="mt-2">
-                <span class="text-h5">New User</span>
+                <span v-if="form.id" class="text-h5">Update User</span>
+                <span v-else class="text-h5">New User</span>
             </v-card-title>
     
             <v-card-text>
@@ -184,6 +185,7 @@ const ResetPassword = async () => {
                             track-by="name"
                             select-label=""
                             deselect-label=""
+                            class="mb-4"
                         >
                         </vue-multiselect>
                         <span v-if="errors['user_roles']" class="error-msg">{{ errors['user_roles'][0] }}</span>
@@ -204,7 +206,7 @@ const ResetPassword = async () => {
                     </v-row>
                     <v-row>
                         
-                <v-btn color="primary" @click="ResetPassword()" variant="tonal" class="mt-2">
+                <v-btn v-if="form.id" color="primary" @click="ResetPassword()" variant="tonal" class="mt-2">
                     RESET PASSWORD
                 </v-btn>
                     </v-row>
