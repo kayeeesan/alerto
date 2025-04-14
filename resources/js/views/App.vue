@@ -117,7 +117,7 @@ const mainContentClass = computed(() => ({
                     class="mb-2 text-none"
                     @click="ShowModalForm"
                   >
-                    Manage your Account
+                    View Profile
                   </v-btn>
 
                   <v-btn

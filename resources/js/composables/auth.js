@@ -40,16 +40,33 @@ export default function useAuth() {
     }
 
     const logout = async () => {
-        is_loading.value = true;
-        await axios.post('/api/logout')
-        .then(() => {
-            localStorage.clear();
-            store.dispatch('auth/logout');
-            
-            is_loading.value = false;
-            // location.reload();
-            router.push("/");
-        })
+        Swal.fire({
+            title: "Logout",
+            text: "Are you sure you want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, logout!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                is_loading.value = true;
+                try{
+                    await axios.post('/api/logout');
+                    localStorage.clear();
+                    store.dispatch('auth/logout');
+                    is_loading.value = false;
+                        router.push("/");
+                } catch (err) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                    });
+                    is_loading.value = false;
+                }
+            }
+        });
     }
 
     const setPassword = async (data) => {
