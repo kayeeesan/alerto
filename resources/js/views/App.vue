@@ -63,29 +63,34 @@ const mainContentClass = computed(() => ({
                 inline
             ></v-badge> -->
             <UserProfile v-model="show_form_modal" :user="user" />
-            <div class="d-flex justify-space-around mr-10">
-                <v-menu transition="scale-transition">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                     color="white"
-                      v-bind="props"
-                      variant="flat"
-                      rounded
-                    >
-                    {{ user.full_name }}<v-icon>mdi-menu-down</v-icon>
-                    </v-btn>
-                  </template>
+            <div class="d-flex align-center pr-6">
+              <v-menu transition="scale-transition" offset-y>
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    variant="text"
+                    color="white"
+                    class="text-capitalize"
+                    rounded="lg"
+                  >
+                    <v-avatar class="mr-2" size="32" color="primary">
+                      <span class="white--text text-subtitle-2">{{ user.full_name.charAt(0) }}</span>
+                    </v-avatar>
+                    {{ user.full_name }}
+                    <v-icon end>mdi-menu-down</v-icon>
+                  </v-btn>
+                </template>
 
-                  <v-list>
-                      <v-list-item @click="ShowModalForm">
-                        <v-list-item-title>View Profile</v-list-item-title>
-                      </v-list-item>
+                <v-list>
+                  <v-list-item @click="ShowModalForm" prepend-icon="mdi-account">
+                    <v-list-item-title>View Profile</v-list-item-title>
+                  </v-list-item>
 
-                      <v-list-item @click="logout">
-                        <v-list-item-title>Logout</v-list-item-title>
-                      </v-list-item>
-                  </v-list>
-                </v-menu>
+                  <v-list-item @click="logout" prepend-icon="mdi-logout">
+                    <v-list-item-title>Logout</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </div>
 
         </v-app-bar>
