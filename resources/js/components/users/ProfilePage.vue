@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -10,12 +10,10 @@ const emit = defineEmits(["update:modelValue"]);
 
 const dialogVisible = ref(props.modelValue);
 
-// Keep local dialogVisible in sync with modelValue
 watch(() => props.modelValue, (newVal) => {
   dialogVisible.value = newVal;
 });
 
-// Emit to parent when closed
 watch(dialogVisible, (newVal) => {
   emit("update:modelValue", newVal);
 });
@@ -23,38 +21,60 @@ watch(dialogVisible, (newVal) => {
 const close = () => {
   dialogVisible.value = false;
 };
+
+const openProfile = () => {
+  // Add your profile action logic here
+};
+
+const logout = () => {
+  // Add your logout logic here
+};
 </script>
+
 <template>
-    <v-dialog v-model="dialogVisible" max-width="500">
-      <v-card>
-        <v-card-title class="text-h6 font-weight-bold">User Info</v-card-title>
-        <v-card-text>
-          <v-list>
-            <v-list-item>
-              <v-list-item-title>Full Name</v-list-item-title>
-              <v-list-item-subtitle>{{ user.full_name }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Username</v-list-item-title>
-              <v-list-item-subtitle>{{ user.username }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item v-if="user.status">
-              <v-list-item-title>Status</v-list-item-title>
-              <v-list-item-subtitle>{{ user.status }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item v-if="user.roles && user.roles.length">
-              <v-list-item-title>Role</v-list-item-title>
-              <v-list-item-subtitle>
-                {{ user.roles.map(role => role.name).join(', ') }}
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text color="primary" @click="close">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </template>
-  
+  <v-dialog v-model="dialogVisible" max-width="380">
+    <v-card class="rounded-xl pa-4" style="background-color: #f5f7fa;">
+      
+      <!-- Profile Info -->
+      <div class="d-flex align-center mb-4">
+        <v-avatar size="56" class="mr-3" color="primary">
+          <v-icon color="white" size="36">mdi-account</v-icon>
+        </v-avatar>
+        <div>
+          <div class="text-subtitle-1 font-weight-medium">{{ user.full_name }}</div>
+          <div class="text-caption text-medium-emphasis">{{ user.username }}</div>
+        </div>
+      </div>
+
+      <v-divider></v-divider>
+
+      <!-- Actions -->
+      <div class="d-flex flex-column mt-3 gap-2">
+        <v-btn
+          variant="text"
+          prepend-icon="mdi-account-cog"
+          class="justify-start"
+          @click="openProfile"
+        >
+          Manage Account
+        </v-btn>
+
+        <v-btn
+          variant="text"
+          prepend-icon="mdi-logout"
+          class="justify-start"
+          @click="logout"
+        >
+          Sign Out
+        </v-btn>
+      </div>
+
+      <!-- Optional Close Button at Bottom -->
+      <v-card-actions class="justify-end mt-4">
+        <v-btn variant="flat" color="primary" class="text-white" @click="close">
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
