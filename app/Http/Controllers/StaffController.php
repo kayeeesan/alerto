@@ -34,7 +34,7 @@ class StaffController extends Controller
     
             // Create the Staff entry
             $staff = new Staff();
-            $staff->username = ucwords($request->username);
+            $staff->username = $request->username;
             $staff->first_name = $request->first_name;
             $staff->last_name = $request->last_name;
             $staff->mobile_number = $request->mobile_number;
@@ -73,7 +73,7 @@ class StaffController extends Controller
     
             // Create the Staff entry
             $staff = new Staff();
-            $staff->username = ucwords($request->username);
+            $staff->username = $request->username;
             $staff->first_name = $request->first_name;
             $staff->last_name = $request->last_name;
             $staff->mobile_number = $request->mobile_number;
@@ -116,7 +116,7 @@ class StaffController extends Controller
             }
     
             // Update Staff details
-            $staff->username = ucwords($request->username);
+            $staff->username = $request->username;
             $staff->first_name = $request->first_name;
             $staff->last_name = $request->last_name;
             $staff->mobile_number = $request->mobile_number;

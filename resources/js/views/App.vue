@@ -4,6 +4,11 @@ import Sidebar from "../components/layouts/Sidebar.vue";
 import UserProfile from "../components/users/ProfilePage.vue";
 import useAuth from "../composables/auth.js";
 import store from "@/store";
+import useStaffs from "../composables/staff.js";
+
+const { staffs, getStaffs } = useStaffs();
+
+const staff = ref({});
 
 const { logout } = useAuth();
 const user = store.state.auth.user;
@@ -12,8 +17,9 @@ const drawer = ref(true); // Controls the sidebar visibility
 let interval = null; // Define interval variable
 const show_form_modal = ref(false);
 
-const ShowModalForm = () => {
-  show_form_modal.value = true;
+const ShowModalForm = (value) => {
+  staff.value = value;
+  show_form_modal.value = value;
 }
 
 
@@ -36,11 +42,23 @@ const updatedLocalTime = () => {
   localTime.value = now.toLocaleTimeString();
 };
 
-onMounted(() => {
+onMounted(async () => {
     interval = setInterval(cleanUpExpiredItems, 28800000); // Restart every 8 hours
     updatedLocalTime();
     setInterval(updatedLocalTime, 1000);
+
+    await getStaffs();
+
+    const matchedStaff = staffs.value.find(s => s.username === user.username);
+    if (matchedStaff) {
+      staff.value = matchedStaff;
+      console.log("✅ Staff matched by username:", matchedStaff);
+    } else {
+      console.log("⚠️ No matching staff found for username:", user.username);
+    }
+
 });
+
 
 
 onUnmounted(() => {
@@ -66,13 +84,13 @@ const mainContentClass = computed(() => ({
         <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
+            
 
             <!-- <v-badge
                 color="blue-grey-lighten-5"
                 :content="user.full_name"
                 inline
             ></v-badge> -->
-            <UserProfile v-model="show_form_modal" :user="user" />
             <div class="d-flex align-center pr-6">
               <v-menu transition="scale-transition" offset-y>
                 <template v-slot:activator="{ props }">
@@ -150,6 +168,11 @@ const mainContentClass = computed(() => ({
       </div>
     </div>
   </v-app>
+  <UserProfile 
+  v-model="show_form_modal" 
+  :user="user"
+  :staff="staff"
+  />
 </template>
 
 <style scoped>
