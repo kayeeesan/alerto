@@ -29,9 +29,19 @@ const cleanUpExpiredItems = () => {
     }
 };
 
+const localTime = ref('');
+
+const updatedLocalTime = () => {
+  const now = new Date();
+  localTime.value = now.toLocaleTimeString();
+};
+
 onMounted(() => {
     interval = setInterval(cleanUpExpiredItems, 28800000); // Restart every 8 hours
+    updatedLocalTime();
+    setInterval(updatedLocalTime, 1000);
 });
+
 
 onUnmounted(() => {
     clearInterval(interval);
@@ -74,23 +84,60 @@ const mainContentClass = computed(() => ({
                     rounded="lg"
                   >
                     <v-avatar class="mr-2" size="32" color="primary">
-                      <span class="white--text text-subtitle-2">{{ user.full_name.charAt(0) }}</span>
+                      <span class="white--text text-subtitle-2">
+                        {{ user.full_name.charAt(0) }}
+                      </span>
                     </v-avatar>
                     {{ user.full_name }}
                     <v-icon end>mdi-menu-down</v-icon>
                   </v-btn>
                 </template>
 
-                <v-list>
-                  <v-list-item @click="ShowModalForm" prepend-icon="mdi-account">
-                    <v-list-item-title>View Profile</v-list-item-title>
-                  </v-list-item>
+                <v-card class="pa-4" width="320">
+                  <div class="d-flex align-center mb-4">
+                    <v-avatar size="56" color="primary">
+                      <span class="white--text text-h6">
+                        {{ user.full_name.charAt(0) }}
+                      </span>
+                    </v-avatar>
+                    <div class="ml-4">
+                      <div class="text-subtitle-1 font-weight-bold">
+                        Hi, {{ user.full_name.split(" ")[0].toUpperCase() }}!
+                      </div>
+                      <div class="text-caption">{{ user.email }}</div>
+                      <div class="text-caption grey--text">Managed by Alerto Staff</div>
+                    </div>
+                  </div>
 
-                  <v-list-item @click="logout" prepend-icon="mdi-logout">
-                    <v-list-item-title>Logout</v-list-item-title>
-                  </v-list-item>
-                </v-list>
+                  <v-divider class="mb-3"></v-divider>
+
+                  <v-btn
+                    variant="outlined"
+                    block
+                    class="mb-2 text-none"
+                    @click="ShowModalForm"
+                  >
+                    Manage your Account
+                  </v-btn>
+
+                  <v-btn
+                    variant="text"
+                    block
+                    class="text-none"
+                    @click="logout"
+                  >
+                    Sign out
+                  </v-btn>
+
+                  <v-divider class="my-3"></v-divider>
+
+                  <div class="text-caption d-flex justify-space-between grey--text">
+                    <span style="cursor: pointer;">{{ localTime }} </span>
+                    <span style="cursor: pointer;">{{ user.username}}</span>
+                  </div>
+                </v-card>
               </v-menu>
+
             </div>
 
         </v-app-bar>
