@@ -13,6 +13,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["reloadStaffs", "input"]);
+const router = useRouter();
 
 const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
 const { roles, getRoles } = useRoles();
@@ -31,7 +32,8 @@ const initialState = {
     region: null,
     province: null,
     municipality: null,
-    river: null
+    river: null,
+    fb_lgu: null
 };
 const form = reactive({ ...initialState });
 
@@ -60,6 +62,9 @@ const save = async () => {
         emit("reloadStaffs");
         emit("input", false);
         resetForm();
+
+        router.push('/');
+        
     }
 };
 
@@ -240,6 +245,17 @@ const filteredRivers = computed(() => {
                                         label="name"
                                         track-by="name"/>
                                     </v-input>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field 
+                                    v-model="form.fb_lgu" 
+                                    prepend-icon="mdi-account"
+                                    label="Facebook Lgu*" 
+                                    variant="outlined"
+                                    :error-messages="errors.fb_lgu || []">
+                                    </v-text-field>
                                 </v-col>
                             </v-row>
                         </v-form>

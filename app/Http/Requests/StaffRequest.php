@@ -44,6 +44,7 @@ class StaffRequest extends FormRequest
                     'province.id' => 'required|exists:provinces,id',
                     'municipality.id' => 'required|exists:municipalities,id',
                     'river.id' => 'required|exists:rivers,id',
+                    'fb_lgu' => 'required|string|max:255',
                 ];
         } else {
             return [
@@ -57,6 +58,7 @@ class StaffRequest extends FormRequest
                     'province.id' => 'required|exists:provinces,id',
                     'municipality.id' => 'required|exists:municipalities,id',
                     'river.id' => 'required|exists:rivers,id',
+                    'fb_lgu' => 'required|string|max:255',
             ];
         }
     }
