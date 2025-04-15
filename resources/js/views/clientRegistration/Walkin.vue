@@ -2,12 +2,14 @@
 import { ref, onMounted } from "vue";
 import StaffForm from "../../components/settings/staffs/Form.vue";
 import useStaffs from "../../composables/staff";
+import StaffModal from "../../components/settings/staffs/Staff.vue";
 
 const { staffs, pagination, query, is_loading, getStaffs, destoryStaff } = useStaffs();
 
 const staff = ref({});
 const action_type = ref('');
 const show_form_modal = ref(false);
+const show_staff_modal = ref(false);
 
 const headers = [
     { title: "Name", key: "username" },
@@ -22,6 +24,12 @@ const showModalForm = (val) => {
     staff.value = {};
 };
 
+const showModalStaff = (val, data = null) => {
+    show_staff_modal.value = val;
+    if (data) {
+        staff.value = data;
+    }
+}
 onMounted(() => {
     getStaffs();
 });
@@ -71,6 +79,15 @@ const reloadStaffs = async () => {
                 <template v-slot:item.actions="{ item }">
                     <v-btn
                         class="me-2"
+                        color="primary"
+                        @click="() => showModalStaff(true, item)"
+                        variant="tonal"
+                        size="small"
+                    >
+                        <v-icon size="small"> mdi-eye </v-icon> View
+                    </v-btn>
+                    <v-btn
+                        class="me-2"
                         color="success"
                         @click="editItem(item, 'Update')"
                         variant="tonal"
@@ -113,6 +130,12 @@ const reloadStaffs = async () => {
         :staff="staff"
         :action_type="action_type"
         @input="showModalForm"
+        @reloadStaffs="reloadStaffs"
+    />
+    <staff-modal
+        :value="show_staff_modal"
+        :staff="staff"
+        @input="showModalStaff"
         @reloadStaffs="reloadStaffs"
     />
 </template>
