@@ -17,9 +17,8 @@ const drawer = ref(true); // Controls the sidebar visibility
 let interval = null; // Define interval variable
 const show_form_modal = ref(false);
 
-const ShowModalForm = (value) => {
-  staff.value = value;
-  show_form_modal.value = value;
+const ShowModalForm = () => {
+  show_form_modal.value = true;
 }
 
 
@@ -49,14 +48,14 @@ onMounted(async () => {
 
     await getStaffs();
 
-    const matchedStaff = staffs.value.find(s => s.username === user.username);
-    if (matchedStaff) {
-      staff.value = matchedStaff;
-      console.log("✅ Staff matched by username:", matchedStaff);
-    } else {
-      console.log("⚠️ No matching staff found for username:", user.username);
-    }
+    const matched = staffs.value.find(
+    (s) => s.username?.toLowerCase() === user.username?.toLowerCase()
+  );
 
+    if (matched) {
+      staff.value = matched;
+    }
+  console.log(matched);
 });
 
 
