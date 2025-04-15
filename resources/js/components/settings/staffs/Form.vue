@@ -40,7 +40,8 @@ const initialState = {
     region: {},
     province: {},
     municipality: {},
-    river: {}
+    river: {},
+    fb_lgu: null
 }
 const form = reactive({ ...initialState });
 
@@ -57,6 +58,7 @@ watch(
             form.province = value.province;
             form.municipality = value.municipality;
             form.river = value.river;
+            form.fb_lgu = value.fb_lgu;
     }
 );
 
@@ -249,8 +251,20 @@ const filteredRivers = computed(() => {
                             track-by="name"
                             select-label=""
                             deselect-label=""
+                            class="mb-3"
                         >
                         </vue-multiselect>
+                    </v-row>
+
+                    <v-row>
+                        <v-text-field
+                            v-model="form.fb_lgu"
+                            label="Facebook LGU Link*"
+                            variant="outlined"
+                            :error-messages="
+                                errors['fb_lgu'] ? errors['fb_lgu'] : []
+                            "
+                        ></v-text-field>
                     </v-row>
                 </v-container>
             </v-card-text>

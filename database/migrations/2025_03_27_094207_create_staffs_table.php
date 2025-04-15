@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('province_id')->contrained('provinces')->onDelete('cascade');
             $table->foreignId('municipality_id')->contrained('municipalities')->onDelete('cascade');
             $table->foreignId('river_id')->contrained('rivers')->onDelete('cascade');
+            $table->string('fb_lgu');
             $table->enum('status', ['pending', 'approved', 'disabled']);
             
         });

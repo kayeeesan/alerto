@@ -43,6 +43,7 @@ class StaffController extends Controller
             $staff->province_id = $request->input('province.id');
             $staff->municipality_id = $request->input('municipality.id');
             $staff->river_id = $request->input('river.id');
+            $staff->fb_lgu = $request->fb_lgu;
             $staff->save();
     
             // Now create the User
@@ -82,6 +83,7 @@ class StaffController extends Controller
             $staff->province_id = $request->input('province.id');
             $staff->municipality_id = $request->input('municipality.id');
             $staff->river_id = $request->input('river.id');
+            $staff->fb_lgu = $request->fb_lgu;
             $staff->save();
     
             // Now create the User
@@ -125,6 +127,7 @@ class StaffController extends Controller
             $staff->province_id = $request->input('province.id');
             $staff->municipality_id = $request->input('municipality.id');
             $staff->river_id = $request->input('river.id');
+            $staff->fb_lgu = $request->fb_lgu;
             $staff->update();
     
             // Update User details

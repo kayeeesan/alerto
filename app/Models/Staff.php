@@ -19,7 +19,8 @@ class Staff extends Model
         'region_id',
         'province_id',
         'municipality_id',
-        'river_id'
+        'river_id',
+        'fb_lgu'
     ];
 
     public function role(){
