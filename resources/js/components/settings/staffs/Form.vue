@@ -127,7 +127,8 @@ const filteredRivers = computed(() => {
             <v-card-text>
                 <v-container fluid>
                     <v-row>
-                        <v-text-field
+                        <v-col>
+                            <v-text-field
                             v-model="form.first_name"
                             label="First Name*"
                             variant="outlined"
@@ -135,9 +136,9 @@ const filteredRivers = computed(() => {
                                 errors['first_name'] ? errors['first_name'] : []
                             "
                         ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <v-text-field
+                        </v-col>
+                        <v-col>
+                            <v-text-field
                             v-model="form.last_name"
                             label="Last Name*"
                             variant="outlined"
@@ -146,9 +147,12 @@ const filteredRivers = computed(() => {
                                 errors['last_name'] ? errors['last_name'] : []
                             "
                         ></v-text-field>
+                        </v-col>
+                       
                     </v-row>
                     <v-row>
-                        <v-text-field
+                        <v-col>
+                            <v-text-field
                             v-model="form.username"
                             label="Email*"
                             variant="outlined"
@@ -156,115 +160,135 @@ const filteredRivers = computed(() => {
                                 errors['username'] ? errors['username'] : []
                             "
                         ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <v-text-field
-                            v-model="form.mobile_number"
-                            label="Mobile Number*"
-                            variant="outlined"
-                            :error-messages="
-                                errors['mobile_number'] ? errors['mobile_number'] : []
-                            "
-                        ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.role"
-                            :options="roles"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select Role/s"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                            class="mb-3"
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.region"
-                            :options="regions"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select Region"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                            class="mb-3"
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.province"
-                            :options="filteredProvinces"
-                            :disabled="!form.region"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select province"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                            class="mb-3"
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.municipality" 
-                            :options="filteredMunicipalities"
-                             :disabled="!form.province"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select municipality"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                            class="mb-3"
-                        >
-                        </vue-multiselect>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.river"
-                            :options="filteredRivers"                              
-                            :disabled="!form.municipality"
-                            :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
-                            placeholder="Select River"
-                            label="name"
-                            track-by="name"
-                            select-label=""
-                            deselect-label=""
-                            class="mb-3"
-                        >
-                        </vue-multiselect>
+                        </v-col>
+                        <v-col>
+                            <v-text-field
+                                v-model="form.mobile_number"
+                                label="Mobile Number*"
+                                variant="outlined"
+                                :error-messages="
+                                    errors['mobile_number'] ? errors['mobile_number'] : []
+                                "
+                            ></v-text-field>
+                        </v-col>
+                       
                     </v-row>
 
                     <v-row>
-                        <v-text-field
-                            v-model="form.fb_lgu"
-                            label="Facebook LGU Link*"
-                            variant="outlined"
-                            :error-messages="
-                                errors['fb_lgu'] ? errors['fb_lgu'] : []
-                            "
-                        ></v-text-field>
+                        <v-col>
+                            <vue-multiselect
+                                v-model="form.role"
+                                :options="roles"
+                                :multiple="false"
+                                :close-on-select="true"
+                                :clear-on-select="true"
+                                :preserve-search="true"
+                                placeholder="Select Role/s"
+                                label="name"
+                                track-by="name"
+                                select-label=""
+                                deselect-label=""
+                                class="mb-3"
+                            >
+                            </vue-multiselect>
+
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <vue-multiselect
+                                v-model="form.region"
+                                :options="regions"
+                                :multiple="false"
+                                :close-on-select="true"
+                                :clear-on-select="true"
+                                :preserve-search="true"
+                                placeholder="Select Region"
+                                label="name"
+                                track-by="name"
+                                select-label=""
+                                deselect-label=""
+                                class="mb-3"
+                            >
+                            </vue-multiselect>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <vue-multiselect
+                                v-model="form.province"
+                                :options="filteredProvinces"
+                                :disabled="!form.region"
+                                :multiple="false"
+                                :close-on-select="true"
+                                :clear-on-select="true"
+                                :preserve-search="true"
+                                placeholder="Select province"
+                                label="name"
+                                track-by="name"
+                                select-label=""
+                                deselect-label=""
+                                class="mb-3"
+                            >
+                            </vue-multiselect>
+
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <vue-multiselect
+                                v-model="form.municipality" 
+                                :options="filteredMunicipalities"
+                                :disabled="!form.province"
+                                :multiple="false"
+                                :close-on-select="true"
+                                :clear-on-select="true"
+                                :preserve-search="true"
+                                placeholder="Select municipality"
+                                label="name"
+                                track-by="name"
+                                select-label=""
+                                deselect-label=""
+                                class="mb-3"
+                            >
+                            </vue-multiselect>
+
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <vue-multiselect
+                                v-model="form.river"
+                                :options="filteredRivers"                              
+                                :disabled="!form.municipality"
+                                :multiple="false"
+                                :close-on-select="true"
+                                :clear-on-select="true"
+                                :preserve-search="true"
+                                placeholder="Select River"
+                                label="name"
+                                track-by="name"
+                                select-label=""
+                                deselect-label=""
+                                class="mb-3"
+                            >
+                            </vue-multiselect>
+
+                        </v-col>
+                    </v-row>
+
+                    <v-row>
+                        <v-col>
+                            <v-text-field
+                                v-model="form.fb_lgu"
+                                label="Facebook LGU Link*"
+                                variant="outlined"
+                                :error-messages="
+                                    errors['fb_lgu'] ? errors['fb_lgu'] : []
+                                "
+                            ></v-text-field>
+
+                        </v-col>
                     </v-row>
                 </v-container>
             </v-card-text>

@@ -87,8 +87,8 @@ const ShowModalForm = () => {
           </v-avatar>
           
           <div>
-            <div class="text-subtitle-1 font-weight-bold">{{ form.first_name }} {{ form.last_name }}</div>
-            <div class="text-body-2 text-grey-darken-1">{{ form.username }}</div>
+            <div class="text-subtitle-1 font-weight-bold">{{ user.first_name }} {{ user.last_name }}</div>
+            <div class="text-body-2 text-grey-darken-1">{{ user.username }}</div>
           </div>
         </div>
 
