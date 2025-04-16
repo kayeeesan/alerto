@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import StaffForm from "../../components/settings/staffs/Form.vue";
 import useStaffs from "../../composables/staff";
 import StaffModal from "../../components/settings/staffs/Staff.vue";
@@ -16,6 +16,7 @@ const headers = [
     { title: "contact No.", key: "mobile_number" },
     { title: "Municipality", key: "municipality.name" },
     { title: "River", key: "river.name" },
+    { title: "Status", key: "status"},
     { title: "Actions", key: "actions", sortable: false },
 ];
 
@@ -48,6 +49,19 @@ const reloadStaffs = async () => {
     await getStaffs();
     staff.value = {};
 };
+
+
+
+const statusColor = (status) => {
+    switch (status) {
+        case "approved":
+            return 'green';
+        case "pending":
+            return 'grey';
+        case "disabled":
+            return 'red';
+    }
+}
 </script>
 <template>
     <v-row class="p-2 ml-8">
@@ -76,6 +90,11 @@ const reloadStaffs = async () => {
                 :loading="is_loading"
                 loading-text="Loading... Please wait"
             >
+                <template v-slot:item.status="{ item}">
+                        <v-chip :color="statusColor(item.status)">
+                            {{ item.status === 'approved' ? 'Active' : item.status }}
+                        </v-chip>
+                </template>
                 <template v-slot:item.actions="{ item }">
                     <v-btn
                         class="me-2"
@@ -104,6 +123,7 @@ const reloadStaffs = async () => {
                         <v-icon> mdi-delete </v-icon> delete
                     </v-btn>
                 </template>
+
                 <template v-slot:bottom>
                     <div class="m-2">
                         <span style="color: gray" v-if="pagination">

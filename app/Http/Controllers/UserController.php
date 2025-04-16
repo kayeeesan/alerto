@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\User as ResourcesUser;
 use App\Models\User;
+use App\Models\Staff;
 use App\Services\UserLogService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,6 +121,12 @@ class UserController extends Controller
             $user->status = $request->status;
             $this->storeUserRoles($user->id, $request->user_roles);
             $user->update();
+
+           $staff = Staff::where('username', $user->username)->first();
+           if($staff){
+                $staff->status = $request->status;
+                $staff->update();
+           }
             
             $this->logService->logAction('User', $user->id, 'update', [
                 'old' => $oldData,
