@@ -57,6 +57,17 @@ const reloadUsers = async () => {
     await getUsers();
     user.value = {};
 };
+
+const statusColor = (status) => {
+    switch (status){
+        case "pending":
+            return 'grey';
+        case "approved":
+            return 'green';
+        case "disabled":
+            return 'red';
+    }
+}
 </script>
 <template>
     <v-row class="p-2 ml-8">
@@ -85,6 +96,11 @@ const reloadUsers = async () => {
                 :loading="is_loading"
                 loading-text="Loading... Please wait"
             >
+                <template v-slot:item.status="{ item}">
+                    <v-chip :color="statusColor(item.status)">
+                        {{ item.status }}
+                    </v-chip>
+                </template>
                 <template v-slot:item.user_roles="{ item }">
                     <span v-for="(role, i) in item.roles">
                         {{  role.name }}{{ item.roles[i+1] ? ", " : "" }}
