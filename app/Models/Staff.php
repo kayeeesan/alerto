@@ -20,7 +20,8 @@ class Staff extends Model
         'province_id',
         'municipality_id',
         'river_id',
-        'fb_lgu'
+        'fb_lgu',
+        'status'
     ];
 
     public function role(){

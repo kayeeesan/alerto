@@ -28,7 +28,8 @@ class Staff extends JsonResource
             'municipality_id' => $this->municipality_id,
             'municipality' => $this->municipality,
             'river' => $this->river,
-            'fb_lgu' => $this->fb_lgu
+            'fb_lgu' => $this->fb_lgu,
+            'status' => $this->status
         ];
     }
 }
