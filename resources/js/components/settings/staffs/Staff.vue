@@ -84,18 +84,20 @@ const statusColor = computed(() => {
             </v-card-title>
 
             <v-card-text class="pa-6">
-                <div class="d-flex align-center">
-                    <v-avatar size="70" class="me-4">
+                <v-row>
+                    <v-col cols="12" md="2" sm="2">
+                        <v-avatar size="70" class="me-4">
                         <img src="../../../../img/icon/user_icon.svg" alt="User Avatar" style="width: 100%;" />
                     </v-avatar>
-
-                    <div>
+                    </v-col>
+                    <v-col cols="12" md="9" sm="9">
+                        <div>
                         <div class="text-subtitle-1 font-weight-bold">{{ form.first_name }} {{ form.    last_name }}</div>
                         <div class="text-body-2 text-grey-darken-1">{{ form.username }}</div>
                         <v-chip class="mt-1" :color="statusColor">{{ statusUpdate }}</v-chip>
                     </div>
-                    
-                </div>
+                    </v-col>
+                </v-row>
 
                 <v-divider></v-divider>
 

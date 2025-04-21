@@ -42,6 +42,7 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph->municipality_id = $request->input('municipality.id');
             $sensor_under_ph->long = $request->long;
             $sensor_under_ph->lat = $request->lat;
+            $sensor_under_ph->sensor_type = $request->sensor_type;
             $sensor_under_ph->save();
 
             $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'create', $sensor_under_ph->toArray());
@@ -62,6 +63,7 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph->municipality_id = $request->municipality['id'];
             $sensor_under_ph->long = $request->long;
             $sensor_under_ph->lat = $request->lat;
+            $sensor_under_ph->sensor_type = $request->sensor_type;
             $sensor_under_ph->update();
 
             $this->logService->logAction('Sensor Under Ph', $sensor_under_ph->id, 'update', [

@@ -127,7 +127,7 @@ const filteredRivers = computed(() => {
             <v-card-text>
                 <v-container fluid>
                     <v-row>
-                        <v-col>
+                        <v-col cols="12" md="6" sm="6">
                             <v-text-field
                             v-model="form.first_name"
                             label="First Name*"
@@ -137,7 +137,7 @@ const filteredRivers = computed(() => {
                             "
                         ></v-text-field>
                         </v-col>
-                        <v-col>
+                        <v-col cols="12" md="6" sm="6">
                             <v-text-field
                             v-model="form.last_name"
                             label="Last Name*"
@@ -151,7 +151,7 @@ const filteredRivers = computed(() => {
                        
                     </v-row>
                     <v-row>
-                        <v-col>
+                        <v-col cols="12" md="6" sm="6">
                             <v-text-field
                             v-model="form.username"
                             label="Email*"
@@ -161,7 +161,7 @@ const filteredRivers = computed(() => {
                             "
                         ></v-text-field>
                         </v-col>
-                        <v-col>
+                        <v-col cols="12" md="6" sm="6">
                             <v-text-field
                                 v-model="form.mobile_number"
                                 label="Mobile Number*"
