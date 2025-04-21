@@ -17,8 +17,9 @@ const headers = [
     { title: "province", key: "municipality.province.name" },
     { title: "long", key: "long" },
     { title: "lat", key: "lat" },
+    { title: "Sensor Type", key: "sensor_type" },
     { title: "status", key: "status" },
-    { title: "", key: "actions" },
+    { title: "Actions", key: "actions" },
 ];
 
 const showModalForm = (val) => {
@@ -76,23 +77,36 @@ const reloadSensorsUnderPh = async () => {
                 loading-text="Loading... Please wait"
             >
                 <template v-slot:item.actions="{ item }">
-                    <v-btn
-                        class="me-2"
-                        color="success"
-                        @click="editItem(item, 'Update')"
-                        variant="tonal"
-                        size="small"
-                    >
-                        <v-icon size="small"> mdi-pencil </v-icon> Edit
-                    </v-btn>
-                    <v-btn
-                        color="error"
-                        @click="deleteItem(item)"
-                        variant="tonal"
-                        size="small"
-                    >
-                        <v-icon> mdi-delete </v-icon> delete
-                    </v-btn>
+                <v-menu open-on-hover>
+                    <template v-slot:activator="{ props }">
+                        <v-btn color="#BDBDBD" v-bind="props" size="small">
+                                Action
+                            </v-btn>
+                    </template>
+                    <v-list max-width="200px" class="p-2">
+                        <div width="100%">
+                                <v-btn
+                                    width="100%"
+                                    class="me-2 mb-2"
+                                    color="success"
+                                    @click="editItem(item, 'Update')"
+                                    variant="flat"
+                                    size="small"
+                                >
+                                    <v-icon size="small"> mdi-pencil </v-icon> Edit
+                                </v-btn>
+                                <v-btn
+                                    width="100%"
+                                    color="error"
+                                    @click="deleteItem(item)"
+                                    variant="flat"
+                                    size="small"
+                                >
+                                    <v-icon> mdi-delete </v-icon> delete
+                                </v-btn>
+                        </div>
+                    </v-list>
+                </v-menu>
                 </template>
 
                 <template v-slot:bottom>

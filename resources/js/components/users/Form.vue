@@ -206,7 +206,7 @@ const ResetPassword = async () => {
                     </v-row>
                     <v-row>
                         
-                <v-btn v-if="form.id" color="primary" @click="ResetPassword()" variant="tonal" class="mt-2">
+                <v-btn v-if="form.id" color="primary" @click="ResetPassword()" variant="flat" class="mt-4">
                     RESET PASSWORD
                 </v-btn>
                     </v-row>
@@ -215,10 +215,10 @@ const ResetPassword = async () => {
     
             <v-card-actions class="mb-4 mr-5">
                 <v-spacer></v-spacer>
-                <v-btn color="blue-grey-lighten-2" @click="close()" variant="tonal">
+                <v-btn color="blue-grey-lighten-2" @click="close()" variant="flat">
                     Cancel
                 </v-btn>
-                <v-btn color="primary" @click="save()" variant="tonal" :loading="is_loading">
+                <v-btn color="primary" @click="save()" variant="flat" :loading="is_loading">
                     Save
                 </v-btn>
             </v-card-actions>

@@ -97,7 +97,7 @@ const statusColor = (status) => {
                 loading-text="Loading... Please wait"
             >
                 <template v-slot:item.status="{ item}">
-                    <v-chip :color="statusColor(item.status)">
+                    <v-chip :color="statusColor(item.status)" variant="flat" class="pb-1">
                         {{ item.status }}
                     </v-chip>
                 </template>
@@ -107,33 +107,47 @@ const statusColor = (status) => {
                     </span>
                 </template>
                 <template v-slot:item.actions="{ item }">
-                    <v-btn
-                        class="me-2"
-                        color="success"
-                        @click="editItem(item)"
-                        variant="tonal"
-                        size="small"
-                    >
-                        <v-icon size="small"> mdi-pencil </v-icon> Update
-                    </v-btn>
-                    <v-btn
-                        color="error"
-                        @click="deleteItem(item)"
-                        variant="tonal"
-                        size="small"
-                    >
-                        <v-icon> mdi-delete </v-icon> delete
-                    </v-btn>
-                    <v-btn
-                        class="me-2 ml-2"
-                        color="blue"
-                        variant="tonal"
-                        size="small"
-                        @click="showItemLog(item)"
-                    >
-                        <v-icon> mdi-post </v-icon> logs
-                    </v-btn>
-
+                    <v-menu open-on-hover>
+                        <template v-slot:activator="{ props}" >
+                            <v-btn color="#BDBDBD" v-bind="props" size="small">
+                                Action
+                            </v-btn>
+                        </template>
+                        <v-list max-width="200px" class="p-2">
+                            <div width="100%">
+                                <v-btn
+                                    width="100%"
+                                    class="me-2 mb-2"
+                                    color="success"
+                                    @click="editItem(item)"
+                                    variant="flat"
+                                    size="small"
+                                >
+                                    <v-icon size="small"> mdi-pencil </v-icon> Update
+                                </v-btn>
+                                <v-btn
+                                    width="100%"
+                                    class="me-2 mb-2"
+                                    color="error"
+                                    @click="deleteItem(item)"
+                                    variant="flat"
+                                    size="small"
+                                >
+                                    <v-icon> mdi-delete </v-icon> delete
+                                </v-btn>
+                                <v-btn
+                                    width="100%"
+                                    class="me-2"
+                                    color="blue"
+                                    variant="flat"
+                                    size="small"
+                                    @click="showItemLog(item)"
+                                >
+                                    <v-icon> mdi-post </v-icon> logs
+                                </v-btn>
+                            </div>
+                        </v-list>
+                    </v-menu>
                 </template>
                 <template v-slot:bottom>
                     <div class="m-2">

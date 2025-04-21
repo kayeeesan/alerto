@@ -26,7 +26,8 @@ class SensorUnderPhRequest extends FormRequest
             'river.id' => 'required|exists:rivers,id',
             'municipality.id' => 'required|exists:municipalities,id',
             'long' => 'required|numeric|min:0',
-            'lat' => 'required|numeric|min:0'
+            'lat' => 'required|numeric|min:0',
+            'sensor_type' => 'required|string'
         ];
     }
 }
