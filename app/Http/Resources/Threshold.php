@@ -18,17 +18,18 @@ class Threshold extends JsonResource
      
      public function toArray(Request $request)
      {
-         $sensorData = null;
-     
-         if ($this->sensorable instanceof \App\Models\SensorUnderPh) {
-             $sensorData = new SensorUnderPh($this->sensorable);
-         } elseif ($this->sensorable instanceof \App\Models\SensorUnderAlerto) {
-             $sensorData = new SensorUnderAlerto($this->sensorable);
-         }
+        $sensorData = null;
+
+        // Checking the type of sensorable and assigning the correct resource
+        if ($this->sensorable instanceof \App\Models\SensorUnderPh) {
+            $sensorData = new SensorUnderPh($this->sensorable);
+        } elseif ($this->sensorable instanceof \App\Models\SensorUnderAlerto) {
+            $sensorData = new SensorUnderAlerto($this->sensorable);
+        }
      
          return [
              'id' => $this->id,
-             'sensor' => $sensorData, // This will have .name, .id, .municipality, etc.
+             'sensor' => $sensorData, 
              'baseline' => $this->baseline,
              'sixty_percent' => $this->sixty_percent,
              'eighty_percent' => $this->eighty_percent,

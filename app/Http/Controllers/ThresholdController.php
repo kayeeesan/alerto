@@ -21,17 +21,6 @@ class ThresholdController extends Controller
         $this->logService = $logService;
     }
 
-    // public function index(Request $request)
-    // {
-    //     $query = Threshold::with('sensor.river', 'sensor.municipality');
-
-    //     if ($request->has('search')) {
-    //         $query->where('sensor_id', 'like', '%' . $request->search . '%');
-    //     }
-
-    //     $thresholds = $query->paginate(10);
-    //     return ResourcesThreshold::collection($thresholds);
-    // }
     public function index(Request $request)
         {
             $query = Threshold::with([
@@ -54,9 +43,8 @@ class ThresholdController extends Controller
             $threshold = new Threshold();
             // $threshold->sensor_id = $request->input('sensor.id');
             $sensor = $request->input('sensor');
-            $threshold->sensorable_type = $sensor['type']; // 'SensorUnderAlerto' or 'SensorUnderPh'
-            $threshold->sensorable_id = $sensor['id'];
-
+            $threshold->sensorable_type = $request->input('sensorable_type');
+            $threshold->sensorable_id = $request->input('sensorable_id');
             $threshold->baseline = $request->baseline;
             $threshold->sixty_percent = $request->sixty_percent;
             $threshold->eighty_percent = $request->eighty_percent;
@@ -103,13 +91,9 @@ class ThresholdController extends Controller
             $threshold = Threshold::findOrFail($id);
             $oldData = $threshold->toArray();
             // $threshold->sensor_id = $request->sensor['id'];
-            $sensor = $request->input('sensor'); // Expecting the sensor as an object (with 'id' and 'type')
-
-            // Update the polymorphic relationship data
-            $threshold->sensorable_type = $sensor['type']; // 'SensorUnderAlerto' or 'SensorUnderPh'
-            $threshold->sensorable_id = $sensor['id'];
-
-            
+            $sensor = $request->input('sensor'); 
+            $threshold->sensorable_type = $request->input('sensorable_type');
+            $threshold->sensorable_id = $request->input('sensorable_id');
             $threshold->baseline = $request->baseline;
             $threshold->sixty_percent = $request->sixty_percent;
             $threshold->eighty_percent = $request->eighty_percent;

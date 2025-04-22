@@ -29,7 +29,6 @@ const initialState = {
 
 const form = reactive({ ...initialState });
 
-// Watch for changes to the threshold prop and update form data accordingly
 watch(() => props.threshold, (value) => {
     if (value) {
         form.id = value.id;
@@ -44,42 +43,53 @@ watch(() => props.threshold, (value) => {
     }
 });
 
+const sensor_group = ref([]);
+
+watch(sensor_group, (val) => {
+    if (val.length > 1) {
+        // Keep only the last selected item
+        sensor_group.value = [val[val.length - 1]];
+    }
+});
+
+
 const show_form_modal = ref(false);
+
 watch(() => props.value, (value) => {
     show_form_modal.value = value;
-});
 
-const sensor_group = ref("alerto");
+});
 
 const available_sensors = computed(() => {
-    return sensor_group.value === "alerto"
-        ? sensors_under_alerto.value.map(sensor => ({
+    const result = [];
+
+    if (sensor_group.value.includes("alerto")) {
+        result.push(...sensors_under_alerto.value.map(sensor => ({
             ...sensor,
-            type: "App\\Models\\SensorUnderAlerto"  // Add the type explicitly
-        }))
-        : sensors_under_ph.value.map(sensor => ({
+            type: "App\\Models\\SensorUnderAlerto"
+        })));
+    }
+
+    if (sensor_group.value.includes("ph")) {
+        result.push(...sensors_under_ph.value.map(sensor => ({
             ...sensor,
-            type: "App\\Models\\SensorUnderPh"  // Add the type explicitly
-        }));
+            type: "App\\Models\\SensorUnderPh"
+        })));
+    }
+
+    return result;
 });
 
-
-// Close the form modal
 const close = () => {
     emit("input", false);
     errors.value = {};
 };
 
-// Save the threshold data
 const save = async () => {
-    console.log("Selected sensor:", form.sensor); // Check if sensor has 'id' and 'type'
-    
     const payload = {
         ...form,
         sensorable_id: form.sensor?.id,
-        sensorable_type: sensor_group.value === "alerto" 
-            ? "App\\Models\\SensorUnderAlerto" 
-            : "App\\Models\\SensorUnderPh"
+        sensorable_type: form.sensor?.type
     };
 
     try {
@@ -98,9 +108,6 @@ const save = async () => {
     }
 };
 
-
-
-// Fetch sensor data on mounted
 onMounted(() => {
     getSensorsUnderAlerto();
     getSensorsUnderPh();
@@ -118,14 +125,19 @@ onMounted(() => {
             <v-card-text>
                 <v-container fluid>
                     <v-row>
-                        <v-radio-group v-model="sensor_group" label="Sensor Group">
-                            <v-radio label="Sensors under Alerto" value="alerto"></v-radio>
-                            <v-radio label="Sensors under PH" value="ph"></v-radio>
-                        </v-radio-group>
+                        <v-checkbox
+                            v-model="sensor_group"
+                            label="Sensors under Alerto"
+                            value="alerto"
+                        ></v-checkbox>
+                        <v-checkbox
+                            v-model="sensor_group"
+                            label="Sensors under PH"
+                            value="ph"
+                        ></v-checkbox>
                     </v-row>
 
                     <v-row>
-                        <!-- Sensor selection based on selected sensor group -->
                         <vue-multiselect
                             v-model="form.sensor"
                             :options="available_sensors"
