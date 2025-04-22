@@ -35,7 +35,7 @@ onMounted(() => {
 const editItem = (value, action) => {
     threshold.value = value;
     action_type.value = action;
-    show_form_modal.value = value;
+    show_form_modal.value = true;
 };
 
 const deleteItem = async (value) => {
