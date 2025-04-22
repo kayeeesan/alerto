@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onMounted, computed } from "vue";
+import { ref, reactive, watch, onMounted, computed, nextTick  } from "vue";
 import useThresholds from "../../../composables/threshold";
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
@@ -29,8 +29,10 @@ const initialState = {
 
 const form = reactive({ ...initialState });
 
-watch(() => props.threshold, (value) => {
+watch(() => props.threshold, async (value) => {
     if (value) {
+        await nextTick(); // Wait for components to render
+        
         form.id = value.id;
         form.sensor = value.sensor;
         form.sensor_id = value.sensor?.id;
@@ -40,8 +42,17 @@ watch(() => props.threshold, (value) => {
         form.one_hundred_percent = value.one_hundred_percent;
         form.xs_date = value.xs_date;
         form.water_level = value.water_level;
+
+        // Set sensor group based on type
+        if (value.sensor?.type) {
+            if (value.sensor.type.includes('SensorUnderAlerto')) {
+                sensor_group.value = ['alerto'];
+            } else if (value.sensor.type.includes('SensorUnderPh')) {
+                sensor_group.value = ['ph'];
+            }
+        }
     }
-});
+}, { immediate: true, deep: true });
 
 const sensor_group = ref([]);
 
@@ -62,19 +73,36 @@ watch(() => props.value, (value) => {
 
 const available_sensors = computed(() => {
     const result = [];
+    
+    // Add current sensor first if it exists
+    if (props.threshold?.sensor) {
+        result.push({
+            ...props.threshold.sensor,
+            type: props.threshold.sensor.type
+        });
+    }
 
+    // Add sensors from selected groups
     if (sensor_group.value.includes("alerto")) {
-        result.push(...sensors_under_alerto.value.map(sensor => ({
-            ...sensor,
-            type: "App\\Models\\SensorUnderAlerto"
-        })));
+        sensors_under_alerto.value.forEach(sensor => {
+            if (!result.some(s => s.id === sensor.id)) {
+                result.push({
+                    ...sensor,
+                    type: "App\\Models\\SensorUnderAlerto"
+                });
+            }
+        });
     }
 
     if (sensor_group.value.includes("ph")) {
-        result.push(...sensors_under_ph.value.map(sensor => ({
-            ...sensor,
-            type: "App\\Models\\SensorUnderPh"
-        })));
+        sensors_under_ph.value.forEach(sensor => {
+            if (!result.some(s => s.id === sensor.id)) {
+                result.push({
+                    ...sensor,
+                    type: "App\\Models\\SensorUnderPh"
+                });
+            }
+        });
     }
 
     return result;
@@ -86,10 +114,18 @@ const close = () => {
 };
 
 const save = async () => {
+    // Ensure we have the type from either current selection or existing threshold
+    const sensorable_type = form.sensor?.type || props.threshold?.sensor?.type;
+    
+    if (!sensorable_type) {
+        errors.value = { sensorable_type: ["The sensorable type field is required."] };
+        return;
+    }
+
     const payload = {
         ...form,
-        sensorable_id: form.sensor?.id,
-        sensorable_type: form.sensor?.type
+        sensorable_id: form.sensor?.id || form.sensor_id,
+        sensorable_type: sensorable_type
     };
 
     try {
@@ -99,9 +135,9 @@ const save = async () => {
             await storeThreshold(payload);
         }
 
-        if (is_success.value === true) {
+        if (is_success.value) {
             emit("reloadThresholds");
-            emit("input", false);
+            close();
         }
     } catch (error) {
         errors.value = error.response?.data?.errors || {};
@@ -123,8 +159,8 @@ onMounted(() => {
             </v-card-title>
 
             <v-card-text>
-                <v-container fluid>
-                    <v-row>
+                <v-container fluid class="pt-0">
+                    <div class="d-flex">
                         <v-checkbox
                             v-model="sensor_group"
                             label="Sensors under Alerto"
@@ -135,8 +171,8 @@ onMounted(() => {
                             label="Sensors under PH"
                             value="ph"
                         ></v-checkbox>
-                    </v-row>
-
+                    </div>
+                   
                     <v-row>
                         <vue-multiselect
                             v-model="form.sensor"

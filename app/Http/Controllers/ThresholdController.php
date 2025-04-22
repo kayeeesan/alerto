@@ -37,106 +37,91 @@ class ThresholdController extends Controller
         }
 
 
-    public function store(ThresholdRequest $request)
-    {
-        try {
-            $threshold = new Threshold();
-            // $threshold->sensor_id = $request->input('sensor.id');
-            $sensor = $request->input('sensor');
-            $threshold->sensorable_type = $request->input('sensorable_type');
-            $threshold->sensorable_id = $request->input('sensorable_id');
-            $threshold->baseline = $request->baseline;
-            $threshold->sixty_percent = $request->sixty_percent;
-            $threshold->eighty_percent = $request->eighty_percent;
-            $threshold->one_hundred_percent = $request->one_hundred_percent;
-            $threshold->xs_date = $request->xs_date;
-            $threshold->water_level = $request->water_level;
-            $threshold->save();
-
-           // Check if the water level exceeds any threshold value and create an alert
-        if ($threshold->water_level > $threshold->one_hundred_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is critical: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
-        } elseif ($threshold->water_level > $threshold->eighty_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is on alert: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
-        } elseif ($threshold->water_level > $threshold->sixty_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Please monitor water level: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
+        public function store(ThresholdRequest $request)
+        {
+            try {
+                $threshold = Threshold::create([
+                    'sensorable_type' => $request->sensorable_type,
+                    'sensorable_id' => $request->sensorable_id,
+                    'baseline' => $request->baseline,
+                    'sixty_percent' => $request->sixty_percent,
+                    'eighty_percent' => $request->eighty_percent,
+                    'one_hundred_percent' => $request->one_hundred_percent,
+                    'xs_date' => $request->xs_date,
+                    'water_level' => $request->water_level
+                ]);
+        
+                $this->createAlertIfNeeded($threshold);
+        
+                $this->logService->logAction('Threshold', $threshold->id, 'create', $threshold->toArray());
+        
+                return response()->json([
+                    'message' => 'Threshold has been successfully saved.',
+                    'data' => new ResourcesThreshold($threshold)
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
         }
-
-            $this->logService->logAction('Threshold', $threshold->id, 'create', $threshold->toArray());
-
-            return response()->json(['message' => 'threshold has been successfully saved.']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()]);
+        
+        public function update($id, ThresholdRequest $request)
+        {
+            try {
+                $threshold = Threshold::findOrFail($id);
+                $oldData = $threshold->toArray();
+        
+                $threshold->update([
+                    'sensorable_type' => $request->sensorable_type,
+                    'sensorable_id' => $request->sensorable_id,
+                    'baseline' => $request->baseline,
+                    'sixty_percent' => $request->sixty_percent,
+                    'eighty_percent' => $request->eighty_percent,
+                    'one_hundred_percent' => $request->one_hundred_percent,
+                    'xs_date' => $request->xs_date,
+                    'water_level' => $request->water_level
+                ]);
+        
+                $this->createAlertIfNeeded($threshold);
+        
+                $this->logService->logAction('Threshold', $threshold->id, 'update', [
+                    'old' => $oldData,
+                    'new' => $threshold->toArray(),
+                ]);
+        
+                return response()->json([
+                    'message' => 'Threshold has been successfully updated.',
+                    'data' => new ResourcesThreshold($threshold)
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
         }
-    }
-
-    public function update($id, ThresholdRequest $request)
-    {
-        try {
-            $threshold = Threshold::findOrFail($id);
-            $oldData = $threshold->toArray();
-            // $threshold->sensor_id = $request->sensor['id'];
-            $sensor = $request->input('sensor'); 
-            $threshold->sensorable_type = $request->input('sensorable_type');
-            $threshold->sensorable_id = $request->input('sensorable_id');
-            $threshold->baseline = $request->baseline;
-            $threshold->sixty_percent = $request->sixty_percent;
-            $threshold->eighty_percent = $request->eighty_percent;
-            $threshold->one_hundred_percent = $request->one_hundred_percent;
-            $threshold->xs_date = $request->xs_date;
-            $threshold->water_level = $request->water_level;
-            $threshold->update();
-
-              // Check if the updated water level exceeds any threshold value and create an alert
-        if ($threshold->water_level > $threshold->one_hundred_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is critical .Water level: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
-        } elseif ($threshold->water_level > $threshold->eighty_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Water is on alert. Water level: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
-        } elseif ($threshold->water_level > $threshold->sixty_percent) {
-            $alert = new Alert();
-            $alert->threshold_id = $threshold->id;
-            $alert->details = 'Please monitor water level. Water level: ' . $threshold->water_level;
-            $alert->status = 'pending';
-            $alert->expired_at = now()->addMinutes(2);
-            $alert->save();
+        
+        // New protected method to handle alert creation
+        protected function createAlertIfNeeded(Threshold $threshold)
+        {
+            $details = '';
+            $status = 'pending';
+            
+            if ($threshold->water_level > $threshold->one_hundred_percent) {
+                $details = 'Water is critical. Water level: ' . $threshold->water_level;
+            } elseif ($threshold->water_level > $threshold->eighty_percent) {
+                $details = 'Water is on alert. Water level: ' . $threshold->water_level;
+            } elseif ($threshold->water_level > $threshold->sixty_percent) {
+                $details = 'Please monitor water level. Water level: ' . $threshold->water_level;
+            }
+        
+            if (!empty($details)) {
+                Alert::updateOrCreate(
+                    ['threshold_id' => $threshold->id],
+                    [
+                        'details' => $details,
+                        'status' => $status,
+                        'expired_at' => now()->addMinutes(2)
+                    ]
+                );
+            }
         }
-
-
-            $this->logService->logAction('Threshold', $threshold->id, 'update', [
-                'old' => $oldData,
-                'new' => $threshold->toArray(),
-            ]);
-
-            return response(['message' => 'Threshold has been successfully updated.']);
-        } catch (\Exception $e) {
-            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-    }
 
     public function destroy($id)
     {
