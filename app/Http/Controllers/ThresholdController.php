@@ -102,26 +102,28 @@ class ThresholdController extends Controller
         {
             $details = '';
             $status = 'pending';
-            
-            if ($threshold->water_level > $threshold->one_hundred_percent) {
+        
+            if ($threshold->water_level >= $threshold->one_hundred_percent) {
                 $details = 'Water is critical. Water level: ' . $threshold->water_level;
-            } elseif ($threshold->water_level > $threshold->eighty_percent) {
+            } elseif ($threshold->water_level >= $threshold->eighty_percent) {
                 $details = 'Water is on alert. Water level: ' . $threshold->water_level;
-            } elseif ($threshold->water_level > $threshold->sixty_percent) {
+            } elseif ($threshold->water_level >= $threshold->sixty_percent) {
                 $details = 'Please monitor water level. Water level: ' . $threshold->water_level;
             }
         
-            if (!empty($details)) {
-                Alert::updateOrCreate(
-                    ['threshold_id' => $threshold->id],
-                    [
-                        'details' => $details,
-                        'status' => $status,
-                        'expired_at' => now()->addMinutes(2)
-                    ]
-                );
+            if (empty($details)) {
+                return; // nothing to create
             }
+        
+            Alert::create([
+                'threshold_id' => $threshold->id,
+                'details' => $details,
+                'status' => $status,
+                'expired_at' => now()->addMinutes(2),
+                'user_id' => auth()->id(), // optional
+            ]);
         }
+        
 
     public function destroy($id)
     {

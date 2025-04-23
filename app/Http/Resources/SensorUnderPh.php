@@ -17,8 +17,20 @@ class SensorUnderPh extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'river' => $this->river,
-            'municipality' => $this->municipality,
+            'municipality' => [
+                'id' => $this->municipality?->id,
+                'name' => $this->municipality?->name,
+                'province' => [
+                    'id' => $this->province?->id,
+                    'name' => $this->province?->name,
+                ],
+            ],
+            'municipality_id' => $this->municipality_id,
+            'river' => [
+                'id' => $this->river?->id,
+                'name' => $this->river?->name,
+            ],
+            'river_id' => $this->river_id,
             'long' => $this->long,
             'lat' => $this->lat,
             'status' => $this->status,

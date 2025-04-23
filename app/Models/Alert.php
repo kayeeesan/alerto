@@ -32,4 +32,11 @@ class Alert extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeExpiredPending($query)
+    {
+        return $query->where('status', 'pending')
+                    ->where('expired_at', '<=', now());
+    }
+
 }

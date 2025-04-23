@@ -18,9 +18,9 @@ const alert_tabs = ref([
 const headers = [
   { title: "Color", key: "color" },
   { title: "Details", key: "details" },
-  { title: "Sensor Location", key: "threshold.sensor.municipality.name" },
+  { title: "Sensor Location", key: "threshold.sensorable.municipality.name" },
   { title: "Action Needed", key: "response.action" },
-  { title: "River", key: "threshold.sensor.river.name" },
+  { title: "River", key: "threshold.sensorable.river.name" },
   { title: "Responder", key: "user.username" },
   { title: "Status", key: "status" },
   { title: "Actions", key: "actions", sortable: false }
@@ -136,7 +136,16 @@ watch(
       :key="tabItem.id"
       :value="tabItem.value"
     >
-      {{ tabItem.name }} ({{ tabItem.count }})
+        <v-badge
+            :content="tabItem.count"
+            v-if="tabItem.count > 0"
+            color="red"
+            inline
+            offset-x="8"
+          >
+            {{ tabItem.name }}
+          </v-badge>
+           <template v-else>{{ tabItem.name }}</template>
     </v-tab>
   </v-tabs>
 
