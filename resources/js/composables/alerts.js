@@ -14,7 +14,7 @@ export default function useAlerts() {
         page: 1,
     });
 
-    // Fetch the alerts with pagination and search functionality
+   
     const getAlerts = async (params = {}) => {
         is_loading.value = true;
         

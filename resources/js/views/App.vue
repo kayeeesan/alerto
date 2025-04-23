@@ -91,7 +91,7 @@ const mainContentClass = computed(() => ({
                 inline
             ></v-badge> -->
             <div class="d-flex align-center pr-6">
-              <v-menu transition="scale-transition" offset-y>
+              <v-menu transition="scale-transition" offset-y open-on-hover>
                 <template v-slot:activator="{ props }">
                   <v-btn
                     v-bind="props"
@@ -119,7 +119,7 @@ const mainContentClass = computed(() => ({
                     </v-avatar>
                     <div class="ml-4">
                       <div class="text-subtitle-1 font-weight-bold">
-                        Hi, {{ user.full_name.split(" ")[0].toUpperCase() }}!
+                        Hi, {{ user.first_name.split(" ")[0].toUpperCase() }}!
                       </div>
                       <div class="text-caption">{{ user.email }}</div>
                       <div class="text-caption grey--text">Managed by Alerto Staff</div>
@@ -129,28 +129,40 @@ const mainContentClass = computed(() => ({
                   <v-divider class="mb-3"></v-divider>
 
                   <v-btn
-                    variant="outlined"
+                    variant="flat"
                     block
                     class="mb-2 text-none"
                     @click="ShowModalForm"
+                    color="#003092"
+                    style="color: white; letter-spacing: 0.5px;"
                   >
+                    <v-icon left>mdi-account</v-icon>
                     View Profile
                   </v-btn>
 
                   <v-btn
-                    variant="text"
+                    variant="outlined"
                     block
                     class="text-none"
                     @click="logout"
+                    color="#d32f2f"
+                    style="letter-spacing: 0.5px;"
                   >
+                    <v-icon left>mdi-logout</v-icon>
                     Sign out
                   </v-btn>
 
                   <v-divider class="my-3"></v-divider>
 
                   <div class="text-caption d-flex justify-space-between grey--text">
-                    <span style="cursor: pointer;">{{ localTime }} </span>
-                    <span style="cursor: pointer;">{{ user.username}}</span>
+                    <span style="cursor: pointer; display: flex; align-items: center;">
+                      <v-icon small class="mr-1">mdi-clock-outline</v-icon>
+                      {{ localTime }}
+                    </span>
+                    <span style="cursor: pointer; display: flex; align-items: center;">
+                      <v-icon small class="mr-1">mdi-account-circle</v-icon>
+                      {{ user.username }}
+                    </span>
                   </div>
                 </v-card>
               </v-menu>

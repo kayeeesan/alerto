@@ -20,14 +20,14 @@ class AlertController extends Controller
      */
     public function index(Request $request)
     {
-    $query = Alert::with('threshold', 'threshold.sensor.municipality', 'threshold.sensor.river', 'user');
-        
-    if ($request->has('search')) {
-        $query->where('sensor_id', 'like', '%' . $request->search . '%');
-    }
+        $query = Alert::with('threshold', 'threshold.sensorable.municipality', 'threshold.sensorable.river', 'user');
+                
+            if ($request->has('search')) {
+            $query->where('sensor_id', 'like', '%' . $request->search . '%');
+        }
 
-    $alerts = $query->paginate(10);
-    return ResourcesAlert::collection($alerts);
+        $alerts = $query->paginate(10);
+        return ResourcesAlert::collection($alerts);
     }
 
 
