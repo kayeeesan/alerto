@@ -148,7 +148,24 @@ class StaffController extends Controller
 
     public function destroy($id)
     {
-        Staff::findOrFail($id)->delete();
-        return response(['message' => 'Staff has been successfully deleted!']);
+        // Staff::findOrFail($id)->delete();
+        // return response(['message' => 'Staff has been successfully deleted!']);
+        DB::beginTransaction();
+        try {
+            $staff = Staff::findOrFail($id);
+            $username = $staff->username;
+
+            $staff->delete();
+
+            $user = User::where('username', $username)->first();
+                if ($user) {
+                    $user->delete();
+                }
+
+            return response(['message' => 'Staff has been successfully deleted!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

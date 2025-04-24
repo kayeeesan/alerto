@@ -177,8 +177,24 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
-        $this->logService->logAction('User', $id, 'delete');
-        return response(['message' => 'User has been successfully deleted!']);
+        try {
+            $user = User::findOrFail($id);
+            $username = $user->username;
+    
+            $user->delete();
+    
+            $this->logService->logAction('User', $id, 'delete');
+    
+            $staff = Staff::where('username', $username)->first();
+            if ($staff) {
+                $staff->delete();
+            }
+    
+            return response(['message' => 'User has been successfully deleted!']);
+        } catch (\Exception $e) {
+            \Log::error('Error in UserController@destroy: ' . $e->getMessage());
+            return response(['message' => 'Something went wrong.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+    
 }

@@ -252,7 +252,7 @@ const filteredRivers = computed(() => {
                                     <v-text-field 
                                     v-model="form.fb_lgu" 
                                     prepend-icon="mdi-account"
-                                    label="Facebook Lgu*" 
+                                    label="Facebook LGU*" 
                                     variant="outlined"
                                     :error-messages="errors.fb_lgu || []">
                                     </v-text-field>
