@@ -1,45 +1,80 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
-const { sensors_under_alerto, pagination, query, is_loading, getSensorsUnderAlerto } = useSensorsUnderAlerto();
+// Composables
+const {
+  sensors_under_alerto,
+  pagination,
+  query,
+  is_loading: alertoLoading,
+  getSensorsUnderAlerto
+} = useSensorsUnderAlerto();
 
+const {
+  sensors_under_ph,
+  is_loading: phLoading,
+  getSensorsUnderPh
+} = useSensorsUnderPh();
+
+// Tabs
 const sensor_type = ref("ARG");
-
 const sensor_tabs = ref([
   { id: 1, name: "ARG", value: "ARG" },
   { id: 2, name: "WLMS", value: "WLMS" },
   { id: 3, name: "TANDEM", value: "TANDEM" }
 ]);
 
+// Table headers
 const headers = [
   { key: "river.name", title: "River" },
   { key: "municipality.name", title: "Region" },
   { key: "name", title: "Sensor Name" },
   { key: "sensor_type", title: "Type" },
   { key: "status", title: "Status" },
-  { key: "", title: "Last Update" },
-  { key: "rain_mm", title: "Rain (mm)" }, // Assuming "rain_mm" exists in the data
+  { key: "updated_at", title: "Last Update" },
+  { key: "rain_mm", title: "Rain (mm)" }
 ];
 
+// Merge sensors from both sources
+const all_sensors = computed(() => [
+  ...sensors_under_alerto.value,
+  ...sensors_under_ph.value
+]);
+
+// Filter sensors by sensor_type and search
 const filteredSensors = computed(() => {
-  return sensors_under_alerto.value.filter(sensor => sensor.sensor_type === sensor_type.value);
+  return all_sensors.value.filter(sensor => {
+    const matchesType = sensor.sensor_type === sensor_type.value;
+    const matchesSearch = query.search
+      ? (sensor.name?.toLowerCase().includes(query.search.toLowerCase()) ||
+         sensor.river?.name?.toLowerCase().includes(query.search.toLowerCase()) ||
+         sensor.municipality?.name?.toLowerCase().includes(query.search.toLowerCase()))
+      : true;
+    return matchesType && matchesSearch;
+  });
 });
 
-// Watch to reload data on sensor type change or search
+// Unified loading state
+const isLoading = computed(() => alertoLoading.value || phLoading.value);
+
+// Fetch on mount
+onMounted(async () => {
+  await getSensorsUnderAlerto({ sensor_type: sensor_type.value });
+  await getSensorsUnderPh({ sensor_type: sensor_type.value });
+});
+
+// Fetch on change
 watch([() => sensor_type.value, () => query.search], async () => {
   await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
-});
-
-// Initial load
-onMounted(() => {
-  getSensorsUnderAlerto({ sensor_type: sensor_type.value });
+  await getSensorsUnderPh({ sensor_type: sensor_type.value, query: query.search });
 });
 </script>
 
 <template>
   <v-col cols="11.5" style="padding: 0 !important;">
-    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative;  border: 1px solid #E0E0E0;">
+    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; border: 1px solid #E0E0E0;">
       <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"></span>
       <div>
         <p class="text-black" style="font-size: 20px;">SENSORS STATUS</p>
@@ -69,9 +104,10 @@ onMounted(() => {
           :items="filteredSensors"
           :search="query.search"
           class="elevation-1 p-2"
-          :loading="is_loading"
+          :loading="isLoading"
           loading-text="Loading... Please wait"
         >
+          <!-- Custom slots -->
           <template v-slot:item["river.name"]="{ item }">
             {{ item.river?.name || 'N/A' }}
           </template>
@@ -88,18 +124,12 @@ onMounted(() => {
             {{ item.rain_mm || '0' }}
           </template>
 
+          <!-- Optional: hide pagination or replace with client-side -->
           <template v-slot:bottom>
             <div class="m-2">
-              <span style="color: gray" v-if="pagination">
-                Showing {{ pagination.from }} to {{ pagination.to }} out of <b>{{ pagination.total }} records</b>
+              <span style="color: gray">
+                Showing {{ filteredSensors.length }} sensors
               </span>
-              <div class="text-center">
-                <v-pagination
-                  v-model="query.page"
-                  circle
-                  @click="getSensorsUnderAlerto"
-                ></v-pagination>
-              </div>
             </div>
           </template>
         </v-data-table>
