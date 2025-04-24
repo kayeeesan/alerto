@@ -52,6 +52,9 @@ const resetForm = () => {
 };
 
 const save = async () => {
+
+    form.role = roles.value.find(role => role.slug === 'project-staff');
+    
     if (props.staff?.id) {
         await updateStaff({ ...form });
     } else {
@@ -179,7 +182,7 @@ const filteredRivers = computed(() => {
                             </v-row>
 
                             <!-- Role -->
-                            <v-row>
+                            <!-- <v-row>
                                 <v-col>
                                 <v-input prepend-icon="mdi-account-tie" v-model="form.role">
                                     <vue-multiselect
@@ -191,7 +194,7 @@ const filteredRivers = computed(() => {
                                     />
                                 </v-input>
                                 </v-col>
-                            </v-row>
+                            </v-row> -->
 
                             <!-- Location Fields -->
                             <v-row>
