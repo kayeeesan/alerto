@@ -69,7 +69,7 @@ const reloadMunicipalities = async () => {
             >
             <template v-slot:item.actions="{ item }">
                 <v-menu open-on-hover>
-                    <template v-slot:activator="{ props}" >
+                        <template v-slot:activator="{ props}" >
                             <v-btn color="#BDBDBD" v-bind="props" size="small">
                                 Action
                             </v-btn>
