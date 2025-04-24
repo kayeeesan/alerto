@@ -77,9 +77,7 @@ watch([() => tab.value, () => query.search], async () => {
 });
 
 // Fetch the initial alerts when mounted
-onMounted(() => {
-  getAlerts({ status: tab.value });
-});
+
 
 // Reload alerts function
 const reloadAlerts = async () => {
@@ -112,118 +110,194 @@ const save = async (formData) => {
   }
 };
 
+const statusColor = (status) => {
+    switch (status) {
+        case "pending":
+            return 'red';
+        case "responded":
+            return 'green';
+        case "expired":
+            return 'orange';
+    }
+}
+
 // Update alert tabs counts when alerts change
+// watch(
+//   () => alerts.value,
+//   (newAlerts, oldAlerts) => {
+//     alert_tabs.value.forEach((tabItem) => {
+//       tabItem.count = newAlerts.filter(alert => alert.status === tabItem.value).length;
+//     });
+//   },
+//   { immediate: true }
+// );
+
 watch(
   () => alerts.value,
-  (newAlerts) => {
+  (newAlerts, oldAlerts) => {
+    // Update tab counts
     alert_tabs.value.forEach((tabItem) => {
       tabItem.count = newAlerts.filter(alert => alert.status === tabItem.value).length;
     });
+
+    // Check if any new alerts have expired
+    if (oldAlerts) {
+      const newExpiredAlerts = newAlerts.filter(newAlert => 
+        newAlert.status === "expired" && 
+        !oldAlerts.some(oldAlert => oldAlert.id === newAlert.id && oldAlert.status === "expired")
+      );
+
+      // If there are newly expired alerts, switch to the expired tab
+      if (newExpiredAlerts.length > 0) {
+        tab.value = "expired";
+      }
+    }
   },
-  { immediate: true }
+  { deep: true, immediate: true }
 );
+
+onMounted(() => {
+  getAlerts({ status: tab.value });
+});
+
+setInterval(() => {
+    getAlerts({ status: tab.value, query: query.search });
+  }, 5000); 
 </script>
 
 <template>
-  <v-row class="p-2">
+  <div class="ml-10">
+    <v-row class="p-2">
     <h5 class="fw-bold p-3">List of Alerts</h5>
-  </v-row>
+    </v-row>
 
-  <!-- Tabs for Pending, Responded, and Expired alerts -->
-  <v-tabs v-model="tab" vertical>
-    <v-tab
-      v-for="tabItem in alert_tabs"
-      :key="tabItem.id"
-      :value="tabItem.value"
-    >
-        <v-badge
-            :content="tabItem.count"
-            v-if="tabItem.count > 0"
-            color="red"
-            inline
-            offset-x="8"
-          >
-            {{ tabItem.name }}
-          </v-badge>
-           <template v-else>{{ tabItem.name }}</template>
-    </v-tab>
-  </v-tabs>
-
-  <v-card>
-    <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
-      <v-card-title>
-        <v-text-field
-          v-model="query.search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-card-title>
-
-      <v-data-table 
-        :headers="filteredHeaders"
-        :items="filteredAlerts"
-        :search="query.search"
-        class="elevation-1 p-2"
-        :loading="is_loading"
-        loading-text="Loading... Please wait"
+    <!-- Tabs for Pending, Responded, and Expired alerts -->
+    <v-tabs v-model="tab" vertical>
+      <v-tab
+        v-for="tabItem in alert_tabs"
+        :key="tabItem.id"
+        :value="tabItem.value"
       >
-        <template v-slot:item.color="{ item }">
-          <v-btn
-            class="ma-2"
-            :color="getColor(item)"
-            icon="mdi-alert-circle-outline"
-          ></v-btn>
-        </template>
+          <v-badge
+              :content="tabItem.count"
+              v-if="tabItem.count > 0"
+              color="red"
+              inline
+              offset-x="8"
+            >
+              {{ tabItem.name }}
+            </v-badge>
+            <template v-else>{{ tabItem.name }}</template>
+      </v-tab>
+    </v-tabs>
 
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            class="me-2"
-            color="success"
-            @click="editItem(item, 'Update')"
-            variant="tonal"
-            size="small"
-          >
-            <v-icon size="small">mdi-pencil</v-icon> Respond
-          </v-btn>
-          <v-btn
-            color="error"
-            @click="deleteItem(item)"
-            variant="tonal"
-            size="small"
-          >
-            <v-icon>mdi-delete</v-icon> Delete
-          </v-btn>
-        </template>
+    <v-card>
+      <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
+        <v-card-title>
+          <v-text-field
+            v-model="query.search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
 
-        <template v-slot:bottom>
-          <div class="m-2">
-            <span style="color: gray" v-if="pagination">
-              Showing {{ pagination.from }} to
-              {{ pagination.to }} out of
-              <b>{{ pagination.total }} records</b>
-            </span>
-            <div class="text-center">
-              <v-pagination
-                v-model="query.page"
-                circle
-                @click="getAlerts"
-              >
-              </v-pagination>
+        <v-data-table 
+          :headers="filteredHeaders"
+          :items="filteredAlerts"
+          :search="query.search"
+          class="elevation-1 p-2"
+          :loading="is_loading"
+          loading-text="Loading... Please wait"
+        >
+              <template v-slot:item.status="{ item}">
+                  <v-chip :color="statusColor(item.status)" variant="flat" class="pb-1">
+                      {{ item.status }}
+                  </v-chip>
+              </template>
+          <template v-slot:item.color="{ item }">
+            <v-btn
+              class="ma-2"
+              :color="getColor(item)"
+              icon="mdi-alert-circle-outline"
+            ></v-btn>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-menu open-on-hover>
+                <template v-slot:activator="{ props}" >
+                  <v-btn color="#BDBDBD" v-bind="props" size="small">
+                    Action
+                  </v-btn>
+                </template>
+                <v-list max-width="200px" class="p-2">
+                  <div width="100%">
+                    <v-btn
+                            v-if="tab === 'pending'"
+                             width="100%"
+                            class="me-2 mb-2"
+                            color="success"
+                            @click="editItem(item, 'Update')"
+                            variant="flat"
+                            size="small"
+                          >
+                          <v-icon size="small">mdi-pencil</v-icon> Respond
+                    </v-btn>
+                    <v-btn
+                          v-if="tab === 'responded'"
+                          width="100%"
+                          class="me-2 mb-2"
+                          color="success"
+                          @click="editItem(item, 'Update')"
+                          variant="flat"
+                          size="small"
+                        >
+                        <v-icon size="small">mdi-pencil</v-icon> Update
+                    </v-btn>
+                    <v-btn
+                        width="100%"
+                        color="error"
+                        @click="deleteItem(item)"
+                        variant="flat"
+                        size="small"
+                      >
+                      <v-icon>mdi-delete</v-icon> Delete
+                    </v-btn> 
+                  </div>
+                </v-list>
+            </v-menu>
+          </template>
+
+          <template v-slot:bottom>
+            <div class="m-2">
+              <span style="color: gray" v-if="pagination">
+                Showing {{ pagination.from }} to
+                {{ pagination.to }} out of
+                <b>{{ pagination.total }} records</b>
+              </span>
+              <div class="text-center">
+                <v-pagination
+                  v-model="query.page"
+                  circle
+                  @click="getAlerts"
+                >
+                </v-pagination>
+              </div>
             </div>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-  </v-card>
+          </template>
+        </v-data-table>
+      </div>
+    </v-card>
 
-  <!-- Alert form modal -->
-  <AlertForm
-    :value="show_form_modal"
-    :alert="alert"
-    @input="showModalForm"
-    @reloadAlerts="reloadAlerts"
-    @save="save" 
-  />
+    <!-- Alert form modal -->
+    <AlertForm
+      :value="show_form_modal"
+      :alert="alert"
+      @input="showModalForm"
+      @reloadAlerts="reloadAlerts"
+      @save="save" 
+    />
+  </div>
+
 </template>
