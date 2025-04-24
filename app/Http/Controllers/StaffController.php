@@ -30,7 +30,8 @@ class StaffController extends Controller
     {
         try {
             // Validate if the role exists
-            $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+            // $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+            $role = Role::where('slug', 'project-staff')->firstOrFail();
     
             // Create the Staff entry
             $staff = new Staff();
@@ -38,7 +39,7 @@ class StaffController extends Controller
             $staff->first_name = $request->first_name;
             $staff->last_name = $request->last_name;
             $staff->mobile_number = $request->mobile_number;
-            $staff->role_id = $role->id;  // Store the role id from the request
+            $staff->role_id = $role->id;
             $staff->region_id = $request->input('region.id');
             $staff->province_id = $request->input('province.id');
             $staff->municipality_id = $request->input('municipality.id');
@@ -70,7 +71,7 @@ class StaffController extends Controller
     {
         try {
             // Validate if the role exists
-            $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+            $role = Role::where('slug', 'project-staff')->firstOrFail();
     
             // Create the Staff entry
             $staff = new Staff();

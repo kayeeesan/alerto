@@ -72,6 +72,13 @@ watch(
     }
 );
 
+watch(
+    () => form.role,
+    (value) => {
+        
+    }
+)
+
 const close = () => {
     Object.assign(form, initialState);
     emit("input", false);
@@ -79,6 +86,9 @@ const close = () => {
 }
 
 const save = async () => {
+
+    form.role = roles.value.find(role => role.slug === 'project-staff');
+
     if(props.staff && props.staff.id) {
         await updateStaff({ ...form });
     } else {
@@ -174,7 +184,7 @@ const filteredRivers = computed(() => {
                        
                     </v-row>
 
-                    <v-row>
+                    <!-- <v-row>
                         <v-col>
                             <vue-multiselect
                                 v-model="form.role"
@@ -193,7 +203,7 @@ const filteredRivers = computed(() => {
                             </vue-multiselect>
 
                         </v-col>
-                    </v-row>
+                    </v-row> -->
                     <v-row>
                         <v-col>
                             <vue-multiselect
