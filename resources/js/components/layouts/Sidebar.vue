@@ -1,5 +1,7 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import useAuth from "../../composables/auth";
+import store from "@/store";
 
 const props = defineProps({
     drawer: {
@@ -7,6 +9,15 @@ const props = defineProps({
         default: null
     },
 }); 
+
+const user = store.state.auth.user;
+// const showLibraries = computed(() => {
+//   return !user?.roles.some(role => role.slug === "project-staff");
+// });
+const hasRole = (roleSlug) => {
+  return user?.roles?.some(role => role.slug === roleSlug);
+};
+
 
 // Dashboard items
 const itemsInDashboard = [
@@ -71,7 +82,7 @@ watch(
                     image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
                     class="mr-3"
                 ></v-avatar>
-                <span class="font-weight-bold" style="font-size: 2em; color: white;">ALERTO</span>
+                <span class="font-weight-bold" style="font-size: 2em; color: white;">ALERTO </span>
             </RouterLink>
         </v-sheet>
 
@@ -84,6 +95,7 @@ watch(
                         <span class="sidebar-text" style="color: white;">Dashboard</span>
                     </v-list-item>
                 </template>
+                
         
                 <v-list-item
                     v-for="item in itemsInDashboard"
@@ -111,7 +123,7 @@ watch(
             </v-list-item>
 
             <!-- Libraries Section -->
-            <v-list-group>
+            <v-list-group v-if="hasRole('administrator')">
                 <template v-slot:activator="{ props }">
                     <v-list-item v-bind="props" class="sidebar-item">
                         <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-folder</v-icon>
