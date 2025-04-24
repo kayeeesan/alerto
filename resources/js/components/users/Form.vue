@@ -62,25 +62,25 @@ watch(
     }
 );
 
-const generateUsername = () => {
-    if(!form.id){
-        var fname = form.first_name ? form.first_name.charAt(0).toUpperCase() : ""; 
-        var mname = form.middle_name ? form.middle_name.charAt(0).toUpperCase() : ""; 
+// const generateUsername = () => {
+//     if(!form.id){
+//         var fname = form.first_name ? form.first_name.charAt(0).toUpperCase() : ""; 
+//         var mname = form.middle_name ? form.middle_name.charAt(0).toUpperCase() : ""; 
     
-        form.username = fname + mname;
-    }
-}
+//         form.username = fname + mname;
+//     }
+// }
 
-watch(
-    () => form.last_name,
-    (value)  => {
-        if(!form.id){
-            if (value) {
-                form.username += value.toUpperCase();
-            }
-        }
-    }
-);
+// watch(
+//     () => form.last_name,
+//     (value)  => {
+//         if(!form.id){
+//             if (value) {
+//                 form.username += value.toUpperCase();
+//             }
+//         }
+//     }
+// );
 
 watch(
     () => form.selected_roles,
@@ -156,7 +156,6 @@ const ResetPassword = async () => {
                             v-model="form.last_name"
                             label="Last Name*"
                             variant="outlined"
-                            @keydown="generateUsername"
                             :error-messages="
                                 errors['last_name'] ? errors['last_name'] : []
                             "

@@ -12,7 +12,7 @@ const show_form_modal = ref(false);
 const show_staff_modal = ref(false);
 
 const headers = [
-    { title: "Name", key: "username" },
+    { title: "Email", key: "username" },
     { title: "contact No.", key: "mobile_number" },
     { title: "Municipality", key: "municipality.name" },
     { title: "River", key: "river.name" },
