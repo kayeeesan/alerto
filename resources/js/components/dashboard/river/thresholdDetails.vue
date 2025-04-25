@@ -69,7 +69,7 @@
         </v-row>
       </div>
       
-      <div class="threshold-section">
+      <div class="threshold-section" style="border-bottom-right-radius: 11px; border-bottom-left-radius: 11px;">
         <h2 class="parameter-title">
           <v-icon color="#1976D2" class="mr-2">mdi-waves</v-icon>
           WATER LEVEL ALERTS
@@ -141,6 +141,7 @@ export default {
 <style scoped>
 .threshold-container {
   padding: 0 !important;
+  border-top-right-radius: 11px;
 }
 
 .threshold-sheet {
@@ -151,7 +152,7 @@ export default {
 }
 
 .header-container {
-  padding: 16px 24px 8px;
+  padding: 8px 24px 8px;
   position: relative;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
   border-bottom: 1px solid #d1d9e0;
@@ -191,7 +192,7 @@ export default {
 }
 
 .threshold-section {
-  padding: 20px 24px;
+  padding: 14px 24px;
   background-color: #f8fafc;
 }
 
@@ -207,7 +208,7 @@ export default {
   font-size: 1rem;
   font-weight: 700;
   color: #37474F;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   text-transform: uppercase;
@@ -219,7 +220,7 @@ export default {
 }
 
 .threshold-card {
-  height: 130px;
+  height: 100px;
   border-radius: 10px !important;
   overflow: hidden;
   display: flex;
@@ -291,21 +292,21 @@ export default {
 }
 
 .value-range {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 800;
   color: #263238;
   line-height: 1.2;
 }
 
 .unit {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #546E7A;
   margin: 4px 0;
   font-weight: 600;
 }
 
 .status {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;

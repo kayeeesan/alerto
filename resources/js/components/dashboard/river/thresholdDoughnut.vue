@@ -121,7 +121,7 @@ onMounted(() => {
 .doughnut-chart {
   width: 100% !important;
   height: 100% !important;
-  max-height: 280px;
+  max-height: 380px;
   margin: 0 auto;
 }
 </style>
