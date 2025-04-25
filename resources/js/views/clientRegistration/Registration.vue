@@ -52,7 +52,6 @@ const resetForm = () => {
 };
 
 const save = async () => {
-
     form.role = roles.value.find(role => role.slug === 'project-staff');
     
     if (props.staff?.id) {
@@ -65,9 +64,7 @@ const save = async () => {
         emit("reloadStaffs");
         emit("input", false);
         resetForm();
-
         router.push('/');
-        
     }
 };
 
@@ -90,7 +87,6 @@ watch(
     }
 )
 
-
 onMounted(() => {
     getRoles();
     getRegions();
@@ -111,93 +107,126 @@ const filteredMunicipalities = computed(() => {
 
 const filteredRivers = computed(() => {
     if (!form.municipality || !form.municipality.id) return [];
-    return rivers.value.filter(r => r.municipality.id === form.municipality.id );
- });
-
+    return rivers.value.filter(r => r.municipality.id === form.municipality.id);
+});
 </script>
 
 <template>
     <v-app>
-        <v-layout class="bg-indigo-darken-1">
+        <v-layout class="bg-indigo-darken-1" style="position: relative; overflow: hidden;">
+            <!-- Background Elements -->
+            <div class="bg-circle" style="
+                position: absolute;
+                top: -100px;
+                right: -100px;
+                width: 400px;
+                height: 400px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+            "></div>
+            <div class="bg-circle" style="
+                position: absolute;
+                bottom: -150px;
+                left: -150px;
+                width: 500px;
+                height: 500px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.08);
+            "></div>
+            
             <v-container fluid class="fill-height d-flex align-center justify-center">
-                <v-card class="pa-8" elevation="8" width="650px" rounded="lg">
-                    <v-card-title class="text-h5 text-center font-weight-bold"> Member Registration </v-card-title>
+                <v-card class="pa-8" elevation="8" width="850px" rounded="lg" style="position: relative; z-index: 1;">
+                    <!-- Header Section -->
+                    <div class="text-center mb-6">
+                        <v-img
+                            class="mx-auto mb-4"
+                            max-width="100"
+                            src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+                        ></v-img>
+                        <v-card-title class="text-h4 font-weight-bold text-primary">Member Registration</v-card-title>
+                        <v-card-subtitle class="text-caption">Please fill out all required fields</v-card-subtitle>
+                    </div>
+
                     <v-card-text>
                         <v-form>
-                            <!-- Name Fields -->
-                            <v-row>
-                                <v-col cols="12" sm="6">
-                                    <v-text-field 
-                                    v-model="form.first_name"
-                                    prepend-icon="mdi-account"
-                                    label="First Name*" 
-                                    variant="outlined"
-                                    :error-messages="errors.first_name || []"
-                                    :rules="[
-                                    (v) => !!v || 'This field is required',
-                                    (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
-                                    ]">
-                                    </v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6">
-                                    <v-text-field 
-                                    v-model="form.last_name" 
-                                    prepend-icon="mdi-account"
-                                    label="Last Name*" 
-                                    variant="outlined"
-                                    :error-messages="errors.last_name || []">
-                                    </v-text-field>
-                                </v-col>
-                            </v-row>
-
-                            <!-- Username & Mobile -->
-                            <v-row>
-                                <v-col cols="12" sm="6">
-                                    <v-text-field
-                                        v-model="form.username"
-                                        prepend-icon="mdi-email"
-                                        :rules="[
-                                        (v) => !!v || 'This field is required',
-                                        (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
-                                        ]"
-                                        label="Email*"
-                                        variant="outlined"
-                                        :error-messages="errors.username || []"
-                                    ></v-text-field>
+                            <!-- Personal Information Section -->
+                            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                                <v-card-title class="text-subtitle-1 font-weight-bold">Personal Information</v-card-title>
+                                <v-row>
+                                    <v-col cols="12" sm="6">
+                                        <v-input prepend-icon="mdi-account">
+                                            <v-text-field 
+                                                v-model="form.first_name"
+                                                label="First Name*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.first_name || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                                ></v-text-field>
+                                        </v-input>
                                     </v-col>
+                                    <v-col cols="12" sm="6">
+                                        <v-input prepend-icon="mdi-account">
+                                            <v-text-field 
+                                            v-model="form.last_name" 
+                                            label="Last Name*" 
+                                            variant="outlined"
+                                            density="comfortable"
+                                            :error-messages="errors.last_name || []"
+                                            bg-color="white"
+                                            class="dark-input"
+                                        ></v-text-field>
+                                        </v-input>
+                                    </v-col>
+                                </v-row>
 
-                                <v-col cols="12" sm="6">
-                                    <v-text-field 
-                                    v-model="form.mobile_number" 
-                                    prepend-icon="mdi-phone"
-                                    label="Mobile Number*" 
-                                    variant="outlined"
-                                    :error-messages="errors.mobile_number || []"
-                                    :rules="[
-                                    (v) => !!v || 'This field is required',
-                                    (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
-                                    ]">
-                                    </v-text-field>
-                                </v-col>
-                            </v-row>
+                                <v-row>
+                                    <v-col cols="12" sm="6">
+                                        <v-input prepend-icon="mdi-email">
+                                            <v-text-field
+                                                v-model="form.username"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
+                                                ]"
+                                                label="Email*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.username || []"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </v-input>
+                                    </v-col>
+                                    <v-col cols="12" sm="6">
+                                        <v-input prepend-icon="mdi-phone">
+                                            <v-text-field 
+                                                v-model="form.mobile_number" 
+                                                label="Mobile Number*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.mobile_number || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </v-input>
+                                    </v-col>
+                                </v-row>
+                            </v-card>
 
-                            <!-- Role -->
-                            <!-- <v-row>
-                                <v-col>
-                                <v-input prepend-icon="mdi-account-tie" v-model="form.role">
-                                    <vue-multiselect
-                                    v-model="form.role"
-                                    :options="roles"
-                                    placeholder="Select Role"
-                                    label="name"
-                                    track-by="name"
-                                    />
-                                </v-input>
-                                </v-col>
-                            </v-row> -->
-
-                            <!-- Location Fields -->
-                            <v-row>
+                            <!-- Location Information Section -->
+                            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                                <v-card-title class="text-subtitle-1 font-weight-bold">Location Information</v-card-title>
+                                <v-row>
                                 <v-col>
                                     <v-input prepend-icon="mdi-map" v-model="form.region">
                                         <vue-multiselect 
@@ -207,89 +236,138 @@ const filteredRivers = computed(() => {
                                         label="name" 
                                         track-by="name"/>
                                     </v-input>
-                                    
                                 </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <v-input prepend-icon="mdi-map" v-model="form.province">
-                                        <vue-multiselect
-                                        v-model="form.province"
-                                        :options="filteredProvinces"
-                                        :disabled="!form.region"
-                                        placeholder="Select Province"
-                                        label="name"
-                                        track-by="name"/>      
-                                    </v-input>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <v-input prepend-icon="mdi-city" v-model="form.municipality" >
-                                        <vue-multiselect 
-                                        v-model="form.municipality" 
-                                        :options="filteredMunicipalities"
-                                        :disabled="!form.province"
-                                        placeholder="Select Municipality" 
-                                        label="name" 
-                                        track-by="name"/>
-                                    </v-input>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-input prepend-icon="mdi-map" v-model="form.province">
+                                            <vue-multiselect
+                                            v-model="form.province"
+                                            :options="filteredProvinces"
+                                            :disabled="!form.region"
+                                            placeholder="Select Province"
+                                            label="name"
+                                            track-by="name"/>      
+                                        </v-input>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-input prepend-icon="mdi-city" v-model="form.municipality" >
+                                            <vue-multiselect 
+                                            v-model="form.municipality" 
+                                            :options="filteredMunicipalities"
+                                            :disabled="!form.province"
+                                            placeholder="Select Municipality" 
+                                            label="name" 
+                                            track-by="name"/>
+                                        </v-input>
 
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <v-input  prepend-icon="mdi-waves" v-model="form.river">
-                                        <vue-multiselect 
-                                        v-model="form.river" 
-                                        :options="filteredRivers" 
-                                        :disabled="!form.municipality"
-                                        placeholder="Select River" 
-                                        label="name"
-                                        track-by="name"/>
-                                    </v-input>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="12">
-                                    <v-text-field 
-                                    v-model="form.fb_lgu" 
-                                    prepend-icon="mdi-account"
-                                    label="Facebook LGU*" 
-                                    variant="outlined"
-                                    :error-messages="errors.fb_lgu || []">
-                                    </v-text-field>
-                                </v-col>
-                            </v-row>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-input  prepend-icon="mdi-waves" v-model="form.river">
+                                            <vue-multiselect 
+                                            v-model="form.river" 
+                                            :options="filteredRivers" 
+                                            :disabled="!form.municipality"
+                                            placeholder="Select River" 
+                                            label="name"
+                                            track-by="name"/>
+                                        </v-input>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <v-text-field 
+                                        v-model="form.fb_lgu" 
+                                        prepend-icon="mdi-account"
+                                        label="Facebook LGU*" 
+                                        variant="outlined"
+                                        :error-messages="errors.fb_lgu || []">
+                                        </v-text-field>
+                                    </v-col>
+                                </v-row>
+                            </v-card>
                         </v-form>
                     </v-card-text>
 
-                    <v-card-actions class="justify-end">
+                    <!-- Action Buttons -->
+                    <v-card-actions class="justify-center pt-4">
                         <v-btn 
                             color="red-darken-2" 
                             variant="flat" 
-                            :to="'/'" 
-                            class="mr-2">
-                            <v-icon left>mdi-close</v-icon> Cancel
+                            :to="'/'"
+                            size="large"
+                            class="mr-4"
+                            height="48"
+                            min-width="120"
+                        >
+                            <v-icon start class="mr-1">mdi-close</v-icon>
+                            <span>Cancel</span>
                         </v-btn>
+                        
                         <v-btn 
                             color="orange-darken-2" 
                             variant="flat" 
-                            @click="resetForm" 
-                            class="mr-2">
-                            <v-icon left>mdi-refresh</v-icon> Reset
+                            @click="resetForm"
+                            size="large"
+                            class="mr-4"
+                            height="48"
+                            min-width="120"
+                        >
+                            <v-icon start class="mr-1">mdi-refresh</v-icon>
+                            <span>Reset</span>
                         </v-btn>
+                        
                         <v-btn 
                             color="blue-darken-4" 
                             variant="flat" 
                             :loading="is_loading" 
-                            @click="save">
-                            <v-icon left>mdi-content-save</v-icon> Save
+                            @click="save"
+                            size="large"
+                            height="48"
+                            min-width="120"
+                        >
+                            <v-icon start class="mr-1">mdi-content-save</v-icon>
+                            <span>Submit</span>
                         </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-container>
         </v-layout>
     </v-app>
-   
 </template>
+
+<style scoped>
+.bg-circle {
+    animation: float 15s infinite ease-in-out;
+    filter: blur(1px);
+}
+
+.bg-circle:nth-child(1) {
+    animation-delay: 0s;
+}
+.bg-circle:nth-child(2) {
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+}
+
+.v-card {
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.v-card-title {
+    color: #646dcf;
+}
+</style>
