@@ -1,9 +1,74 @@
+<template>
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">SENSORS STATUS</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="sensors-content">
+        <!-- Tabs -->
+        <v-tabs v-model="sensor_type" class="sensor-tabs">
+          <v-tab v-for="sensorTab in sensor_tabs" :key="sensorTab.id" :value="sensorTab.value">
+            {{ sensorTab.name }}
+          </v-tab>
+        </v-tabs>
+
+        <v-card class="sensor-card">
+          <v-card-title class="search-container">
+            <v-text-field
+              v-model="query.search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+              class="search-field"
+            ></v-text-field>
+          </v-card-title>
+
+          <v-data-table
+            :headers="headers"
+            :items="filteredSensors"
+            :search="query.search"
+            :loading="isLoading"
+            loading-text="Loading... Please wait"
+            class="sensor-table"
+          >
+            <template v-slot:item["river.name"]="{ item }">
+              {{ item.river?.name || 'N/A' }}
+            </template>
+
+            <template v-slot:item["municipality.name"]="{ item }">
+              {{ item.municipality?.name || 'N/A' }}
+            </template>
+
+            <template v-slot:item["updated_at"]="{ item }">
+              {{ new Date(item.updated_at).toLocaleString() }}
+            </template>
+
+            <template v-slot:item["rain_mm"]="{ item }">
+              {{ item.rain_mm || '0' }}
+            </template>
+
+            <template v-slot:bottom>
+              <div class="table-footer">
+                <span>Showing {{ filteredSensors.length }} sensors</span>
+              </div>
+            </template>
+          </v-data-table>
+        </v-card>
+      </div>
+    </v-sheet>
+  </v-col>
+</template>
+
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
-// Composables
 const {
   sensors_under_alerto,
   pagination,
@@ -18,7 +83,6 @@ const {
   getSensorsUnderPh
 } = useSensorsUnderPh();
 
-// Tabs
 const sensor_type = ref("ARG");
 const sensor_tabs = ref([
   { id: 1, name: "ARG", value: "ARG" },
@@ -26,7 +90,6 @@ const sensor_tabs = ref([
   { id: 3, name: "TANDEM", value: "TANDEM" }
 ]);
 
-// Table headers
 const headers = [
   { key: "river.name", title: "River" },
   { key: "municipality.name", title: "Region" },
@@ -37,13 +100,11 @@ const headers = [
   { key: "rain_mm", title: "Rain (mm)" }
 ];
 
-// Merge sensors from both sources
 const all_sensors = computed(() => [
   ...sensors_under_alerto.value,
   ...sensors_under_ph.value
 ]);
 
-// Filter sensors by sensor_type and search
 const filteredSensors = computed(() => {
   return all_sensors.value.filter(sensor => {
     const matchesType = sensor.sensor_type === sensor_type.value;
@@ -56,84 +117,89 @@ const filteredSensors = computed(() => {
   });
 });
 
-// Unified loading state
 const isLoading = computed(() => alertoLoading.value || phLoading.value);
 
-// Fetch on mount
 onMounted(async () => {
   await getSensorsUnderAlerto({ sensor_type: sensor_type.value });
   await getSensorsUnderPh({ sensor_type: sensor_type.value });
 });
 
-// Fetch on change
 watch([() => sensor_type.value, () => query.search], async () => {
   await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
   await getSensorsUnderPh({ sensor_type: sensor_type.value, query: query.search });
 });
 </script>
 
-<template>
-  <v-col cols="11.5" style="padding: 0 !important;">
-    <v-sheet class="pa-4 elevation-3" rounded="lg" style="position: relative; border: 1px solid #E0E0E0;">
-      <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"></span>
-      <div>
-        <p class="text-black" style="font-size: 20px;">SENSORS STATUS</p>
-      </div>
-      <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
 
-      <!-- Tabs -->
-      <v-tabs v-model="sensor_type" vertical>
-        <v-tab v-for="sensorTab in sensor_tabs" :key="sensorTab.id" :value="sensorTab.value">
-          {{ sensorTab.name }}
-        </v-tab>
-      </v-tabs>
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
 
-      <v-card class="mt-4">
-        <v-card-title>
-          <v-text-field
-            v-model="query.search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-        </v-card-title>
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
 
-        <v-data-table
-          :headers="headers"
-          :items="filteredSensors"
-          :search="query.search"
-          class="elevation-1 p-2"
-          :loading="isLoading"
-          loading-text="Loading... Please wait"
-        >
-          <!-- Custom slots -->
-          <template v-slot:item["river.name"]="{ item }">
-            {{ item.river?.name || 'N/A' }}
-          </template>
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
 
-          <template v-slot:item["municipality.name"]="{ item }">
-            {{ item.municipality?.name || 'N/A' }}
-          </template>
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-          <template v-slot:item["updated_at"]="{ item }">
-            {{ new Date(item.updated_at).toLocaleString() }}
-          </template>
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
 
-          <template v-slot:item["rain_mm"]="{ item }">
-            {{ item.rain_mm || '0' }}
-          </template>
+.sensors-content {
+  padding: 16px 24px;
+}
 
-          <!-- Optional: hide pagination or replace with client-side -->
-          <template v-slot:bottom>
-            <div class="m-2">
-              <span style="color: gray">
-                Showing {{ filteredSensors.length }} sensors
-              </span>
-            </div>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-sheet>
-  </v-col>
-</template>
+.sensor-tabs {
+  margin-bottom: 16px;
+}
+
+.sensor-card {
+  box-shadow: none !important;
+  border: 1px solid #E0E0E0;
+}
+
+.search-container {
+  padding: 16px;
+}
+
+.search-field {
+  max-width: 300px;
+}
+
+.sensor-table {
+  border-top: 1px solid #E0E0E0;
+}
+
+.table-footer {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  color: #666;
+}
+</style>

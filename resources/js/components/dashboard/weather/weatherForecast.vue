@@ -1,67 +1,84 @@
 <template>
-  <v-col cols="12" class="p-0">
-    <v-sheet class="pa-6 rounded-lg shadow-md forecast-container elevation-3">
-      <span class="header-bar"></span>
-      
-      <div class="forecast-header">
-        <p class="forecast-title">24-HOUR FORECAST</p>
-        <p class="forecast-subtitle">Weather Updates</p>
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">24-HOUR FORECAST</h1>
+        <p class="section-subtitle">Weather Updates</p>
       </div>
       
-      <hr class="section-divider" />
+      <v-divider class="divider"></v-divider>
       
-      <v-row class="forecast-image-container">
+      <div class="forecast-image-container">
         <v-img 
           src="https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/1-him-colored.png" 
           alt="24-Hour Weather Forecast" 
           class="forecast-image"
         ></v-img>
-      </v-row>
+      </div>
     </v-sheet>
   </v-col>
 </template>
 
 <style scoped>
-.forecast-container {
-  position: relative;
-  background: #F8FAF0;
-  border: 1px solid #E0E0E0;
+.threshold-container {
+  padding: 0 !important;
 }
-.header-bar {
-  background: var(--primary-color);
+
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.alert-indicator {
   position: absolute;
   left: 0;
-  right: 0;
   top: 0;
-  border-top-left-radius: 11px;
-  border-top-right-radius: 11px;
-  height: 8px;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
 }
-.forecast-header {
-  text-align: center;
-  margin-bottom: 10px;
-}
-.forecast-title {
+
+.section-title {
   font-size: 1.25rem;
-  font-weight: bold;
-  color: var(--primary-color);
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.forecast-subtitle {
-  font-size: 1rem;
-  font-weight: medium;
-  color: #6B7280;
+
+.section-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
 }
-.section-divider {
-  border: 2px solid var(--primary-color);
-  margin: 10px 0;
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
+
 .forecast-image-container {
+  padding: 16px 24px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .forecast-image {
   max-width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
+  border: 1px solid #E0E0E0;
 }
 </style>

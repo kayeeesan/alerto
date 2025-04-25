@@ -1,12 +1,27 @@
+<template>
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">MONITORING OVERVIEW</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="doughnut-container">
+        <canvas ref="chartRef" class="doughnut-chart"></canvas>
+      </div>
+    </v-sheet>
+  </v-col>
+</template>
+
 <script setup>
 import { ref, onMounted } from "vue";
 import Chart from 'chart.js/auto';
 
-// Reference for the canvas element
 const chartRef = ref(null);
 let chartInstance = null;
 
-// Chart data and config
 const data = {
   labels: ['EVACUATION', 'WLMS', 'TANDEM'],
   datasets: [{
@@ -24,6 +39,23 @@ const data = {
 const config = {
   type: 'doughnut',
   data: data,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          boxWidth: 12,
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      }
+    },
+    cutout: '70%'
+  }
 };
 
 onMounted(() => {
@@ -32,22 +64,64 @@ onMounted(() => {
   }
 });
 </script>
-<template>
-            <v-col cols="12" style="padding: 0 !important;" class="">
-                <v-sheet class="pa-4 elevation-3 " rounded="lg"  style="position: relative; border: 1px solid #E0E0E0;">
-                    <span style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;">.</span>
-                    <div>
-                        <p style="font-size: 20px;"> MONITORING OVERVIEW</p>
-                    </div>
-                    <hr style="border: 2px solid var(--primary-color); margin: 10px 0;">
-                 
-                    <div class="d-flex justify-center align-center" style="width: 100%; height: 250px">
-                        <canvas ref="chartRef" ></canvas>
-                    </div>
-                </v-sheet>
-            </v-col>
-            
-</template>
 
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
 
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.doughnut-container {
+  padding: 8px 16px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for flex children */
+}
+
+.doughnut-chart {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 280px;
+  margin: 0 auto;
+}
+</style>

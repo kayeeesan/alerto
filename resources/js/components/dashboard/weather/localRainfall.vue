@@ -1,31 +1,79 @@
 <template>
-    <v-col cols="12" class="mb-3" style="padding: 0 !important;">
-      <v-sheet
-        class="pa-6 rounded-lg shadow-md elevation-3"
-        style="position: relative; border: 1px solid #E0E0E0;"
-      >
-        <!-- Top Bar -->
-        <span
-          style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;"
-        ></span>
-  
-        <!-- Title Section -->
-        <v-row justify="center" class="mb-2">
-          <p class="text-h6 font-weight-medium text-grey-darken-2">
-            Local Rainfall Warning
-          </p>
-        </v-row>
-  
-        <!-- Divider -->
-        <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
-
-        <v-row justify="center" align="center" class="py-4">
-        <v-icon size="48" color="grey-darken-1">mdi-message-bulleted-off</v-icon>
-      </v-row>
-
-      <v-row justify="center">
-        <p class="text-body-1 text-grey-darken-2">No Event</p>
-      </v-row>
-      </v-sheet>
-    </v-col>
+  <v-col class="threshold-container mb-4">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">LOCAL RAINFALL WARNING</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="warning-content">
+        <v-icon size="64" color="grey-darken-1" class="warning-icon">mdi-message-bulleted-off</v-icon>
+        <p class="warning-text">No Event</p>
+      </div>
+    </v-sheet>
+  </v-col>
 </template>
+
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
+
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.warning-content {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.warning-icon {
+  margin-bottom: 16px;
+}
+
+.warning-text {
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0;
+}
+</style>

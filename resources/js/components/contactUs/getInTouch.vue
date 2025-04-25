@@ -2,11 +2,11 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import useContactMessages from "../../composables/contactMessage";
 
-const { errors, is_loading, is_success, storeContactMessage} = useContactMessages();
+const { errors, is_loading, is_success, storeContactMessage } = useContactMessages();
 
 const emit = defineEmits(["input", "reloadContactMessages"]);
 const props = defineProps({
-    contact_message: Object
+  contact_message: Object
 });
 
 const initialState = {
@@ -23,14 +23,14 @@ watch(
   () => props.contact_message,
   (value) => {
     if (value) {
-      Object.assign(form, { ...value});
+      Object.assign(form, { ...value });
     }
   },
-  { deep: true}
+  { deep: true }
 );
 
 const resetForm = () => {
-  Object.assign(form, { ...initialState});
+  Object.assign(form, { ...initialState });
 };
 
 const save = async () => {
@@ -42,128 +42,256 @@ const save = async () => {
     resetForm();
   }
 };
-
 </script>
-<template>
-    <v-col cols="12" class="p-10 ml-5">
-      <v-sheet
-      class="pa-8 rounded-lg shadow-lg elevation-3"
-      style="position: relative; background: #F8FAF0; border: 1px solid #E0E0E0;"
-    >
-        <!-- Top Bar -->
-        <span
-        style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;"
-      ></span>
-       
-        
-        <v-row class="mt-1 ml-5">
-          <v-col cols="12" sm="6" >
-            <v-row class="d-flex flex-column text-center mb-2">
-                <v-img
-                    style="height: 120px;"
-                    src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
-                ></v-img>
-                <p class="text-lg font-bold text-gray-800" style="margin-bottom: 0 !important;">ALeRTO</p>
-                <p class="text-sm text-gray-600" style="margin-bottom: 0 !important;">Ateneo Center for Environment and Sustainability</p>
-                <p class="text-s text-gray-600">Ateneo de Zamboanga University</p>
-        </v-row>
-        <v-divider :thickness="2" class="border-opacity-75 mt-1 mb-4"></v-divider>
-            <v-row class="my-4">
-              <v-col cols="12" class="d-flex align-center">
-                <v-icon class="mr-4" style="font-size: 28px; color: #3b5998;">mdi-facebook</v-icon>
-                <span class="text-lg font-bold">facebook.com/alerto</span>
-              </v-col>
-              <v-col cols="12" class="d-flex align-center ">
-                <v-icon class="mr-4" style="font-size: 28px; color: #d32f2f;">mdi-email</v-icon>
-                <span class="text-lg font-bold">alerto@ateneo.edu</span>
-              </v-col>
-              <v-col cols="12" class="d-flex align-center ">
-                <v-icon class="mr-4" style="font-size: 28px; color: #388e3c;">mdi-phone</v-icon>
-                <span class="text-lg font-bold">+63 912 345 6789</span>
-              </v-col>
-              <v-col cols="12" class="d-flex align-center ">
-                <v-icon class="mr-4" style="font-size: 28px; color: #1976d2;">mdi-map-marker</v-icon>
-                <span class="text-lg font-bold">Ateneo de Zamboanga University, Zamboanga City</span>
-              </v-col>
-            </v-row>
 
+<template>
+  <v-col class="threshold-container ml-5">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">CONTACT US</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="contact-content">
+        <v-row>
+          <!-- Left Info Column -->
+          <v-col cols="12" md="6" class="info-column">
+            <div class="logo-section">
+              <v-img
+                src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+                class="logo-img"
+                max-width="180px"
+                contain
+              ></v-img>
+              <h2 class="logo-title">ALeRTO</h2>
+              <p class="logo-subtitle">Ateneo Center for Environment and Sustainability</p>
+              <p class="logo-institution">Ateneo de Zamboanga University</p>
+            </div>
+
+            <v-divider class="content-divider"></v-divider>
+
+            <div class="contact-details">
+              <div class="contact-item">
+                <v-icon color="#3b5998" class="mr-2">mdi-facebook</v-icon>
+                <span>facebook.com/alerto</span>
+              </div>
+              <div class="contact-item">
+                <v-icon color="#d32f2f" class="mr-2">mdi-email</v-icon>
+                <span>alerto@ateneo.edu</span>
+              </div>
+              <div class="contact-item">
+                <v-icon color="#388e3c" class="mr-2">mdi-phone</v-icon>
+                <span>+63 912 345 6789</span>
+              </div>
+              <div class="contact-item">
+                <v-icon color="#1976d2" class="mr-2">mdi-map-marker</v-icon>
+                <span>Ateneo de Zamboanga University, Zamboanga City</span>
+              </div>
+            </div>
           </v-col>
 
-          <v-col class="shadow-md bg-gray-100 border border-gray-300 rounded-lg" style="background: lightgrey; margin: 15px; margin-top: 1px; ">
-            <v-row>
-                <v-col cols="6">
+          <!-- Right Form Column -->
+          <v-col cols="12" md="6" class="form-column">
+            <v-card class="form-card bg-blue-grey-lighten-5">
+              <v-row>
+                <v-col cols="12" sm="6" class="mb-4">
                   <v-text-field
                     v-model="form.email"
-                    hint="Email"
                     label="Email"
-                    variant="solo"
+                    variant="outlined"
                     :error="!!errors.email"
                     :error-messages="errors.email"
-                  ></v-text-field>
-
+                    density="comfortable"
+                    class="bg-white"
+                    style="height: 48px; border-radius: 11px;"
+                  />
                 </v-col>
-                <v-col cols="6">
-                    <v-text-field
+                <v-col cols="12" sm="6">
+                  <v-text-field
                     v-model="form.name"
                     label="Name"
-                    variant="solo"
+                    variant="outlined"
                     :error="!!errors.name"
                     :error-messages="errors.name"
-                    ></v-text-field>
+                    density="comfortable"
+                    class="bg-white"
+                    style="height: 48px; border-radius: 11px;"
+                  />
                 </v-col>
-            </v-row>
-            <v-row>
-                    <v-col cols="12">
-                    <v-text-field
-                    v-model="form.contact_number"
-                    label="Phone No."
-                    variant="solo"
-                    :error="!!errors.contact_number"
-                    :error-messages="errors.contact_number"
-                    ></v-text-field>
-                </v-col>
-            </v-row>
-            
-            <v-row>
-                <v-col>
-                    <v-textarea
-                    v-model="form.message"
-                    label="Message"
-                    maxlength="120"
-                    counter
-                    single-line
-                    variant="solo"
-                    :error="!!errors.message"
-                    :error-messages="errors.message"
-                    ></v-textarea>
-                </v-col>
-            </v-row>
+              </v-row>
+              
+              <div class="mb-4">
+                  <v-text-field
+                  v-model="form.contact_number"
+                  label="Phone Number"
+                  variant="outlined"
+                  :error="!!errors.contact_number"
+                  :error-messages="errors.contact_number"
+                  density="comfortable"
+                  class="bg-white"
+                  style="height: 48px; border-radius: 11px;"
+                />
+              </div>
 
-            <v-row class="d-flex justify-end pb-6 pr-4">
-                <!-- <v-btn
-                    color="blue-darken-4"
-                    text="SUBMIT"
-                    variant="flat"
-                    class="text-white"
-                    append-icon="mdi-send-outline"
-                    @click="save"
-                    ></v-btn> -->
-                    <v-btn
-                    color="blue-darken-4"
-                    text="SUBMIT"
-                    variant="flat"
-                    class="text-white"
-                    append-icon="mdi-send-outline"
-                    @click="save"
-                    :loading="is_loading"
-                    :disabled="is_loading"
-                  ></v-btn>
+              <div>
+                  <v-textarea
+                  v-model="form.message"
+                  label="Message"
+                  variant="outlined"
+                  counter
+                  maxlength="120"
+                  :error="!!errors.message"
+                  :error-messages="errors.message"
+                  density="comfortable"
+                  rows="3"
+                  class="bg-white"
+                  style="height: 95px; border-radius: 11px;"
+                />
+              </div>
 
-            </v-row>
-
+              <div class="form-actions">
+                <v-btn
+                  color="primary"
+                  variant="flat"
+                  size="large"
+                  append-icon="mdi-send-outline"
+                  @click="save"
+                  :loading="is_loading"
+                  :disabled="is_loading"
+                >
+                  SUBMIT
+                </v-btn>
+              </div>
+            </v-card>
           </v-col>
         </v-row>
-      </v-sheet>
-    </v-col>
-  </template>
+      </div>
+    </v-sheet>
+  </v-col>
+</template>
+
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
+
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.contact-content {
+  padding: 24px;
+}
+
+.info-column {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logo-img {
+  margin: 0 auto 16px;
+}
+
+.logo-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.logo-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.logo-institution {
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.content-divider {
+  margin: 16px 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.contact-details {
+  margin-top: 16px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 0.9375rem;
+  color: #555;
+}
+
+.form-column {
+  padding: 16px;
+}
+
+.form-card {
+  padding: 24px;
+  border: 1px solid #E0E0E0;
+  box-shadow: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+@media (max-width: 959px) {
+  .info-column {
+    order: 2;
+    margin-top: 24px;
+  }
   
+  .form-column {
+    order: 1;
+  }
+}
+</style>

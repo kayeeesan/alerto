@@ -1,104 +1,255 @@
 <script setup>
-// import { defineProps, defineEmits } from "vue";
+import { ref, watch } from "vue";
+import store from "@/store";
 
-const props = defineProps(["drawer"]);
-const emit = defineEmits();
+const props = defineProps({
+  drawer: {
+    type: Boolean,
+    default: null,
+  },
+});
 
-const toggleDrawer = (val) => {
-  emit("update:drawer", val);
+const user = store.state.auth.user;
+
+const hasRole = (roleSlug) => {
+  return user?.roles?.some((role) => role.slug === roleSlug);
 };
 
-  // Dashboard items
-  const itemsInDashboard = [
-    { title: "River Status", icon: "mdi-wave", route: "/river-status" },
-    { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
-    { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
-    { title: "Earthquake Bulletin", icon: "mdi-earth", route: "earthquake" },
-    { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
-    { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
-  ];
-  
-  // Other menu items
-  const items = [
-  { title: "About Us", icon: "mdi-information", route: "/about-us" },
-  { title: "Contact Us", icon: "mdi-phone", route: "/contact-us" }
-  ];
-  
+const itemsInDashboard = [
+  { title: "River Status", icon: "mdi-wave", route: "/river-status" },
+  { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
+  { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
+  { title: "Earthquake Bulletin", icon: "mdi-earth", route: "/earthquake" },
+  { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
+  { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
+];
+
+const items = [
+  { title: "About Us", icon: "mdi-information-outline", route: "/about-us" },
+  { title: "Contact Us", icon: "mdi-email-outline", route: "/contact-us" },
+];
+
+
+const rail = ref(true);
+
+watch(
+  () => props.drawer,
+  (value) => {
+    rail.value = value;
+  }
+);
 </script>
 
 <template>
   <v-navigation-drawer
-    :model-value="drawer"
-    @update:model-value="toggleDrawer"
+    v-model="rail"
+    app
+    style="background: #003092; color: white"
     width="300"
-    style="background: #003092;"
+    class="sidebar"
   >
-    <v-list style="padding: 0 !important;">
-      <v-sheet
-        class="d-flex flex-row align-center"
-        style="padding: 15px; background: #001A6E;"
-        width="100%"
-      >
-        <RouterLink to="/" class="sidebar-logo d-flex align-center" style="text-decoration: none;">
-          <v-avatar
-            size="64"
-            image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
-            class="mr-3"
-          ></v-avatar>
-          <span class="font-weight-bold" style="font-size: 2em; color: white;">ALERTO</span>
-        </RouterLink>
-      </v-sheet>
-    </v-list>
-    <v-list nav dense>
-        <v-list-group>
-          <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" class="sidebar-item" :to="'/'">
-              <v-icon class="sidebar-icon mr-2" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">mdi-view-dashboard</v-icon>
-              <span class="sidebar-text" style="color: white;">Dashboard</span>
-            </v-list-item>
-          </template>
-  
+    <!-- Header -->
+    <div class="sidebar-header">
+      <RouterLink to="/" class="sidebar-logo">
+        <v-avatar
+          size="64"
+          image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+          class="logo-avatar"
+        ></v-avatar>
+        <span class="logo-text">ALERTO</span>
+      </RouterLink>
+    </div>
+
+    <!-- Menu Items -->
+    <v-list class="sidebar-list">
+      <v-list-group value="Dashboard" class="sidebar-group">
+        <template v-slot:activator="{ props }">
           <v-list-item
-            v-for="item in itemsInDashboard"
-            :key="item.title"
-            :to="item.route"
-            class="sidebar-subitem"
-            link
+            v-bind="props"
+            class="sidebar-item"
+            :to="'/'"
+            prepend-icon="mdi-view-dashboard"
           >
-            <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
-            <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
+            <template v-slot:prepend>
+              <v-icon class="sidebar-icon"></v-icon>
+            </template>
+            <span class="sidebar-text">Dashboard</span>
           </v-list-item>
-        </v-list-group>
+        </template>
+
         <v-list-item
-          v-for="item in items"
+          v-for="item in itemsInDashboard"
           :key="item.title"
           :to="item.route"
-          class="sidebar-item"
+          class="sidebar-subitem"
           link
         >
-          <v-icon class="sidebar-icon mr-3" style="background: #001A6E; color: #fff; height: 40px; width: 40px; border-radius: 99px;">{{ item.icon }}</v-icon>
-          <span class="sidebar-text" style="color: white;">{{ item.title }}</span>
+          <template v-slot:prepend>
+            <v-icon class="subitem-icon">{{ item.icon }}</v-icon>
+          </template>
+          <span class="sidebar-text">{{ item.title }}</span>
         </v-list-item>
-  
+      </v-list-group>
+
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        :to="item.route"
+        class="sidebar-item"
+        link
+        :prepend-icon="item.icon"
+      >
+        <template v-slot:prepend>
+          <v-icon class="sidebar-icon"></v-icon>
+        </template>
+        <span class="sidebar-text">{{ item.title }}</span>
+      </v-list-item>
+
+      <v-list-group
+        v-if="hasRole('administrator')"
+        value="Libraries"
+        class="sidebar-group"
+      >
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            class="sidebar-item"
+            prepend-icon="mdi-folder-outline"
+          >
+            <template v-slot:prepend>
+              <v-icon class="sidebar-icon"></v-icon>
+            </template>
+            <span class="sidebar-text">Libraries</span>
+          </v-list-item>
+        </template>
+
+      </v-list-group>
     </v-list>
 
-      <v-footer class="d-flex flex-column align-center" style="background: #001A6E; padding: 10px; color: white;">
-      <p class="text-center mb-2">Partners: Region 9</p>
-      <v-row class="d-flex justify-center" no-gutters>
-        <v-col cols="3" class="d-flex justify-center">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" height="40" contain alt="">
-        </v-col>
-        <v-col cols="3" class="d-flex justify-center">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" height="40" contain alt="">
-        </v-col>
-        <v-col cols="3" class="d-flex justify-center">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" height="40" contain alt="">
-        </v-col>
-        <v-col cols="3" class="d-flex justify-center">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" height="40" contain alt="">
-        </v-col>
-      </v-row>
-    </v-footer>
+    <!-- Footer with Logos -->
+    <div class="sidebar-footer">
+      <p class="footer-text">Partners: Region 9</p>
+      <div class="partner-logos">
+        <img src="https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" alt="RDRRMC9" />
+        <img src="https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" alt="OCD" />
+        <img src="https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" alt="DOST9" />
+        <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" alt="DILG" />
+      </div>
+    </div>
   </v-navigation-drawer>
 </template>
 
+<style scoped>
+.sidebar {
+  background: linear-gradient(180deg, #003092 0%, #001a6e 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header {
+  padding: 16px;
+  background: #001a6e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 12px;
+}
+
+.logo-avatar {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.sidebar-list {
+  background: transparent;
+  padding: 8px 0;
+}
+
+.sidebar-item {
+  color: white;
+  margin: 4px 8px;
+  border-radius: 8px;
+  min-height: 48px;
+}
+
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.v-list-item--active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-icon {
+  color: white;
+  margin-right: 16px;
+}
+
+.sidebar-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-group :deep(.v-list-group__items) {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-subitem {
+  color: white;
+  padding-left: 56px !important;
+  min-height: 40px;
+}
+
+.sidebar-subitem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.subitem-icon {
+  font-size: 1.25rem;
+  margin-right: 16px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar-footer {
+  padding: 16px;
+  background: #001a6e;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+}
+
+.partner-logos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.partner-logos img {
+  max-width: 100%;
+  height: auto;
+  max-height: 40px;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+.partner-logos img:hover {
+  opacity: 1;
+}
+</style>
