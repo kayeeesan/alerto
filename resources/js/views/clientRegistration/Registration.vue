@@ -154,25 +154,26 @@ const filteredRivers = computed(() => {
                                 <v-card-title class="text-subtitle-1 font-weight-bold">Personal Information</v-card-title>
                                 <v-row>
                                     <v-col cols="12" sm="6">
-                                        <v-text-field 
-                                        v-model="form.first_name"
-                                        prepend-inner-icon="mdi-account-outline"
-                                        label="First Name*" 
-                                        variant="outlined"
-                                        density="comfortable"
-                                        :error-messages="errors.first_name || []"
-                                        :rules="[
-                                            (v) => !!v || 'This field is required',
-                                            (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
-                                        ]"
-                                        bg-color="white"
-                                        class="dark-input"
-                                        ></v-text-field>
+                                        <v-input prepend-icon="mdi-account">
+                                            <v-text-field 
+                                                v-model="form.first_name"
+                                                label="First Name*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.first_name || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                                ></v-text-field>
+                                        </v-input>
                                     </v-col>
                                     <v-col cols="12" sm="6">
-                                        <v-text-field 
+                                        <v-input prepend-icon="mdi-account">
+                                            <v-text-field 
                                             v-model="form.last_name" 
-                                            prepend-inner-icon="mdi-account-outline"
                                             label="Last Name*" 
                                             variant="outlined"
                                             density="comfortable"
@@ -180,41 +181,44 @@ const filteredRivers = computed(() => {
                                             bg-color="white"
                                             class="dark-input"
                                         ></v-text-field>
+                                        </v-input>
                                     </v-col>
                                 </v-row>
 
                                 <v-row>
                                     <v-col cols="12" sm="6">
-                                        <v-text-field
-                                            v-model="form.username"
-                                            prepend-inner-icon="mdi-email-outline"
-                                            :rules="[
-                                                (v) => !!v || 'This field is required',
-                                                (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
-                                            ]"
-                                            label="Email*"
-                                            variant="outlined"
-                                            density="comfortable"
-                                            :error-messages="errors.username || []"
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-text-field>
+                                        <v-input prepend-icon="mdi-email">
+                                            <v-text-field
+                                                v-model="form.username"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
+                                                ]"
+                                                label="Email*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.username || []"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </v-input>
                                     </v-col>
                                     <v-col cols="12" sm="6">
-                                        <v-text-field 
-                                            v-model="form.mobile_number" 
-                                            prepend-inner-icon="mdi-phone-outline"
-                                            label="Mobile Number*" 
-                                            variant="outlined"
-                                            density="comfortable"
-                                            :error-messages="errors.mobile_number || []"
-                                            :rules="[
-                                                (v) => !!v || 'This field is required',
-                                                (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
-                                            ]"
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-text-field>
+                                        <v-input prepend-icon="mdi-phone">
+                                            <v-text-field 
+                                                v-model="form.mobile_number" 
+                                                label="Mobile Number*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.mobile_number || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </v-input>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -223,88 +227,66 @@ const filteredRivers = computed(() => {
                             <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
                                 <v-card-title class="text-subtitle-1 font-weight-bold">Location Information</v-card-title>
                                 <v-row>
-                                    <v-col>
-                                        <v-select
-                                            v-model="form.region"
-                                            :items="regions"
-                                            item-title="name"
-                                            item-value="id"
-                                            prepend-inner-icon="mdi-map-outline"
-                                            label="Region*"
-                                            variant="outlined"
-                                            density="comfortable"
-                                            clearable
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-select>
-                                    </v-col>
+                                <v-col>
+                                    <v-input prepend-icon="mdi-map" v-model="form.region">
+                                        <vue-multiselect 
+                                        v-model="form.region" 
+                                        :options="regions" 
+                                        placeholder="Select Region"
+                                        label="name" 
+                                        track-by="name"/>
+                                    </v-input>
+                                </v-col>
                                 </v-row>
                                 <v-row>
                                     <v-col>
-                                        <v-select
+                                        <v-input prepend-icon="mdi-map" v-model="form.province">
+                                            <vue-multiselect
                                             v-model="form.province"
-                                            :items="filteredProvinces"
-                                            item-title="name"
-                                            item-value="id"
-                                            prepend-inner-icon="mdi-map-marker-outline"
-                                            label="Province*"
-                                            variant="outlined"
-                                            density="comfortable"
+                                            :options="filteredProvinces"
                                             :disabled="!form.region"
-                                            clearable
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-select>
+                                            placeholder="Select Province"
+                                            label="name"
+                                            track-by="name"/>      
+                                        </v-input>
                                     </v-col>
                                 </v-row>
                                 <v-row>
                                     <v-col>
-                                        <v-select
-                                            v-model="form.municipality"
-                                            :items="filteredMunicipalities"
-                                            item-title="name"
-                                            item-value="id"
-                                            prepend-inner-icon="mdi-city"
-                                            label="Municipality*"
-                                            variant="outlined"
-                                            density="comfortable"
+                                        <v-input prepend-icon="mdi-city" v-model="form.municipality" >
+                                            <vue-multiselect 
+                                            v-model="form.municipality" 
+                                            :options="filteredMunicipalities"
                                             :disabled="!form.province"
-                                            clearable
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-select>
+                                            placeholder="Select Municipality" 
+                                            label="name" 
+                                            track-by="name"/>
+                                        </v-input>
+
                                     </v-col>
                                 </v-row>
                                 <v-row>
                                     <v-col>
-                                        <v-select
-                                            v-model="form.river"
-                                            :items="filteredRivers"
-                                            item-title="name"
-                                            item-value="id"
-                                            prepend-inner-icon="mdi-waves"
-                                            label="River*"
-                                            variant="outlined"
-                                            density="comfortable"
+                                        <v-input  prepend-icon="mdi-waves" v-model="form.river">
+                                            <vue-multiselect 
+                                            v-model="form.river" 
+                                            :options="filteredRivers" 
                                             :disabled="!form.municipality"
-                                            clearable
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-select>
+                                            placeholder="Select River" 
+                                            label="name"
+                                            track-by="name"/>
+                                        </v-input>
                                     </v-col>
                                 </v-row>
                                 <v-row>
                                     <v-col cols="12">
                                         <v-text-field 
-                                            v-model="form.fb_lgu" 
-                                            prepend-inner-icon="mdi-facebook"
-                                            label="Facebook LGU*" 
-                                            variant="outlined"
-                                            density="comfortable"
-                                            :error-messages="errors.fb_lgu || []"
-                                            bg-color="white"
-                                            class="dark-input"
-                                        ></v-text-field>
+                                        v-model="form.fb_lgu" 
+                                        prepend-icon="mdi-account"
+                                        label="Facebook LGU*" 
+                                        variant="outlined"
+                                        :error-messages="errors.fb_lgu || []">
+                                        </v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -386,6 +368,6 @@ const filteredRivers = computed(() => {
 }
 
 .v-card-title {
-    color: #242faa;
+    color: #646dcf;
 }
 </style>
