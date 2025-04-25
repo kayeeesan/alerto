@@ -1,3 +1,23 @@
+<template>
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">TOTAL SENSORS</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="sensors-count">
+        <div class="sensor-row" v-for="sensor in sensorTypes" :key="sensor.type">
+          <div class="count-value">{{ getCountByType(sensor.type) }}</div>
+          <div class="count-label">{{ sensor.label }}</div>
+        </div>
+      </div>
+    </v-sheet>
+  </v-col>
+</template>
+
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import useSensorsUnderAlerto from '../../../composables/sensorsUnderAlerto';
@@ -13,95 +33,99 @@ const {
   getSensorsUnderPh
 } = useSensorsUnderPh();
 
-// Fetch both sensor sets on mount
+const sensorTypes = [
+  { type: "ARG", label: "ARG" },
+  { type: "WLMS", label: "WLMS" },
+  { type: "TANDEM", label: "TANDEM" }
+];
+
 onMounted(() => {
   getSensorsUnderAlerto();
   getSensorsUnderPh();
 });
 
-// Combine all sensors
 const all_sensors = computed(() => [
   ...sensors_under_alerto.value,
   ...sensors_under_ph.value
 ]);
 
-// Function to get sensor count by type
 const getCountByType = (type) => computed(() =>
   Array.isArray(all_sensors.value)
     ? all_sensors.value.filter(sensor => sensor.sensor_type === type).length
     : 0
 );
-
-const argCount = getCountByType("ARG");
-const wlmsCount = getCountByType("WLMS");
-const tandemCount = getCountByType("TANDEM");
 </script>
 
-<template>
-  <v-col cols="12" style="padding: 0 !important;">
-    <v-sheet
-      class="pa-4 elevation-3"
-      rounded="lg"
-      style="position: relative; border: 1px solid #E0E0E0;"
-    >
-      <span
-        style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 11px;"
-      ></span>
-      <div>
-        <p style="font-size: 20px;">TOTAL SENSORS</p>
-      </div>
-      <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
 
-      <v-row style="margin: 10px 5px;" class="d-flex justify-center align-center">
-        <v-col
-          class="d-flex justify-center align-center"
-          cols="4"
-          style="background: #C99D34; height: 40px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; color: white;"
-        >
-          {{ argCount }}
-        </v-col>
-        <v-col
-          cols="8"
-          style="height: 40px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border: 1px solid #C99D34; background: lightyellow;"
-          class="d-flex justify-center align-center"
-        >
-          ARG
-        </v-col>
-      </v-row>
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
 
-      <v-row style="margin: 10px 5px;" class="d-flex justify-center align-center">
-        <v-col
-          class="d-flex justify-center align-center"
-          cols="4"
-          style="background: #C99D34; height: 40px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; color: white;"
-        >
-          {{ wlmsCount }}
-        </v-col>
-        <v-col
-          cols="8"
-          style="height: 40px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border: 1px solid #C99D34; background: lightyellow;"
-          class="d-flex justify-center align-center"
-        >
-          WLMS
-        </v-col>
-      </v-row>
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
 
-      <v-row style="margin: 10px 5px;" class="d-flex justify-center align-center">
-        <v-col
-          class="d-flex justify-center align-center"
-          cols="4"
-          style="background: #C99D34; height: 40px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; color: white;"
-        >
-          {{ tandemCount }}
-        </v-col>
-        <v-col
-          cols="8"
-          style="height: 40px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border: 1px solid #C99D34; background: lightyellow;"
-          class="d-flex justify-center align-center"
-        >
-          TANDEM
-        </v-col>
-      </v-row>
-    </v-sheet>
-  </v-col>
-</template>
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.sensors-count {
+  padding: 16px 24px;
+}
+
+.sensor-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.count-value {
+  width: 80px;
+  padding: 12px;
+  background: #C99D34;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.count-label {
+  flex: 1;
+  padding: 12px;
+  background: #FFF9E6;
+  border: 1px solid #C99D34;
+  font-weight: bold;
+  text-align: center;
+}
+</style>

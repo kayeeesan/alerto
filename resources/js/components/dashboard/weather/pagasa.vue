@@ -1,43 +1,37 @@
 <template>
-    <v-col cols="12" class="mt-2" style="padding: 0 !important;">
-      <v-sheet
-        class="pa-6 rounded-lg shadow-md elevation-3"
-        style="position: relative; border: 1px solid #E0E0E0;"
-      >
-        <!-- Top Bar -->
-        <span
-          style="background: var(--primary-color); position: absolute; left: 0; right: 0; top: 0; border-top-left-radius: 11px; border-top-right-radius: 11px; height: 8px;"
-        ></span>
-  
-        <!-- Title Section -->
-        <v-row align="center" justify="center" class="mb-4">
-          <v-icon color="primary">mdi-web</v-icon>
-          <p class="text-h6 font-weight-medium text-grey-darken-2">PAGASA WEBSITE</p>
-        </v-row>
-  
-        <!-- Divider -->
-        <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
-        
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">
+          <v-icon color="#FF5252" class="mr-2">mdi-web</v-icon>
+          PAGASA WEBSITE
+        </h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="pagasa-content">
         <v-img
           src="https://rdrrmc9-alerto.com/assets/images/partners/pagasa.png"
-          max-height="200"
+          max-height="180"
           contain
-          class="mb-4"
+          class="pagasa-logo mb-4"
         ></v-img>
 
-        <p class="text-body-1 text-grey-darken-2 text-center">
+        <p class="pagasa-description">
           Philippine Atmospheric, Geophysical and Astronomical Services Administration
         </p>
 
-        <hr style="border: 2px solid var(--primary-color); margin: 10px 0;" />
+        <v-divider class="divider mb-4"></v-divider>
 
-          <v-row justify="center" class="mt-2 p-1">
+        <div class="pagasa-buttons">
           <v-btn
             variant="tonal"
             color="primary"
             href="https://bagong.pagasa.dost.gov.ph/index.php"
             target="_blank"
-            class="m-1"
+            class="pagasa-button"
           >
             Visit Bagong PAGASA
           </v-btn>
@@ -46,12 +40,90 @@
             color="primary"
             href="https://www.panahon.gov.ph/"
             target="_blank"
-            class="m-1"
+            class="pagasa-button"
           >
             Panahon Website
           </v-btn>
-        </v-row>
-
-      </v-sheet>
-    </v-col>
+        </div>
+      </div>
+    </v-sheet>
+  </v-col>
 </template>
+
+<style scoped>
+.threshold-container {
+  padding: 0 !important;
+}
+
+.threshold-sheet {
+  padding: 0;
+  border: 1px solid #E0E0E0;
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.header-container {
+  padding: 16px 24px 8px;
+  position: relative;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.alert-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--primary-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.pagasa-content {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pagasa-logo {
+  max-width: 80%;
+  border-radius: 8px;
+}
+
+.pagasa-description {
+  font-size: 0.875rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pagasa-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.pagasa-button {
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+}
+</style>

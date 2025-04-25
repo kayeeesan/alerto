@@ -135,7 +135,7 @@ const filteredRivers = computed(() => {
             "></div>
             
             <v-container fluid class="fill-height d-flex align-center justify-center">
-                <v-card class="pa-8" elevation="8" width="850px" rounded="lg" style="position: relative; z-index: 1;">
+                <v-card class="pa-8" elevation="8" width="950px" rounded="lg" style="position: relative; z-index: 1;">
                     <!-- Header Section -->
                     <div class="text-center mb-6">
                         <v-img
@@ -154,7 +154,8 @@ const filteredRivers = computed(() => {
                                 <v-card-title class="text-subtitle-1 font-weight-bold">Personal Information</v-card-title>
                                 <v-row>
                                     <v-col cols="12" sm="6">
-                                        <v-input prepend-icon="mdi-account">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-account</v-icon>
                                             <v-text-field 
                                                 v-model="form.first_name"
                                                 label="First Name*" 
@@ -168,10 +169,12 @@ const filteredRivers = computed(() => {
                                                 bg-color="white"
                                                 class="dark-input"
                                                 ></v-text-field>
-                                        </v-input>
+                                        </div>
+                                            
                                     </v-col>
                                     <v-col cols="12" sm="6">
-                                        <v-input prepend-icon="mdi-account">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;"> mdi-account</v-icon>
                                             <v-text-field 
                                             v-model="form.last_name" 
                                             label="Last Name*" 
@@ -181,13 +184,15 @@ const filteredRivers = computed(() => {
                                             bg-color="white"
                                             class="dark-input"
                                         ></v-text-field>
-                                        </v-input>
+                                        </div>
+                                            
                                     </v-col>
                                 </v-row>
 
                                 <v-row>
                                     <v-col cols="12" sm="6">
-                                        <v-input prepend-icon="mdi-email">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-email</v-icon>
                                             <v-text-field
                                                 v-model="form.username"
                                                 :rules="[
@@ -201,10 +206,12 @@ const filteredRivers = computed(() => {
                                                 bg-color="white"
                                                 class="dark-input"
                                             ></v-text-field>
-                                        </v-input>
+                                        </div>
+                                           
                                     </v-col>
                                     <v-col cols="12" sm="6">
-                                        <v-input prepend-icon="mdi-phone">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-phone</v-icon>
                                             <v-text-field 
                                                 v-model="form.mobile_number" 
                                                 label="Mobile Number*" 
@@ -218,7 +225,8 @@ const filteredRivers = computed(() => {
                                                 bg-color="white"
                                                 class="dark-input"
                                             ></v-text-field>
-                                        </v-input>
+                                        </div>
+                                            
                                     </v-col>
                                 </v-row>
                             </v-card>

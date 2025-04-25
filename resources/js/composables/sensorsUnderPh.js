@@ -14,12 +14,14 @@ export default function useSensorsUnderPh() {
         page: 1,
     });
 
-    const getSensorsUnderPh = async (params = {}) => {
+    const getSensorsUnderPh = async (params = {}, type = "") => {
         is_loading.value = true;
 
         let query_str = { ...query.value, ...params };
+        let url = type === "/sensors_under_ph" ? "/api/sensors_under_ph" : "/api/form/sensors_under_ph"
         await axios
-            .get('/api/sensors_under_ph?page=' + query.value.page, query_str)
+            // .get('/api/sensors_under_ph?page=' + query.value.page, query_str)
+            .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 sensors_under_ph.value = response.data.data;
                 pagination.value = response.data.meta;
