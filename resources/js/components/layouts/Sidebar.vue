@@ -38,15 +38,15 @@ const libraries = [
   { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
   { title: "Sensors under ALerTO", icon: "mdi-signal", route: "/home/sensors-under-alerto" },
   { title: "Sensors in PH", icon: "mdi-signal-variant", route: "/home/sensors-under-ph" },
-  { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
-  { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
+  // { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
+  // { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
   { title: "Role", icon: "mdi-account-group", route: "/home/roles" },
   { title: "Recipients Data", icon: "mdi-account-details", route: "/home/staffs" },
   { title: "Accounts", icon: "mdi-account-box-multiple", route: "/home/users" },
 ];
 
 const alerts = [
-  { title: "User Settings", icon: "mdi-cog-outline", route: "/home/alerts" },
+  { title: "Monitoring", icon: "mdi-cog-outline", route: "/home/alerts" },
 ];
 
 const rail = ref(true);
