@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ThresholdForm from "../../components/settings/thresholds/Form.vue";
-import useThresholds from "../../composables//threshold";
+import useThresholds from "../../composables/threshold";
 
 const { thresholds, pagination, query, is_loading, getThresholds, destoryThreshold } = useThresholds();
 
@@ -10,17 +10,17 @@ const action_type = ref('');
 const show_form_modal = ref(false);
 
 const headers = [
-    { title: "River", key: "sensor.river.name" },
-    { title: "Sensor", key: "sensor.name" },
-    { title: "Sensor", key: "sensor.id" },
-    { title: "Baseline", key: "baseline" },
-    { title: "60%", key: "sixty_percent" },
-    { title: "80%", key: "eighty_percent" },
-    { title: "100%", key: "one_hundred_percent" },
-    { title: "municipality", key: "sensor.municipality.name" },
-    { title: "XS date", key: "xs_date" },
-    { title: "Water Level", key: "water_level" },
-    { title: "Actions", key: "actions", sortable: false },
+    { title: "River", key: "sensor.river.name", width: "12%" },
+    { title: "Sensor Name", key: "sensor.name", width: "12%" },
+    { title: "Sensor ID", key: "sensor.id", width: "8%" },
+    { title: "Baseline", key: "baseline", width: "8%" },
+    { title: "60%", key: "sixty_percent", width: "7%" },
+    { title: "80%", key: "eighty_percent", width: "7%" },
+    { title: "100%", key: "one_hundred_percent", width: "7%" },
+    { title: "Municipality", key: "sensor.municipality.name", width: "12%" },
+    { title: "XS Date", key: "xs_date", width: "10%" },
+    { title: "Water Level", key: "water_level", width: "8%" },
+    { title: "Actions", key: "actions", sortable: false, align: "end", width: "9%" },
 ];
 
 const showModalForm = (val) => {
@@ -39,103 +39,145 @@ const editItem = (value, action) => {
 };
 
 const deleteItem = async (value) => {
-    await destoryThreshold(value.id);
+    await destoryThreshold(value.id); // Swal handled in composable
 };
 
 const reloadThresholds = async () => {
     await getThresholds();
     threshold.value = {};
 };
-
-
 </script>
+
 <template>
-    <v-row class="p-2 ml-8">
-        <h5 class="fw-bold p-3">List of Thresholds</h5>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Threshold
-        </v-btn>
-    </v-row>
-    <v-card class="ml-8">
-        <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
-            <v-card-title>
+    <v-container fluid class="pa-6">
+        <v-row class="mb-4" align="center">
+            <v-col cols="12" md="6">
+                <h2 class="text-h5 font-weight-bold">Thresholds Management</h2>
+                <v-breadcrumbs :items="[{ title: 'Settings', disabled: true }, { title: 'Thresholds' }]" class="pa-0"></v-breadcrumbs>
+            </v-col>
+            <v-col cols="12" md="6" class="text-md-right">
+                <v-btn 
+                    color="primary" 
+                    @click="showModalForm(true)" 
+                    prepend-icon="mdi-plus"
+                    class="text-capitalize"
+                >
+                    Add New Threshold
+                </v-btn>
+            </v-col>
+        </v-row>
+
+        <v-card elevation="1" rounded="lg">
+            <v-card-title class="d-flex align-center ">
                 <v-text-field
                     v-model="query.search"
-                    append-icon="mdi-magnify"
-                    label="Search"
+                    append-inner-icon="mdi-magnify"
+                    label="Search thresholds..."
                     single-line
                     hide-details
+                    density="comfortable"
+                    variant="outlined"
+                    class="mr-4"
+                    style="max-width: 400px;"
                 ></v-text-field>
+                <v-spacer></v-spacer>
+                <v-btn
+                    variant="text"
+                    icon="mdi-refresh"
+                    @click="reloadThresholds"
+                    title="Refresh"
+                ></v-btn>
             </v-card-title>
-            <v-data-table 
-                :headers="headers" 
-                :items="thresholds"
-                :search="query.search"
-                class="elevation-1 p-2"
-                :loading="is_loading"
-                loading-text="Loading... Please wait"
-            >
-            <template v-slot:item.actions="{ item }">
-                <v-menu open-on-hover>
-                    <template v-slot:activator="{ props}" >
-                            <v-btn color="#BDBDBD" v-bind="props" size="small">
-                                Action
-                            </v-btn>
-                        </template>
-                        <v-list max-width="200px" class="p-2">
-                            <div width="100%">
-                                <v-btn
-                                    width="100%"
-                                    class="me-2 mb-2"
-                                    color="success"
-                                    @click="editItem(item, 'Update')"
-                                    variant="flat"
-                                    size="small"
-                                >
-                                    <v-icon size="small"> mdi-pencil </v-icon> Edit
-                                </v-btn>
-                                <v-btn
-                                    width="100%"
-                                    color="error"
-                                    @click="deleteItem(item)"
-                                    variant="flat"
-                                    size="small"
-                                >
-                                    <v-icon> mdi-delete </v-icon> delete
-                                </v-btn>
+
+            <v-divider></v-divider>
+
+            <div class="horizontal-scroll">
+                <v-data-table 
+                    :headers="headers" 
+                    :items="thresholds"
+                    :search="query.search"
+                    :loading="is_loading"
+                    loading-text="Loading threshold data..."
+                    class="elevation-0"
+                    :items-per-page="pagination.per_page"
+                    :page="query.page"
+                    @update:page="getThresholds"
+                >
+                    <template v-slot:item.sensor.river.name="{ item }">
+                        <span>{{ item.sensor?.river?.name || '-' }}</span>
+                    </template>
+
+                    <template v-slot:item.sensor.name="{ item }">
+                        <span>{{ item.sensor?.name || '-' }}</span>
+                    </template>
+
+                    <template v-slot:item.sensor.id="{ item }">
+                        <span>{{ item.sensor?.id || '-' }}</span>
+                    </template>
+
+                    <template v-slot:item.sensor.municipality.name="{ item }">
+                        <span>{{ item.sensor?.municipality?.name || '-' }}</span>
+                    </template>
+
+                    <template v-slot:item.actions="{ item }">
+                        <div class="d-flex justify-end">
+                            <v-btn
+                                variant="text"
+                                color="primary"
+                                icon="mdi-pencil"
+                                size="small"
+                                @click="editItem(item, 'Update')"
+                                class="mr-1"
+                                title="Edit"
+                            ></v-btn>
+                            <v-btn
+                                variant="text"
+                                color="error"
+                                icon="mdi-delete"
+                                size="small"
+                                @click="deleteItem(item)"
+                                title="Delete"
+                            ></v-btn>
+                        </div>
+                    </template>
+
+                    <template v-slot:bottom>
+                        <div class="d-flex flex-column flex-md-row justify-space-between align-center pa-4">
+                            <div class="text-caption text-medium-emphasis mb-2 mb-md-0">
+                                Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }} entries
                             </div>
-                        </v-list>
-                </v-menu>
-                </template>
-                <template v-slot:bottom>
-                    <div class="m-2">
-                        <span style="color: gray" v-if="pagination">
-                            Showing {{ pagination.from }} to
-                            {{ pagination.to }} out of
-                            <b>{{ pagination.total }} records</b>
-                        </span>
-                        <div class="text-center">
                             <v-pagination
                                 v-model="query.page"
                                 :length="pagination.last_page"
-                                circle
-                                @click="getThresholds"
-                            >
-                            </v-pagination>
+                                :total-visible="5"
+                                density="comfortable"
+                                @update:model-value="getThresholds"
+                            ></v-pagination>
                         </div>
-                    </div>
-                </template>
-            </v-data-table>
-        </div>
-    </v-card>
+                    </template>
+                </v-data-table>
+            </div>
+        </v-card>
 
-    <ThresholdForm
-    :value="show_form_modal"
-    :threshold="threshold"
-    :action_type="action_type"
-    @input="showModalForm"
-    @reloadThresholds="reloadThresholds"
-    />
-
+        <ThresholdForm
+            :value="show_form_modal"
+            :threshold="threshold"
+            :action_type="action_type"
+            @input="showModalForm"
+            @reloadThresholds="reloadThresholds"
+        />
+    </v-container>
 </template>
+
+<style scoped>
+.v-card {
+    border-radius: 8px;
+}
+.v-data-table {
+    border-radius: 8px;
+}
+.horizontal-scroll {
+    overflow-x: auto;
+    max-width: 100%;
+}
+</style>

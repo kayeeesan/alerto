@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import StaffForm from "../../components/settings/staffs/Form.vue";
-import useStaffs from "../../composables/staff";
 import StaffModal from "../../components/settings/staffs/Staff.vue";
+import useStaffs from "../../composables/staff";
 
 const { staffs, pagination, query, is_loading, getStaffs, destoryStaff } = useStaffs();
 
@@ -12,12 +12,12 @@ const show_form_modal = ref(false);
 const show_staff_modal = ref(false);
 
 const headers = [
-    { title: "Email", key: "username" },
-    { title: "contact No.", key: "mobile_number" },
-    { title: "Municipality", key: "municipality.name" },
-    { title: "River", key: "river.name" },
-    { title: "Status", key: "status"},
-    { title: "Actions", key: "actions", sortable: false },
+    { title: "Email", key: "username", width: "20%" },
+    { title: "Contact No.", key: "mobile_number", width: "15%" },
+    { title: "Municipality", key: "municipality.name", width: "15%" },
+    { title: "River", key: "river.name", width: "15%" },
+    { title: "Status", key: "status", width: "10%" },
+    { title: "Actions", key: "actions", sortable: false, align: "end", width: "25%" },
 ];
 
 const showModalForm = (val) => {
@@ -30,7 +30,8 @@ const showModalStaff = (val, data = null) => {
     if (data) {
         staff.value = data;
     }
-}
+};
+
 onMounted(() => {
     getStaffs();
 });
@@ -38,11 +39,11 @@ onMounted(() => {
 const editItem = (value, action) => {
     staff.value = value;
     action_type.value = action;
-    show_form_modal.value = value;
+    show_form_modal.value = true;
 };
 
 const deleteItem = async (value) => {
-    await destoryStaff(value.id);
+    await destoryStaff(value.id); // Swal handled in composable
 };
 
 const reloadStaffs = async () => {
@@ -50,126 +51,153 @@ const reloadStaffs = async () => {
     staff.value = {};
 };
 
-
-
 const statusColor = (status) => {
     switch (status) {
         case "approved":
-            return 'green';
+            return 'success';
         case "pending":
-            return 'grey';
+            return 'warning';
         case "disabled":
-            return 'red';
+            return 'error';
+        default:
+            return 'grey';
     }
-}
+};
 </script>
+
 <template>
-    <v-row class="p-2 ml-8">
-        <h5 class="fw-bold p-3">List of Members </h5>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="showModalForm(true)" class="m-3">
-            New Member
-        </v-btn>
-    </v-row>
-    <v-card class="ml-8">
-        <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
-            <v-card-title>
+    <v-container fluid class="pa-6">
+        <v-row class="mb-4" align="center">
+            <v-col cols="12" md="6">
+                <h2 class="text-h5 font-weight-bold">Staff Members</h2>
+                <v-breadcrumbs :items="[{ title: 'Settings', disabled: true }, { title: 'Staff' }]" class="pa-0"></v-breadcrumbs>
+            </v-col>
+            <v-col cols="12" md="6" class="text-md-right">
+                <v-btn 
+                    color="primary" 
+                    @click="showModalForm(true)" 
+                    prepend-icon="mdi-plus"
+                    class="text-capitalize"
+                >
+                    Add New Member
+                </v-btn>
+            </v-col>
+        </v-row>
+
+        <v-card elevation="1" rounded="lg">
+            <v-card-title class="d-flex align-center">
                 <v-text-field
                     v-model="query.search"
-                    append-icon="mdi-magnify"
-                    label="Search"
+                    append-inner-icon="mdi-magnify"
+                    label="Search members..."
                     single-line
                     hide-details
+                    density="comfortable"
+                    variant="outlined"
+                    class="mr-4"
                 ></v-text-field>
+                <v-spacer></v-spacer>
+                <v-btn
+                    variant="text"
+                    icon="mdi-refresh"
+                    @click="reloadStaffs"
+                    title="Refresh"
+                ></v-btn>
             </v-card-title>
+
+            <v-divider></v-divider>
+
             <v-data-table 
                 :headers="headers" 
                 :items="staffs"
                 :search="query.search"
-                class="elevation-1 p-2"
                 :loading="is_loading"
-                loading-text="Loading... Please wait"
+                loading-text="Loading staff data..."
+                class="elevation-0"
+                :items-per-page="pagination.per_page"
+                :page="query.page"
+                @update:page="getStaffs"
             >
-                <template v-slot:item.status="{ item}">
-                        <v-chip :color="statusColor(item.status)" variant="flat" class="pb-1">
-                            {{ item.status === 'approved' ? 'Active' : item.status }}
-                        </v-chip>
+                <template v-slot:item.status="{ item }">
+                    <v-chip 
+                        :color="statusColor(item.status)" 
+                        variant="flat"
+                        class="text-capitalize"
+                    >
+                        {{ item.status === 'approved' ? 'Active' : item.status }}
+                    </v-chip>
                 </template>
+
                 <template v-slot:item.actions="{ item }">
-                <v-menu open-on-hover>
-                    <template v-slot:activator="{ props}">
-                        <v-btn color="#BDBDBD" v-bind="props" size="small">
-                            Action
-                        </v-btn>
-                    </template>
-                    <v-list max-width="200px" class="p-2">
-                        <div width="100%">
-                            <v-btn
-                                width="100%"
-                                class="me-2 mb-2"
-                                color="primary"
-                                @click="() => showModalStaff(true, item)"
-                                variant="flat"
-                                size="small"
-                            >
-                                <v-icon size="small"> mdi-eye </v-icon> View
-                            </v-btn>
-                            <v-btn
-                                width="100%"
-                                class="me-2 mb-2"
-                                color="success"
-                                @click="editItem(item, 'Update')"
-                                variant="flat"
-                                size="small"
-                            >
-                                <v-icon size="small"> mdi-pencil </v-icon> Edit
-                            </v-btn>
-                            <v-btn
-                                width="100%"
-                                color="error"
-                                @click="deleteItem(item)"
-                                variant="flat"
-                                size="small"
-                            >
-                                <v-icon> mdi-delete </v-icon> delete
-                            </v-btn>
-                        </div>
-                    </v-list>
-                </v-menu>
+                    <div class="d-flex justify-end">
+                        <v-btn
+                            variant="text"
+                            color="info"
+                            icon="mdi-eye"
+                            size="small"
+                            @click="() => showModalStaff(true, item)"
+                            class="mr-1"
+                            title="View"
+                        ></v-btn>
+                        <v-btn
+                            variant="text"
+                            color="primary"
+                            icon="mdi-pencil"
+                            size="small"
+                            @click="editItem(item, 'Update')"
+                            class="mr-1"
+                            title="Edit"
+                        ></v-btn>
+                        <v-btn
+                            variant="text"
+                            color="error"
+                            icon="mdi-delete"
+                            size="small"
+                            @click="deleteItem(item)"
+                            title="Delete"
+                        ></v-btn>
+                    </div>
                 </template>
 
                 <template v-slot:bottom>
-                    <div class="m-2">
-                        <span style="color: gray" v-if="pagination">
-                            Showing {{ pagination.from }} to
-                            {{ pagination.to }} out of
-                            <b>{{ pagination.total }} records</b>
-                        </span>
-                        <div class="text-center">
-                            <v-pagination
-                                v-model="query.page"
-                                circle
-                                @click="getStaffs"
-                            >
-                            </v-pagination>
+                    <div class="d-flex flex-column flex-md-row justify-space-between align-center pa-4">
+                        <div class="text-caption text-medium-emphasis mb-2 mb-md-0">
+                            Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }} entries
                         </div>
+                        <v-pagination
+                            v-model="query.page"
+                            :length="pagination.last_page"
+                            :total-visible="5"
+                            density="comfortable"
+                            @update:model-value="getStaffs"
+                        ></v-pagination>
                     </div>
                 </template>
             </v-data-table>
-        </div>
-    </v-card>
+        </v-card>
 
-    <staff-form
-        :value="show_form_modal"
-        :staff="staff"
-        :action_type="action_type"
-        @input="showModalForm"
-        @reloadStaffs="reloadStaffs"
-    />
-    <staff-modal
-        :value="show_staff_modal"
-        :staff="staff"
-        @input="showModalStaff"
-        @reloadStaffs="reloadStaffs"
-    />
+        <staff-form
+            :value="show_form_modal"
+            :staff="staff"
+            :action_type="action_type"
+            @input="showModalForm"
+            @reloadStaffs="reloadStaffs"
+        />
+
+        <staff-modal
+            :value="show_staff_modal"
+            :staff="staff"
+            @input="showModalStaff"
+            @reloadStaffs="reloadStaffs"
+        />
+    </v-container>
 </template>
+
+<style scoped>
+.v-card {
+    border-radius: 8px;
+}
+.v-data-table {
+    border-radius: 8px;
+}
+</style>
