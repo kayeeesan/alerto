@@ -127,5 +127,7 @@ const getCountByType = (type) => computed(() =>
   border: 1px solid #C99D34;
   font-weight: bold;
   text-align: center;
+  border-bottom-right-radius: 11px;
+  border-top-right-radius: 11px;
 }
 </style>
