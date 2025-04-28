@@ -45,26 +45,33 @@ export default function useUsers() {
                     is_success.value = true;                
                 });
         } catch (e) {
-            if(e.response.status == 422) {
-                errors.value = e.response.data;
-                is_success.value = false;
-                is_loading.value = false;
-            
-                  Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "There was a problem with the information you provided. Please check and try again.",
-                    });
-            } else {
-                            // Handle other types of errors
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "An unexpected error occurred. Please try again later.",
-                });
                     is_loading.value = false;
-            }
-        }
+                    if (e.response && e.response.status == 422) {
+                        errors.value = e.response.data;
+                        is_success.value = false;
+            
+                        const message = e.response.data?.message || "";
+                        if (e.response.data.username && e.response.data.username.includes("The username has already been taken.")) {
+                            Swal.fire({
+                                title: "Username Taken",
+                                icon: "error",
+                                text: "The username is already taken. Please choose a different one.",
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error",
+                                icon: "error",
+                                text: "There was a problem with the information you provided. Please check and try again.",
+                            });
+                        }
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            icon: "error",
+                            text: "An unexpected error occurred. Please try again later.",
+                        });
+                    }
+                }
     }
 
     const updateUser = async (data) => {
@@ -86,10 +93,31 @@ export default function useUsers() {
                     is_success.value = true;                
                 });
         } catch (e) {
-            if(e.response.status == 422) {
+            is_loading.value = false;
+            if (e.response && e.response.status == 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
-                is_loading.value = false;
+        
+                // Check for username error directly in the response data
+                if (e.response.data.username && e.response.data.username.includes("The username has already been taken.")) {
+                    Swal.fire({
+                        title: "Username Taken",
+                        icon: "error",
+                        text: "The username is already taken. Please choose a different one.",
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        icon: "error",
+                        text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+                }
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "An unexpected error occurred. Please try again later.",
+                });
             }
         }
     }

@@ -57,24 +57,31 @@ export default function useStaffs() {
                     is_success.value = true;                
                 });
         } catch (e) {
-            if(e.response.status == 422) {
+            is_loading.value = false;
+            if (e.response && e.response.status == 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
-                is_loading.value = false;
-            
-                  Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "There was a problem with the information you provided. Please check and try again.",
+    
+                const message = e.response.data?.message || "";
+                if (message.includes("The username has already been taken.")) {
+                    Swal.fire({
+                        title: "Username Taken",
+                        icon: "error",
+                        text: "The username is already taken. Please choose a different one.",
                     });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        icon: "error",
+                        text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+                }
             } else {
-                            // Handle other types of errors
                 Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred. Please try again later.",
                 });
-                    is_loading.value = false;
             }
         }
     }
@@ -97,24 +104,31 @@ export default function useStaffs() {
                     is_success.value = true;                
                 });
         } catch (e) {
-            if(e.response.status == 422) {
+            is_loading.value = false;
+            if (e.response && e.response.status == 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
-                is_loading.value = false;
-                
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "There was a problem with the information you provided. Please check and try again.",
-                });
+    
+                const message = e.response.data?.message || "";
+                if (message.includes("The username has already been taken.")) {
+                    Swal.fire({
+                        title: "Username Taken",
+                        icon: "error",
+                        text: "The username is already taken. Please choose a different one.",
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        icon: "error",
+                        text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+                }
             } else {
-                // Handle other types of errors
                 Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred. Please try again later.",
                 });
-                is_loading.value = false;
             }
         }
     }
@@ -124,41 +138,47 @@ export default function useStaffs() {
         is_loading.value = true;
         staff.value = data;
         
-        try{
-            await axios
-                .patch(`/api/staffs/${staff.value.id}`, staff.value)
-                .then((response) => {
-                    Swal.fire({
-                        title: "Success",
-                        icon: "success",
-                        text: response.data.message,
-                    });
-                    errors.value = {};
-                    is_loading.value = false;
-                    is_success.value = true;                
+        try {
+            await axios.patch(`/api/staffs/${staff.value.id}`, staff.value).then((response) => {
+                Swal.fire({
+                    title: "Success",
+                    icon: "success",
+                    text: response.data.message,
                 });
+                errors.value = {};
+                is_loading.value = false;
+                is_success.value = true;
+            });
         } catch (e) {
-            if(e.response.status == 422) {
+            is_loading.value = false;
+            if (e.response && e.response.status == 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
-                is_loading.value = false;
-
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "There was a problem with the information you provided. Please check and try again.",
-                });
+    
+                const message = e.response.data?.message || "";
+                if (message.includes("The username has already been taken.")) {
+                    Swal.fire({
+                        title: "Username Taken",
+                        icon: "error",
+                        text: "The username is already taken. Please choose a different one.",
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        icon: "error",
+                        text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+                }
             } else {
-                // Handle other types of errors (e.g., 500 or network issues)
                 Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred while updating the staff. Please try again later.",
                 });
-                is_loading.value = false;
             }
         }
-    }
+    };
+    
   
 
     const destoryStaff = async (id) => {

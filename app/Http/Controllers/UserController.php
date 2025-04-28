@@ -44,6 +44,13 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try {
+
+            $existingUser = User::where('username', $request->username)->first();
+            if ($existingUser) {
+                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+
             $default_password = "*1234#";
 
             $user = new User();
@@ -68,6 +75,11 @@ class UserController extends Controller
     public function register(UserRequest $request)
 {
     try {
+
+        $existingUser = User::where('username', $request->username)->first();
+        if ($existingUser) {
+            return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
         // Default password or allow user to set their own password
         $default_password = "*1234#";
 
@@ -113,7 +125,18 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+    
+            // Check if username is being changed and if new username already exists
+            if ($user->username !== $request->username) {
+                $existingUser = User::where('username', $request->username)->where('id', '!=', $id)->first();
+                if ($existingUser) {
+                    return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+            }
+    
             $oldData = $user->toArray();
+            
+            // Update user data
             $user->username = $request->username;
             $user->first_name = ucwords($request->first_name);
             $user->middle_name = ucwords($request->middle_name);
@@ -121,19 +144,22 @@ class UserController extends Controller
             $user->status = $request->status;
             $this->storeUserRoles($user->id, $request->user_roles);
             $user->update();
-
-           $staff = Staff::where('username', $user->username)->first();
-           if($staff){
-                $staff->status = $request->status;
+    
+            // Find and update corresponding staff record
+            $staff = Staff::where('username', $oldData['username'])->first();
+            if ($staff) {
+                $staff->username = $user->username;
+                $staff->first_name = $user->first_name;
+                $staff->last_name = $user->last_name;
+                $staff->status = $user->status;
                 $staff->update();
-           }
+            }
             
             $this->logService->logAction('User', $user->id, 'update', [
                 'old' => $oldData,
                 'new' => $user->toArray(),
             ]);
-
-
+    
             return response(['message' => 'User has been successfully updated.']);
         } catch (\Exception $e) {
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
