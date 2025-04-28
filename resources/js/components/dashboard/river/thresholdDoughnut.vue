@@ -1,20 +1,3 @@
-<template>
-  <v-col class="threshold-container">
-    <v-sheet class="threshold-sheet" rounded="lg">
-      <div class="header-container">
-        <div class="alert-indicator"></div>
-        <h1 class="section-title">MONITORING OVERVIEW</h1>
-      </div>
-      
-      <v-divider class="divider"></v-divider>
-      
-      <div class="doughnut-container">
-        <canvas ref="chartRef" class="doughnut-chart"></canvas>
-      </div>
-    </v-sheet>
-  </v-col>
-</template>
-
 <script setup>
 import { ref, onMounted } from "vue";
 import Chart from 'chart.js/auto';
@@ -64,6 +47,24 @@ onMounted(() => {
   }
 });
 </script>
+
+<template>
+  <v-col class="threshold-container">
+    <v-sheet class="threshold-sheet" rounded="lg">
+      <div class="header-container">
+        <div class="alert-indicator"></div>
+        <h1 class="section-title">MONITORING OVERVIEW</h1>
+      </div>
+      
+      <v-divider class="divider"></v-divider>
+      
+      <div class="doughnut-container">
+        <canvas ref="chartRef" class="doughnut-chart"></canvas>
+      </div>
+    </v-sheet>
+  </v-col>
+</template>
+
 
 <style scoped>
 .threshold-container {
@@ -115,13 +116,16 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* Important for flex children */
+  justify-content: center; /* center it vertically */
+  align-items: center; /* center it horizontally */
+  min-height: 400px; /* <-- ADD THIS */
 }
 
 .doughnut-chart {
   width: 100% !important;
   height: 100% !important;
-  max-height: 380px;
-  margin: 0 auto;
+  max-width: 350px; /* optional: limit max size */
+  max-height: 350px; /* optional: limit max size */
 }
+
 </style>

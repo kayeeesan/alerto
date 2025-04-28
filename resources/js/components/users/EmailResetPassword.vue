@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
 import useResetPasswordRequest from "../../composables/resetPasswordRequest"; // ✅ correct import path
+import Swal from "sweetalert2";
 
 const email = ref('');
 const router = useRouter();
@@ -12,7 +13,12 @@ const { isLoading, sendResetLink } = useResetPasswordRequest();
 const handleSend = async () => {
     const success = await sendResetLink(email.value);
     if (success) {
-        alert("Reset link sent! Please check your email.");
+        // alert("Reset link sent! Please check your email.");
+        Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Reset link sent! Please check your email.",
+        });
         router.push('/');
     }
 };

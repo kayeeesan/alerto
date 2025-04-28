@@ -119,7 +119,7 @@ class ThresholdController extends Controller
                 'threshold_id' => $threshold->id,
                 'details' => $details,
                 'status' => $status,
-                'expired_at' => now()->addMinutes(2),
+                'expired_at' => now()->addMinutes(30),
                 'user_id' => auth()->id(), // optional
             ]);
         }

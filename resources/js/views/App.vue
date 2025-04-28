@@ -7,68 +7,71 @@ import store from "@/store";
 import useStaffs from "../composables/staff.js";
 
 const { staffs, getStaffs } = useStaffs();
-
 const staff = ref({});
-
 const { logout } = useAuth();
 const user = store.state.auth.user;
-
-const drawer = ref(true); // Controls the sidebar visibility
-let interval = null; // Define interval variable
+const drawer = ref(true);
+const isMobile = ref(false);
 const show_form_modal = ref(false);
+const localTime = ref('');
+let interval = null;
+let resizeListener = null;
 
 const ShowModalForm = () => {
   show_form_modal.value = true;
 }
 
-
 const cleanUpExpiredItems = () => {
     const expiry = localStorage.getItem("expiry");
-
     if (!expiry) return;
-
     const now = new Date().getTime();
-
     if (now > expiry) {
         logout();
     }
 };
-
-const localTime = ref('');
 
 const updatedLocalTime = () => {
   const now = new Date();
   localTime.value = now.toLocaleTimeString();
 };
 
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768;
+  if (isMobile.value) {
+    drawer.value = false;
+  } else {
+    drawer.value = true;
+  }
+};
+
 onMounted(async () => {
-    interval = setInterval(cleanUpExpiredItems, 28800000); // Restart every 8 hours
+    interval = setInterval(cleanUpExpiredItems, 28800000);
     updatedLocalTime();
     setInterval(updatedLocalTime, 1000);
+    
+    checkMobile();
+    resizeListener = () => checkMobile();
+    window.addEventListener('resize', resizeListener);
 
     await getStaffs();
-
     const matched = staffs.value.find(
-    (s) => s.username?.toLowerCase() === user.username?.toLowerCase()
-  );
-
+      (s) => s.username?.toLowerCase() === user.username?.toLowerCase()
+    );
     if (matched) {
       staff.value = matched;
     }
-  console.log(matched);
 });
-
-
 
 onUnmounted(() => {
     clearInterval(interval);
+    if (resizeListener) {
+      window.removeEventListener('resize', resizeListener);
+    }
 });
 
-// Dynamically adjust main content margin
 const mainContentClass = computed(() => ({
-  "expanded": drawer.value, // Add 'expanded' class when sidebar is open
+  "expanded": drawer.value && !isMobile.value,
 }));
-
 
 </script>
 
@@ -76,20 +79,18 @@ const mainContentClass = computed(() => ({
   <v-app>
     <div class="layout-wrapper">
       <!-- Sidebar -->
-      <Sidebar v-model:drawer="drawer" class="sidebar" />
+      <Sidebar 
+        v-model:drawer="drawer" 
+        class="sidebar" 
+        :temporary="isMobile"
+      />
 
-      <!-- Main Content (Responsive) -->
+      <!-- Main Content -->
       <div class="main-content" :class="mainContentClass" style="background: #F8FAF0;">
         <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
             
-
-            <!-- <v-badge
-                color="blue-grey-lighten-5"
-                :content="user.full_name"
-                inline
-            ></v-badge> -->
             <div class="d-flex align-center pr-6">
               <v-menu transition="scale-transition" offset-y open-on-hover>
                 <template v-slot:activator="{ props }">
@@ -110,7 +111,7 @@ const mainContentClass = computed(() => ({
                   </v-btn>
                 </template>
 
-                <v-card class="pa-4" width="320">
+                <v-card class="pa-4" width="380">
                   <div class="d-flex align-center mb-4">
                     <v-avatar size="56" color="primary">
                       <span class="white--text text-h6">
@@ -166,9 +167,7 @@ const mainContentClass = computed(() => ({
                   </div>
                 </v-card>
               </v-menu>
-
             </div>
-
         </v-app-bar>
 
         <v-main style="margin-left: 0 !important; background: #F8FAF0; ">
@@ -180,39 +179,43 @@ const mainContentClass = computed(() => ({
     </div>
   </v-app>
   <UserProfile 
-  v-model="show_form_modal" 
-  :user="user"
-  :staff="staff"
+    v-model="show_form_modal" 
+    :user="user"
+    :staff="staff"
   />
 </template>
 
 <style scoped>
-/* Base layout */
 .layout-wrapper {
   display: flex;
   height: 100vh;
 }
 
-/* Sidebar styling */
 .sidebar {
   transition: width 0.3s ease-in-out;
 }
 
-/* Main content responsiveness */
 .main-content {
   flex-grow: 1;
   transition: margin-left 0.3s ease-in-out;
+  width: 100%;
+  margin-left: 0;
 }
 
-/* When Sidebar is expanded */
 .main-content.expanded {
-  margin-left: 270px; /* Same width as sidebar */
+  margin-left: 270px;
+  width: calc(100% - 270px);
 }
 
-/* Responsive for small screens */
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0 !important; /* No offset when sidebar is temporary */
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .main-content.expanded {
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 }
 </style>
