@@ -31,6 +31,12 @@ class StaffController extends Controller
         try {
             // Validate if the role exists
             // $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
+
+            $existingUser = User::where('username', $request->username)->first();
+            if ($existingUser) {
+                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            
             $role = Role::where('slug', 'project-staff')->firstOrFail();
     
             // Create the Staff entry
@@ -70,6 +76,13 @@ class StaffController extends Controller
     public function storeWalkinStaff(StaffRequest $request)
     {
         try {
+
+            $existingUser = User::where('username', $request->username)->first();
+            if ($existingUser) {
+                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            
             // Validate if the role exists
             $role = Role::where('slug', 'project-staff')->firstOrFail();
     
@@ -149,24 +162,21 @@ class StaffController extends Controller
 
     public function destroy($id)
     {
-        // Staff::findOrFail($id)->delete();
-        // return response(['message' => 'Staff has been successfully deleted!']);
-        DB::beginTransaction();
         try {
             $staff = Staff::findOrFail($id);
-            $username = $staff->username;
+
+            $user = User::where('username', $staff->username)->first();
 
             $staff->delete();
 
-            $user = User::where('username', $username)->first();
-                if ($user) {
-                    $user->delete();
-                }
+            if ($user) {
+                $user->delete();
+            }
 
-            return response(['message' => 'Staff has been successfully deleted!']);
+            return response(['message' => 'Staff and associated User have been successfully deleted!']);
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response(['message' => 'Something went wrong.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
+
 }
