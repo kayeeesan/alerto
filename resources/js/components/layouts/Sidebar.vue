@@ -261,7 +261,6 @@ watch(
 
 .subitem-icon {
   font-size: 1.25rem;
-  margin-right: 16px;
   color: rgba(255, 255, 255, 0.7);
 }
 

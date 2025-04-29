@@ -138,13 +138,15 @@ const filteredRivers = computed(() => {
                 <v-card class="pa-8" elevation="8" width="950px" rounded="lg" style="position: relative; z-index: 1;">
                     <!-- Header Section -->
                     <div class="text-center mb-6">
-                        <v-img
-                            class="mx-auto mb-4"
-                            max-width="100"
-                            src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
-                        ></v-img>
-                        <v-card-title class="text-h4 font-weight-bold text-primary">Member Registration</v-card-title>
-                        <v-card-subtitle class="text-caption">Please fill out all required fields</v-card-subtitle>
+                            <v-img
+                                class="mx-auto mb-4"
+                                max-width="100"
+                                src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+                            ></v-img>
+                            <v-card-title class="text-h5 text-md-h4 text-lg-h3 font-weight-bold text-primary">
+                                Member<span class="d-sm-none"><br></span> Registration
+                            </v-card-title>
+                        <v-card-subtitle class="text-caption">Please fill out all <span class="d-sm-none"><br></span> required fields</v-card-subtitle>
                     </div>
 
                     <v-card-text>
@@ -303,44 +305,43 @@ const filteredRivers = computed(() => {
 
                     <!-- Action Buttons -->
                     <v-card-actions class="justify-center pt-4">
-                        <v-btn 
-                            color="red-darken-2" 
-                            variant="flat" 
-                            :to="'/'"
-                            size="large"
-                            class="mr-4"
-                            height="48"
-                            min-width="120"
-                        >
-                            <v-icon start class="mr-1">mdi-close</v-icon>
-                            <span>Cancel</span>
-                        </v-btn>
+                        <v-row>
+                            <v-col class="d-flex justify-end">
+                                <v-btn 
+                                    color="red-darken-2" 
+                                    variant="flat" 
+                                    :to="'/'"
+                                    size="large"
+                                    class="mr-2"
+                                    cols="12"
+                                >
+                                    <v-icon>mdi-home</v-icon>
+                                </v-btn>
+                          
+                                <v-btn 
+                                    color="orange-darken-2" 
+                                    variant="flat" 
+                                    @click="resetForm"
+                                    size="large"
+                                    class="mr-2"
+                                >
+                                    <v-icon>mdi-refresh</v-icon>
+                                </v-btn>
+                          
+                                <v-btn 
+                                    color="blue-darken-4" 
+                                    variant="flat" 
+                                    :loading="is_loading" 
+                                    @click="save"
+                                    size="large"
+                                >
+                                    <v-icon>mdi-content-save</v-icon>
+                                </v-btn>
+                          
+                            </v-col>
+                             
+                        </v-row>
                         
-                        <v-btn 
-                            color="orange-darken-2" 
-                            variant="flat" 
-                            @click="resetForm"
-                            size="large"
-                            class="mr-4"
-                            height="48"
-                            min-width="120"
-                        >
-                            <v-icon start class="mr-1">mdi-refresh</v-icon>
-                            <span>Reset</span>
-                        </v-btn>
-                        
-                        <v-btn 
-                            color="blue-darken-4" 
-                            variant="flat" 
-                            :loading="is_loading" 
-                            @click="save"
-                            size="large"
-                            height="48"
-                            min-width="120"
-                        >
-                            <v-icon start class="mr-1">mdi-content-save</v-icon>
-                            <span>Submit</span>
-                        </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-container>

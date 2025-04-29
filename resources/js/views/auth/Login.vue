@@ -57,11 +57,13 @@ const handleSubmit = async () => {
             rounded="lg"
           >
           <div class="text-center mb-6">
-                  <v-img
-                    class="mx-auto mb-4"
-                    max-width="100"
-                    src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
-                  ></v-img>
+                    <router-link :to="'/'">
+                            <v-img
+                                class="mx-auto mb-4"
+                                max-width="130"
+                                src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+                            ></v-img>
+                      </router-link>
                   <v-card-title class="text-h4 font-weight-bold text-primary">Welcome Back</v-card-title>
                   <v-card-subtitle class="text-caption">Sign in to your account</v-card-subtitle>
                 </div>

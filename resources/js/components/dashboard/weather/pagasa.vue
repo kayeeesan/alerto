@@ -125,5 +125,6 @@
   flex: 1;
   min-width: 120px;
   max-width: 200px;
+  font-size: 11px;
 }
 </style>
