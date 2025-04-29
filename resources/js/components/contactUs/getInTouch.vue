@@ -47,7 +47,7 @@ const save = async () => {
 <template>
   <v-col class="threshold-container ml-5">
     <v-sheet class="threshold-sheet" rounded="lg">
-      <div class="header-container">
+      <div class="header-container bg-blue-grey-lighten-5">
         <div class="alert-indicator"></div>
         <h1 class="section-title">CONTACT US</h1>
       </div>
@@ -121,35 +121,43 @@ const save = async () => {
                   />
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col>
+                  <div class="mb-4">
+                      <v-text-field
+                      v-model="form.contact_number"
+                      label="Phone Number"
+                      variant="outlined"
+                      :error="!!errors.contact_number"
+                      :error-messages="errors.contact_number"
+                      density="comfortable"
+                      class="bg-white"
+                      style="height: 48px; border-radius: 11px;"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
               
-              <div class="mb-4">
-                  <v-text-field
-                  v-model="form.contact_number"
-                  label="Phone Number"
-                  variant="outlined"
-                  :error="!!errors.contact_number"
-                  :error-messages="errors.contact_number"
-                  density="comfortable"
-                  class="bg-white"
-                  style="height: 48px; border-radius: 11px;"
-                />
-              </div>
-
-              <div>
-                  <v-textarea
-                  v-model="form.message"
-                  label="Message"
-                  variant="outlined"
-                  counter
-                  maxlength="120"
-                  :error="!!errors.message"
-                  :error-messages="errors.message"
-                  density="comfortable"
-                  rows="3"
-                  class="bg-white"
-                  style="height: 95px; border-radius: 11px;"
-                />
-              </div>
+            <v-row>
+              <v-col>
+                  <div>
+                    <v-textarea
+                    v-model="form.message"
+                    label="Message"
+                    variant="outlined"
+                    counter
+                    maxlength="120"
+                    :error="!!errors.message"
+                    :error-messages="errors.message"
+                    density="comfortable"
+                    rows="3"
+                    class="bg-white"
+                    style="height: 95px; border-radius: 11px;"
+                  />
+                </div>
+              </v-col>
+            </v-row>
+              
 
               <div class="form-actions">
                 <v-btn
@@ -187,7 +195,7 @@ const save = async () => {
 .header-container {
   padding: 16px 24px 8px;
   position: relative;
-  background: #F5F5F5;
+  /* background: #F5F5F5; */
   border-bottom: 1px solid #E0E0E0;
 }
 

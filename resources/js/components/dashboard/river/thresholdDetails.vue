@@ -62,7 +62,7 @@
               <div class="card-content">
                 <div class="value-range">30+</div>
                 <div class="unit">MM</div>
-                <div class="status">EVACUATION</div>
+                <div class="status text-caption text-sm-body-6">EVACUATION</div>
               </div>
             </v-card>
           </v-col>
@@ -122,7 +122,7 @@
               <div class="card-content">
                 <div class="value-range">2.0+</div>
                 <div class="unit">M</div>
-                <div class="status">EVACUATION</div>
+                <div class="status text-caption text-sm-body-6">EVACUATION</div>
               </div>
             </v-card>
           </v-col>

@@ -55,11 +55,14 @@ const handleSubmit = async () => {
             rounded="lg"
           >
               <div class="text-center mb-6">
+                <router-link :to="'/'">
                   <v-img
                     class="mx-auto mb-4"
                     max-width="100"
                     src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
                   ></v-img>
+                </router-link>
+                  
                   <v-card-title class="text-h4 font-weight-bold text-primary">Set Password</v-card-title>
                 </div>
 
