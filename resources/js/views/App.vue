@@ -73,6 +73,10 @@ const mainContentClass = computed(() => ({
   "expanded": drawer.value && !isMobile.value,
 }));
 
+const items = [
+  { title: 'Notification 1' },
+  { title: 'Notification 2' },
+];
 </script>
 
 <template>
@@ -90,6 +94,39 @@ const mainContentClass = computed(() => ({
         <v-app-bar app style="background: #003092;">
             <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
+
+            <div class="d-flex align-center">
+              <v-menu offset-y>
+                <template v-slot:activator="{ props }">
+                  <v-badge
+                    color="red"
+                    dot
+                    overlap
+                    offset-x="8"
+                    offset-y="8"
+                  >
+                    <v-btn
+                      v-bind="props"
+                      icon
+                      color="primary"
+                      variant="flat"
+                      style="width: 40px; height: 40px; min-width: 40px; border-radius: 50%;"
+                    >
+                      <v-icon>mdi-bell</v-icon>
+                    </v-btn>
+                  </v-badge>
+                </template>
+
+                <v-list>
+                  <v-list-item
+                    v-for="(item, index) in items"
+                    :key="index"
+                  >
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
             
             <div class="d-flex align-center pr-6">
               <v-menu transition="scale-transition" offset-y open-on-hover>
