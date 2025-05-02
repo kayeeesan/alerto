@@ -24,6 +24,7 @@ class User extends JsonResource
             'password_reset' => $this->password_reset,
             'status' => $this->status,
             'roles' => $this->roles ? Role::collection($this->roles) : [],
+            'river' => $this->river, // will use the accessor defined above
         ];
     }
 }
