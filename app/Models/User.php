@@ -59,4 +59,10 @@ class User extends Authenticatable
 
         return "{$last_name}, {$first_name} {$middle_name}";
     }
+
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'user_id');
+    }
+
 }

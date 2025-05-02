@@ -11,18 +11,20 @@ class Staff extends Model
     use HasFactory;
 
     protected $fillable = [
-        'username',
-        'first_name',
-        'last_name',
+        'user_id',
         'mobile_number',
         'role_id',
         'region_id',
         'province_id',
         'municipality_id',
         'river_id',
-        'fb_lgu',
-        'status'
+        'fb_lgu'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function role(){
         return $this->belongsTo(Role::class,'role_id');

@@ -12,11 +12,12 @@ const show_form_modal = ref(false);
 const show_staff_modal = ref(false);
 
 const headers = [
+    { title: "Name", key: "full_name", width: "20%" },
     { title: "Email", key: "username", width: "20%" },
     { title: "Contact No.", key: "mobile_number", width: "15%" },
     { title: "Municipality", key: "municipality.name", width: "15%" },
     { title: "River", key: "river.name", width: "15%" },
-    { title: "Status", key: "status", width: "10%" },
+    { title: "Status", key: "status", width: "10%" }, 
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "25%" },
 ];
 
