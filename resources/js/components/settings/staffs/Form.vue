@@ -35,6 +35,7 @@ const initialState = {
     username: null,
     first_name: null,
     last_name: null,
+    middle_name: null,
     mobile_number: null,
     role: {},
     region: {},
@@ -52,6 +53,7 @@ watch(
             form.username = value.username;
             form.first_name = value.first_name;
             form.last_name = value.last_name;
+            form.middle_name = value.middle_name;
             form.mobile_number = value.mobile_number;
             form.role = value.role;
             form.region = value.region;
@@ -137,7 +139,7 @@ const filteredRivers = computed(() => {
             <v-card-text>
                 <v-container fluid>
                     <v-row>
-                        <v-col cols="12" md="6" sm="6">
+                        <v-col cols="12" md="5" sm="5">
                             <v-text-field
                             v-model="form.first_name"
                             label="First Name*"
@@ -147,12 +149,21 @@ const filteredRivers = computed(() => {
                             "
                         ></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="6" sm="6">
+                        <v-col cols="12" md="5" sm="5">
                             <v-text-field
                             v-model="form.last_name"
                             label="Last Name*"
                             variant="outlined"
-                            @keydown="generateUsername"
+                            :error-messages="
+                                errors['last_name'] ? errors['last_name'] : []
+                            "
+                        ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="2" sm="2">
+                            <v-text-field
+                            v-model="form.middle_name"
+                            label="M.I*"
+                            variant="outlined"
                             :error-messages="
                                 errors['last_name'] ? errors['last_name'] : []
                             "

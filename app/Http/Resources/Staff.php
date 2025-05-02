@@ -16,12 +16,15 @@ class Staff extends JsonResource
     {
         return [
             'id' => $this->id,
-            'username' => $this->username,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
+            'user_id' => $this->user_id,
+            'username' => $this->user?->username,
+            'full_name' => $this->user?->full_name,
+            'first_name' => $this->user?->first_name,
+            'last_name' => $this->user?->last_name,
+            'middle_name' => $this->user?->middle_name,
             'mobile_number' => $this->mobile_number,
             'role' => $this->role,
-            'region_id' => $this->region_id, 
+            'region_id' => $this->region_id,
             'region' => $this->region,
             'province_id' => $this->province_id,
             'province' => $this->province,
@@ -29,7 +32,8 @@ class Staff extends JsonResource
             'municipality' => $this->municipality,
             'river' => $this->river,
             'fb_lgu' => $this->fb_lgu,
-            'status' => $this->status
+            'status' => $this->user?->status
         ];
     }
+
 }

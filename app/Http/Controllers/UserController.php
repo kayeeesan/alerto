@@ -145,15 +145,7 @@ class UserController extends Controller
             $this->storeUserRoles($user->id, $request->user_roles);
             $user->update();
     
-            // Find and update corresponding staff record
-            $staff = Staff::where('username', $oldData['username'])->first();
-            if ($staff) {
-                $staff->username = $user->username;
-                $staff->first_name = $user->first_name;
-                $staff->last_name = $user->last_name;
-                $staff->status = $user->status;
-                $staff->update();
-            }
+           
             
             $this->logService->logAction('User', $user->id, 'update', [
                 'old' => $oldData,
@@ -211,10 +203,10 @@ class UserController extends Controller
     
             $this->logService->logAction('User', $id, 'delete');
     
-            $staff = Staff::where('username', $username)->first();
-            if ($staff) {
-                $staff->delete();
-            }
+            // $staff = Staff::where('username', $username)->first();
+            // if ($staff) {
+            //     $staff->delete();
+            // }
     
             return response(['message' => 'User has been successfully deleted!']);
         } catch (\Exception $e) {

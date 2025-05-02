@@ -29,133 +29,114 @@ class StaffController extends Controller
     public function store(StaffRequest $request)
     {
         try {
-            // Validate if the role exists
-            // $role = Role::findOrFail($request->input('role.id'));  // Ensure role exists
-
             $existingUser = User::where('username', $request->username)->first();
             if ($existingUser) {
-                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+                return response()->json(['message' => 'Username already exists.'], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             
             $role = Role::where('slug', 'project-staff')->firstOrFail();
+
+            $user = User::create([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
+                'password' => bcrypt('*1234#'),
+                'status' => 'pending',
+            ]);
     
-            // Create the Staff entry
-            $staff = new Staff();
-            $staff->username = $request->username;
-            $staff->first_name = $request->first_name;
-            $staff->last_name = $request->last_name;
-            $staff->mobile_number = $request->mobile_number;
-            $staff->role_id = $role->id;
-            $staff->region_id = $request->input('region.id');
-            $staff->province_id = $request->input('province.id');
-            $staff->municipality_id = $request->input('municipality.id');
-            $staff->river_id = $request->input('river.id');
-            $staff->fb_lgu = $request->fb_lgu;
-            $staff->save();
+            $role = Role::where('slug', 'project-staff')->firstOrFail();
+            $user->roles()->sync([$role->id]);
     
-            // Now create the User
-            $default_password = "*1234#";
-            $user = new User();
-            $user->username = $request->username;
-            $user->first_name = ucwords($request->first_name);
-            $user->middle_name = null;
-            $user->last_name = ucwords($request->last_name);
-            $user->password = bcrypt($default_password);
-            $user->status = 'pending';
-            $user->save();
+            $staff = Staff::create([
+                'user_id' => $user->id,
+                'mobile_number' => $request->mobile_number,
+                'role_id' => $role->id,
+                'region_id' => $request->input('region.id'),
+                'province_id' => $request->input('province.id'),
+                'municipality_id' => $request->input('municipality.id'),
+                'river_id' => $request->input('river.id'),
+                'fb_lgu' => $request->fb_lgu,
+            ]);
     
-            // Assign role to user
-            $user->roles()->sync([$role->id]);  // Sync the role for the user
-    
-            return response()->json(['message' => 'Staff has been successfully saved.']);
+            return response()->json(['message' => 'Staff successfully created.']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()]);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     public function storeWalkinStaff(StaffRequest $request)
     {
         try {
-
             $existingUser = User::where('username', $request->username)->first();
             if ($existingUser) {
-                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+                return response()->json(['message' => 'Username already exists.'], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            
-            // Validate if the role exists
             $role = Role::where('slug', 'project-staff')->firstOrFail();
     
-            // Create the Staff entry
-            $staff = new Staff();
-            $staff->username = $request->username;
-            $staff->first_name = $request->first_name;
-            $staff->last_name = $request->last_name;
-            $staff->mobile_number = $request->mobile_number;
-            $staff->role_id = $role->id;  // Store the role id from the request
-            $staff->region_id = $request->input('region.id');
-            $staff->province_id = $request->input('province.id');
-            $staff->municipality_id = $request->input('municipality.id');
-            $staff->river_id = $request->input('river.id');
-            $staff->fb_lgu = $request->fb_lgu;
-            $staff->save();
+            $user = User::create([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
+                'password' => bcrypt('*1234#'),
+                'status' => 'pending',
+            ]);
     
-            // Now create the User
-            $default_password = "*1234#";
-            $user = new User();
-            $user->username = $request->username;
-            $user->first_name = ucwords($request->first_name);
-            $user->middle_name = null;
-            $user->last_name = ucwords($request->last_name);
-            $user->password = bcrypt($default_password);
-            $user->status = 'pending';
-            $user->save();
+            $role = Role::where('slug', 'project-staff')->firstOrFail();
+            $user->roles()->sync([$role->id]);
     
-            // Assign role to user
-            $user->roles()->sync([$role->id]);  // Sync the role for the user
+            $staff = Staff::create([
+                'user_id' => $user->id,
+                'mobile_number' => $request->mobile_number,
+                'role_id' => $role->id,
+                'region_id' => $request->input('region.id'),
+                'province_id' => $request->input('province.id'),
+                'municipality_id' => $request->input('municipality.id'),
+                'river_id' => $request->input('river.id'),
+                'fb_lgu' => $request->fb_lgu,
+            ]);
     
-            return response()->json(['message' => 'Staff has been successfully saved.']);
+            return response()->json(['message' => 'Staff successfully created.']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()]);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
     public function update($id, StaffRequest $request)
     {
         try {
             $staff = Staff::findOrFail($id);
-            $user = User::where('username', $staff->username)->first();
+            $user = $staff->user;
     
-            // Check if the new username already exists in users (excluding current user)
-            $existingUser = User::where('username', $request->username)->where('id', '!=', $user->id)->first();
+            $existingUser = User::where('username', $request->username)
+            ->where('id', '!=', $user->id)
+            ->first();
+
             if ($existingUser) {
-                return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => 'Username already exists.'], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
     
-            // Update Staff details
-            $staff->username = $request->username;
-            $staff->first_name = $request->first_name;
-            $staff->last_name = $request->last_name;
-            $staff->mobile_number = $request->mobile_number;
-            $staff->role_id = $request->input('role.id');
-            $staff->region_id = $request->input('region.id');
-            $staff->province_id = $request->input('province.id');
-            $staff->municipality_id = $request->input('municipality.id');
-            $staff->river_id = $request->input('river.id');
-            $staff->fb_lgu = $request->fb_lgu;
-            $staff->update();
+            $user->update([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
+            ]);
     
-            // Update User details
-            if ($user) {
-                $user->username = $request->username;
-                $user->first_name = ucwords($request->first_name);
-                $user->middle_name = null;
-                $user->last_name = ucwords($request->last_name);
-                $user->update();
-            }
+            $staff->update([
+                'mobile_number' => $request->mobile_number,
+                'role_id' => $request->input('role.id'),
+                'region_id' => $request->input('region.id'),
+                'province_id' => $request->input('province.id'),
+                'municipality_id' => $request->input('municipality.id'),
+                'river_id' => $request->input('river.id'),
+                'fb_lgu' => $request->fb_lgu,
+            ]);
     
-            return response(['message' => 'Staff has been successfully updated.']);
+            return response()->json(['message' => 'Staff successfully updated.']);
         } catch (\Exception $e) {
-            return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
     
@@ -164,8 +145,7 @@ class StaffController extends Controller
     {
         try {
             $staff = Staff::findOrFail($id);
-
-            $user = User::where('username', $staff->username)->first();
+            $user = $staff->user;
 
             $staff->delete();
 
