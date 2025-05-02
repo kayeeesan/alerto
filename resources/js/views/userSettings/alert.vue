@@ -2,6 +2,11 @@
 import { ref, onMounted, watch, computed } from "vue";
 import useAlerts from "../../composables/alerts";
 import AlertForm from "../../components/userSettings/Form.vue";
+import store from "@/store";
+
+const user = store.state.auth.user;
+const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
+const userRiverId = computed(() => user?.river?.id);
 
 const { alerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts } = useAlerts();
 
@@ -40,14 +45,25 @@ const filteredHeaders = computed(() => {
 });
 
 const filteredAlerts = computed(() => {
-  const filtered = alerts.value.filter(a => a.status === tab.value);
-  return query.search 
-    ? filtered.filter(a => 
-        Object.values(a).some(val => 
-          val?.toString().toLowerCase().includes(query.search.toLowerCase())
-        )
+
+  //Filter by status
+  let filtered = alerts.value.filter(a => a.status === tab.value);
+
+  //Filter by river if user is not admin
+  if (!isAdmin.value){
+    filtered = filtered.filter(a => a?.threshold?.sensorable?.river?.name === user?.river?.name);
+  }
+
+  if (query.search) {
+    const search = query.search.toLowerCase();
+    filtered = filtered.filter(a =>
+      Object.values(a).some(val =>
+        val?.toString().toLowerCase().includes(search)
       )
-    : filtered;
+    );
+  }
+
+  return filtered;
 });
 
 watch([() => tab.value, () => query.search], async () => {
@@ -92,17 +108,46 @@ const statusColor = (status) => {
   }[status] || 'grey';
 };
 
+// watch(
+//   () => alerts.value,
+//   (newAlerts, oldAlerts) => {
+//     alert_tabs.value.forEach(tab => {
+//       tab.count = newAlerts.filter(a => a.status === tab.value).length;
+//     });
+    
+//     if (oldAlerts && newAlerts.some(a => 
+//       a.status === "expired" && 
+//       !oldAlerts.some(o => o.id === a.id && o.status === "expired")
+//     )) {
+//       tab.value = "expired";
+//     }
+//   },
+//   { deep: true, immediate: true }
+// );
+
 watch(
   () => alerts.value,
   (newAlerts, oldAlerts) => {
-    alert_tabs.value.forEach(tab => {
-      tab.count = newAlerts.filter(a => a.status === tab.value).length;
+    alert_tabs.value.forEach(tabItem => {
+      let filtered = newAlerts.filter(a => a.status === tabItem.value);
+
+      if (!isAdmin.value) {
+        filtered = filtered.filter(
+          a => a?.threshold?.sensorable?.river?.name === user?.river?.name
+        );
+      }
+
+      tabItem.count = filtered.length;
     });
-    
-    if (oldAlerts && newAlerts.some(a => 
-      a.status === "expired" && 
-      !oldAlerts.some(o => o.id === a.id && o.status === "expired")
-    )) {
+
+    if (
+      oldAlerts &&
+      newAlerts.some(
+        a =>
+          a.status === "expired" &&
+          !oldAlerts.some(o => o.id === a.id && o.status === "expired")
+      )
+    ) {
       tab.value = "expired";
     }
   },
