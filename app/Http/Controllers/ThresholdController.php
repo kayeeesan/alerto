@@ -102,27 +102,60 @@ class ThresholdController extends Controller
         {
             $details = '';
             $status = 'pending';
+            $type = '';
         
             if ($threshold->water_level >= $threshold->one_hundred_percent) {
                 $details = 'Water is critical. Water level: ' . $threshold->water_level;
+                $type = 'critical';
             } elseif ($threshold->water_level >= $threshold->eighty_percent) {
                 $details = 'Water is on alert. Water level: ' . $threshold->water_level;
+                $type = 'alert';
             } elseif ($threshold->water_level >= $threshold->sixty_percent) {
                 $details = 'Please monitor water level. Water level: ' . $threshold->water_level;
+                $type = 'warning';
             }
         
             if (empty($details)) {
-                return; // nothing to create
+                return; // No alert needed
             }
         
-            Alert::create([
+            // Create the alert
+            $alert = Alert::create([
                 'threshold_id' => $threshold->id,
                 'details' => $details,
                 'status' => $status,
                 'expired_at' => now()->addMinutes(30),
                 'user_id' => auth()->id(), // optional
             ]);
+        
+            // Get the river_id from the sensorable
+            $riverId = optional($threshold->sensorable)->river_id;
+        
+            if (!$riverId) return;
+        
+            // Notify users with the same river via staff
+            $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
+                $query->where('river_id', $riverId);
+            })->get();
+        
+            // Notify administrators (regardless of river)
+            $adminUsers = \App\Models\User::whereHas('roles', function ($query) {
+                $query->where('slug', 'administrator');
+            })->get();
+        
+            // Combine users and remove duplicates
+            $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
+        
+            // Create notifications
+            foreach ($usersToNotify as $user) {
+                \App\Models\Notification::create([
+                    'user_id' => $user->id,
+                    'text' => $details,
+                    'type' => $type,
+                ]);
+            }
         }
+        
         
 
     public function destroy($id)
