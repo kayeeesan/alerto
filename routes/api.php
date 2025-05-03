@@ -18,6 +18,7 @@ use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
@@ -58,4 +59,6 @@ Route::middleware('auth:sanctum')->group(function  () {
         $user = User::with('staff.river')->find($request->user()->id);
         return new UserResource($user);
     });
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });

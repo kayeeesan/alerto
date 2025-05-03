@@ -148,7 +148,7 @@ watch(
           !oldAlerts.some(o => o.id === a.id && o.status === "expired")
       )
     ) {
-      tab.value = "expired";
+      tab.value = "pending";
     }
   },
   { deep: true, immediate: true }
