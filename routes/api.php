@@ -59,7 +59,10 @@ Route::middleware('auth:sanctum')->group(function  () {
         $user = User::with('staff.river')->find($request->user()->id);
         return new UserResource($user);
     });
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/{notification}/seen', [NotificationController::class, 'markAsSeen']);
+        Route::patch('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    });
 });

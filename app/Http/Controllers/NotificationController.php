@@ -40,4 +40,24 @@ class NotificationController extends Controller
             'message' => 'All notifications marked as read'
         ]);
     }
+
+    public function markAsSeen($id)
+    {
+        $notification = Notification::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if (!$notification->seen_at) {
+            $notification->update(['seen_at' => now()]);
+            return response()->json([
+                'success' => true,
+                'data' => new ResourcesNotification($notification)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Notification already seen'
+        ]);
+    }
 }
