@@ -30,31 +30,20 @@ const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administ
 const userRiverId = computed(() => user?.river?.id);
 
 const filteredNotifications = computed(() => {
-  // Ensure we have notifications and they're loaded
   if (!notifications.value || notifications.value.length === 0) {
     return [];
   }
+  let filtered = [...notifications.value];
 
-  // If admin, return all notifications
-  if (isAdmin.value) {
-    return [...notifications.value].reverse(); // Show newest first
-  }
-
-  // For non-admin users with river_id
-  if (userRiverId.value) {
-    return notifications.value.filter(notif => {
-      // Get the river ID from either direct property or nested object
+  if (!isAdmin.value && userRiverId.value) {
+    filtered = filtered.filter(notif => {
       const notifRiverId = notif.river_id || (notif.river && notif.river.id);
-      
-      // Debug each comparison
-      console.log(`Comparing - Notification River: ${notifRiverId}, User River: ${userRiverId.value}`);
-      
-      // Compare as numbers to avoid type issues
       return notifRiverId != null && Number(notifRiverId) === Number(userRiverId.value);
-    }).reverse(); // Show newest first
+    });
   }
-
-  return [];
+  return filtered.sort((a, b) => {
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
 });
 
 const filteredUnreadCount = computed(() => {
