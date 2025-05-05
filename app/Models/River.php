@@ -20,4 +20,9 @@ class River extends Model
     public function municipality(){
         return $this->belongsTo(Municipality::class,'municipality_id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

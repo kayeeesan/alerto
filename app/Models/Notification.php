@@ -11,6 +11,7 @@ class Notification extends Model
 
     protected $fillable = [
         'user_id',
+        'river_id',
         'text',
         'type',
         'read_at'
@@ -19,5 +20,10 @@ class Notification extends Model
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function river()
+    {
+        return $this->belongsTo(River::class, 'river_id');
     }
 }
