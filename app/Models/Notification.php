@@ -14,7 +14,15 @@ class Notification extends Model
         'river_id',
         'text',
         'type',
-        'read_at'
+        'read_at',
+        'seen_at'
+    ];
+
+    protected $dates = [
+        'read_at',
+        'seen_at',
+        'created_at',
+        'updated_at'
     ];
 
     public function user()
