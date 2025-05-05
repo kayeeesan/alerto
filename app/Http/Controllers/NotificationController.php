@@ -10,7 +10,8 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::where('user_id', auth()->id())
+        $notifications = Notification::with('river')
+        ->where('user_id', auth()->id())
         ->latest()
         ->paginate(10);
 
@@ -19,12 +20,24 @@ class NotificationController extends Controller
 
     public function markAsRead($id)
     {
-        $notification = Notification::where('id', $id)
+        $notification = Notification::with('river')
+            ->where('id', $id)
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
         $notification->update(['read_at' => now()]);
 
-        return new NotificationResource($notification);
+        return new ResourcesNotification($notification);
+    }
+
+    public function markAllAsRead()
+    {
+        Notification::where('user_id', auth()->id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+    
+        return response()->json([
+            'message' => 'All notifications marked as read'
+        ]);
     }
 }

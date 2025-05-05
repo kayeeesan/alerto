@@ -16,10 +16,12 @@ class Notification extends JsonResource
     {
         return [
             'id' => $this->id,
+            'river' => $this->river,
             'text' => $this->text,
             'type' => $this->type,
             'read_at' => $this->read_at,
-            'created_at' =>this->created_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }

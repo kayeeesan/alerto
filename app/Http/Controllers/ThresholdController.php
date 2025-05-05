@@ -104,14 +104,21 @@ class ThresholdController extends Controller
             $status = 'pending';
             $type = '';
         
+            // Get both river object and ID
+            $river = optional($threshold->sensorable)->river;
+            
+            if (!$river) return;
+        
+            $riverId = $river->id; // Get the ID from the river object
+        
             if ($threshold->water_level >= $threshold->one_hundred_percent) {
-                $details = 'Water is critical. Water level: ' . $threshold->water_level;
+                $details = $river->name . ' is at critical level. Current level: ' . $threshold->water_level;
                 $type = 'critical';
             } elseif ($threshold->water_level >= $threshold->eighty_percent) {
-                $details = 'Water is on alert. Water level: ' . $threshold->water_level;
+                $details = $river->name . ' is on alert. Current level: ' . $threshold->water_level;
                 $type = 'alert';
             } elseif ($threshold->water_level >= $threshold->sixty_percent) {
-                $details = 'Please monitor water level. Water level: ' . $threshold->water_level;
+                $details = 'Please monitor ' . $river->name . '. Current level: ' . $threshold->water_level;
                 $type = 'warning';
             }
         
@@ -125,13 +132,8 @@ class ThresholdController extends Controller
                 'details' => $details,
                 'status' => $status,
                 'expired_at' => now()->addMinutes(30),
-                'user_id' => auth()->id(), // optional
+                'user_id' => auth()->id(),
             ]);
-        
-            // Get the river_id from the sensorable
-            $riverId = optional($threshold->sensorable)->river_id;
-        
-            if (!$riverId) return;
         
             // Notify users with the same river via staff
             $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
@@ -150,6 +152,7 @@ class ThresholdController extends Controller
             foreach ($usersToNotify as $user) {
                 \App\Models\Notification::create([
                     'user_id' => $user->id,
+                    'river_id' => $riverId,
                     'text' => $details,
                     'type' => $type,
                 ]);
