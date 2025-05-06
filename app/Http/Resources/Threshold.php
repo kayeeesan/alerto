@@ -41,7 +41,8 @@ class Threshold extends JsonResource
              'eighty_percent' => $this->eighty_percent,
              'one_hundred_percent' => $this->one_hundred_percent,
              'xs_date' => $this->xs_date,
-             'water_level' => $this->water_level
+             'water_level' => $this->water_level,
+             'rain_amount' => $this->rain_amount
          ];
      }
      

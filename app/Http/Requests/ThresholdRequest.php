@@ -25,12 +25,13 @@ class ThresholdRequest extends FormRequest
             // 'sensor.id' => 'required|exists:sensors_under_alertos,id',
             'sensorable_id' => 'required|integer',
             'sensorable_type' => 'required|string|in:App\Models\SensorUnderPh,App\Models\SensorUnderAlerto',
-            'baseline' => 'required|numeric|min:0',
-            'sixty_percent' => 'required|numeric|min:0',
-            'eighty_percent' => 'required|numeric|min:0',
-            'one_hundred_percent' => 'required|numeric|min:0',
+            'baseline' => 'nullable|numeric|min:0',
+            'sixty_percent' => 'nullable|numeric|min:0',
+            'eighty_percent' => 'nullable|numeric|min:0',
+            'one_hundred_percent' => 'nullable|numeric|min:0',
             'xs_date' => 'nullable|date',
-            'water_level' => 'nullable|numeric|min:0'
+            'water_level' => 'nullable|numeric|min:0',
+            'rain_amount' => 'nullable|numeric|min:0'
         ];
     }
 }

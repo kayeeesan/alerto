@@ -94,8 +94,7 @@
                 <img src="../../../../img/riverstatus-icon/monitor-water.svg" alt="Monitor" width="65">
               </div>
               <div class="card-content">
-                <div class="value-range">1.0-1.5</div>
-                <div class="unit">M</div>
+                <div class="value-range">60% BANKFULL</div>
                 <div class="status">MONITOR</div>
               </div>
             </v-card>
@@ -107,8 +106,7 @@
                 <img src="../../../../img/riverstatus-icon/warning-water.svg" alt="Alert" width="65">
               </div>
               <div class="card-content">
-                <div class="value-range">1.5-2.0</div>
-                <div class="unit">M</div>
+                <div class="value-range">80% BANKFULL</div>
                 <div class="status">ALERT</div>
               </div>
             </v-card>
@@ -120,8 +118,7 @@
                 <img src="../../../../img/riverstatus-icon/alert-water.svg" alt="Evacuation" width="65">
               </div>
               <div class="card-content">
-                <div class="value-range">2.0+</div>
-                <div class="unit">M</div>
+                <div class="value-range">100% BANKFULL</div>
                 <div class="status text-caption text-sm-body-6">EVACUATION</div>
               </div>
             </v-card>
@@ -293,7 +290,7 @@ export default {
 
 .value-range {
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #263238;
   line-height: 1.2;
 }

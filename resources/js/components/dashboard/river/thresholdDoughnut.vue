@@ -6,7 +6,7 @@ const chartRef = ref(null);
 let chartInstance = null;
 
 const data = {
-  labels: ['EVACUATION', 'WLMS', 'TANDEM'],
+  labels: ['MONITOR', 'ALERT', 'CRITICAL'],
   datasets: [{
     label: 'My First Dataset',
     data: [300, 50, 100],

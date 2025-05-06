@@ -31,7 +31,6 @@ const initialState = {
     municipality: {},
     long: null,
     lat: null,
-    status: null,
     sensor_type: null
 };
 const form = reactive({ ...initialState });
@@ -46,7 +45,6 @@ watch(
             form.municipality = value.municipality;
             form.long = value.long;
             form.lat = value.lat;
-            form.status = value.status;
             form.sensor_type = value.sensor_type;
          }
     }
@@ -58,10 +56,10 @@ const sensorType = [
     'TANDEM'
 ];
 
-const sensorStatus = [
-    'ENABLED',
-    'DISABLED'
-];
+// const sensorStatus = [
+//     'ENABLED',
+//     'DISABLED'
+// ];
 
 const show_form_modal = ref(false);
 
@@ -174,14 +172,6 @@ const filteredRivers = computed(() => {
                             variant="outlined"
                             @keyup.enter="save()"
                         ></v-text-field>
-                    </v-row>
-                    <v-row>
-                        <vue-multiselect
-                            v-model="form.status"
-                            :options="sensorStatus"
-                            placeholder="Sensor Status"
-                            class="mb-3"
-                        ></vue-multiselect>
                     </v-row>
                     <v-row>
                         <vue-multiselect
