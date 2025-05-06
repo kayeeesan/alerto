@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import store from "@/store";
 import useNotifications from "../../../composables/notification";
 
@@ -7,6 +7,7 @@ const { notifications, getNotifications, markAsSeen } = useNotifications();
 const user = store.state.auth.user;
 const visibleAlerts = ref([]);
 const alertTimeouts = ref({}); // To track timeouts for each alert
+let pollingInterval = null;
 
 const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
 const userRiverId = computed(() => user?.river?.id);
@@ -31,6 +32,9 @@ const filteredPopUpAlerts = computed(() => {
 const showAlert = async (alert) => {
   // Don't show if already visible
   if (visibleAlerts.value.some(a => a.id === alert.id)) return;
+
+  const audio = new Audio('/sounds/notification.mp3');
+  audio.play().catch(e => console.error("Audio error:", e));
 
   visibleAlerts.value.push(alert);
   await markAsSeen(alert.id);
@@ -57,6 +61,15 @@ const closeAlert = (id) => {
 
 onMounted(async () => {
   await getNotifications();
+  pollingInterval = setInterval(async () => {
+    await getNotifications();
+  }, 3000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+  }
 });
 
 watch(filteredPopUpAlerts, (newAlerts) => {
@@ -77,7 +90,7 @@ watch(filteredPopUpAlerts, (newAlerts) => {
         border="start"
         :color="notif.type === 'critical' ? 'error' : notif.type === 'alert' ? 'warning' : 'info'"
         title="ALERT"
-        variant="tonal"
+        variant="flat"
         closable
         class="alert-item"
         :icon="notif.type === 'critical' ? 'mdi-alert-octagon' : 'mdi-alert'"
