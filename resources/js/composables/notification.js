@@ -38,6 +38,23 @@ export default function useNotifications() {
     }
   };
 
+  // Added markAsSeen function (similar to markAsRead but uses seen_at instead of read_at)
+  const markAsSeen = async (id) => {
+    try {
+      // Change from PATCH to POST to match your route definition
+      await axios.post(`/api/notifications/${id}/seen`);
+      const notif = notifications.value.find((n) => n.id === id);
+      if (notif) {
+        notif.seen_at = new Date().toISOString();
+        if (!notif.read_at) {
+          unread_count.value = Math.max(0, unread_count.value - 1);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to mark as seen", error);
+    }
+  };
+
   const markAllAsRead = async () => {
     try {
       await axios.patch('/api/notifications/mark-all-read');
@@ -56,6 +73,7 @@ export default function useNotifications() {
     unread_count,
     getNotifications,
     markAsRead,
+    markAsSeen, // Now included in the return object
     markAllAsRead
   };
 }
