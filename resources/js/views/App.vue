@@ -7,8 +7,7 @@ import store from "@/store";
 import useStaffs from "../composables/staff.js";
 import useNotifications from "../composables/notification.js";
 import { RouterLink } from "vue-router";
-
-
+import Alert from "../components/dashboard/dashboard/alert.vue";
 
 const { staffs, getStaffs } = useStaffs();
 const {
@@ -100,7 +99,6 @@ onMounted(async () => {
   }
 });
 
-
 onUnmounted(() => {
   clearInterval(interval);
   if (notifInterval) {
@@ -114,6 +112,23 @@ onUnmounted(() => {
 const mainContentClass = computed(() => ({
   "expanded": drawer.value && !isMobile.value,
 }));
+
+// Notification type styling
+const getNotificationColor = (type) => {
+  switch (type) {
+    case 'critical': return 'error';
+    case 'alert': return 'warning';
+    default: return 'info';
+  }
+};
+
+const getNotificationIcon = (type) => {
+  switch (type) {
+    case 'critical': return 'mdi-alert-octagon';
+    case 'alert': return 'mdi-alert';
+    default: return 'mdi-information';
+  }
+};
 </script>
 
 <template>
@@ -132,6 +147,7 @@ const mainContentClass = computed(() => ({
           <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
           <v-spacer></v-spacer>
 
+          <!-- Notifications Bell -->
           <div class="d-flex align-center">
             <v-menu offset-y :close-on-content-click="false" open-on-hover>
               <template v-slot:activator="{ props }">
@@ -146,9 +162,9 @@ const mainContentClass = computed(() => ({
                   <v-btn
                     v-bind="props"
                     icon
-                    color="primary"
-                    variant="flat"
-                    style="width: 40px; height: 40px; min-width: 40px; border-radius: 50%;"
+                    color="white"
+                    variant="text"
+                    style="width: 40px; height: 40px; min-width: 40px;"
                     :loading="is_loading"
                   >
                     <v-icon>mdi-bell</v-icon>
@@ -156,52 +172,70 @@ const mainContentClass = computed(() => ({
                 </v-badge>
               </template>
 
-              <v-card width="400" >
-                <v-toolbar color="primary" density="compact">
-                  <v-toolbar-title>Notifications</v-toolbar-title>
+              <v-card width="420" class="elevation-12 rounded-xl">
+                <v-toolbar color="#003092" density="compact" class="rounded-t-xl">
+                  <v-toolbar-title class="text-white">Notifications</v-toolbar-title>
                   <v-spacer></v-spacer>
                   <v-btn
                     v-if="filteredNotifications.length > 0"
                     variant="text"
                     size="small"
+                    color="white"
                     @click="markAllAsRead"
                   >
-                    Mark all as read
+                    Mark All Raed
                   </v-btn>
                 </v-toolbar>
 
-                <v-list v-if="filteredNotifications.length > 0">
-                  <RouterLink to="/home/alerts" class="text-decoration-none">
-                    <v-list-item
-                    v-for="notif in filteredNotifications"
-                    :key="notif.id"
-                    @click="markAsRead(notif.id)"
-                    :class="{ 'bg-grey-lighten-4': !notif.read_at }"
-                  >
-                    <template v-slot:prepend>
-                      <v-icon
-                        :color="notif.read_at ? 'grey' : 'primary'"
-                        :icon="notif.read_at ? 'mdi-alert-circle-check' : 'mdi-alert'"
-                      ></v-icon>
-                    </template>
-                    
-                    <v-list-item-title>{{ notif.data?.message || notif.text || 'New notification' }}</v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ new Date(notif.created_at).toLocaleString() }}
-                    </v-list-item-subtitle>
-                  </v-list-item>
-                  </RouterLink>
-                 
-                </v-list>
+                <div style="max-height: 400px; overflow-y: auto;">
+                  <v-list v-if="filteredNotifications.length > 0" class="pa-2">
+                    <RouterLink to="/home/alerts" class="text-decoration-none">
+                      <v-list-item
+                        v-for="notif in filteredNotifications"
+                        :key="notif.id"
+                        @click="markAsRead(notif.id)"
+                        class="rounded-lg mb-2 pa-3"
+                        :class="{
+                          'bg-blue-lighten-5': !notif.read_at,
+                          'bg-grey-lighten-4': notif.read_at
+                        }"
+                      >
+                        <template v-slot:prepend>
+                          <v-avatar
+                            size="36"
+                            :color="getNotificationColor(notif.type)"
+                          >
+                            <v-icon
+                              :icon="getNotificationIcon(notif.type)"
+                              color="white"
+                              size="20"
+                            ></v-icon>
+                          </v-avatar>
+                        </template>
 
-                <v-card-text v-else class="text-center py-4" >
-                  <v-icon size="48" color="grey">mdi-bell-off</v-icon>
-                  <div class="text-h6 mt-2">No notifications</div>
-                </v-card-text>
+                        <v-list-item-title class="font-weight-medium">
+                          {{ notif.data?.message || notif.text || 'New notification' }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle class="text-caption grey--text text--darken-2 mt-1">
+                          {{ new Date(notif.created_at).toLocaleString() }}
+                        </v-list-item-subtitle>
+                      </v-list-item>
+                    </RouterLink>
+                  </v-list>
+
+                  <v-card-text v-else class="text-center py-6">
+                    <v-icon size="48" color="grey">mdi-bell-off-outline</v-icon>
+                    <div class="text-h6 mt-2">You're all caught up!</div>
+                    <div class="text-caption grey--text">No new notifications</div>
+                  </v-card-text>
+                </div>
               </v-card>
+
             </v-menu>
           </div>
+
           
+          <!-- User Profile Menu -->
           <div class="d-flex align-center pr-6">
             <v-menu transition="scale-transition" offset-y open-on-hover>
               <template v-slot:activator="{ props }">
@@ -222,7 +256,7 @@ const mainContentClass = computed(() => ({
                 </v-btn>
               </template>
 
-              <v-card class="pa-4" width="380">
+              <v-card class="pa-4 rounded-xl" width="380">
                 <div class="d-flex align-center mb-4">
                   <v-avatar size="56" color="primary">
                     <span class="white--text text-h6">
@@ -283,17 +317,23 @@ const mainContentClass = computed(() => ({
 
         <v-main style="margin-left: 0 !important; background: #F8FAF0; ">
           <v-container fluid>
+            <v-row>
+              <v-col cols="12">
+                <Alert/>
+              </v-col>
+            </v-row>
             <router-view />
           </v-container>
         </v-main>
       </div>
     </div>
+    
+    <UserProfile 
+      v-model="show_form_modal" 
+      :user="user"
+      :staff="staff"
+    />
   </v-app>
-  <UserProfile 
-    v-model="show_form_modal" 
-    :user="user"
-    :staff="staff"
-  />
 </template>
 
 <style scoped>
@@ -318,6 +358,53 @@ const mainContentClass = computed(() => ({
   width: calc(100% - 270px);
 }
 
+/* Notification Styles */
+.notification-dropdown {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.notification-header {
+  background: #003092;
+}
+
+.notification-list {
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 12px 16px;
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.notification-item.unread {
+  background-color: rgba(0, 48, 146, 0.05);
+  border-left-color: #003092;
+}
+
+.notification-item:hover {
+  background-color: rgba(0, 48, 146, 0.1);
+}
+
+.notification-title {
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: #616161;
+}
+
+.empty-notifications {
+  color: #757575;
+}
+
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0 !important;
@@ -328,5 +415,21 @@ const mainContentClass = computed(() => ({
     margin-left: 0 !important;
     width: 100% !important;
   }
+  
+  .notification-dropdown {
+    width: 100vw !important;
+    max-width: 100%;
+    margin-right: -16px;
+  }
 }
+
+.v-list-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.v-list-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0 2px 12px rgba(0, 48, 146, 0.12);
+}
+
 </style>
