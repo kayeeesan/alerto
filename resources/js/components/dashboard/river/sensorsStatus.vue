@@ -1,3 +1,69 @@
+<script setup>
+import { ref, onMounted, watch, computed } from 'vue';
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
+
+const {
+  sensors_under_alerto,
+  pagination,
+  query,
+  is_loading: alertoLoading,
+  getSensorsUnderAlerto
+} = useSensorsUnderAlerto();
+
+const {
+  sensors_under_ph,
+  is_loading: phLoading,
+  getSensorsUnderPh
+} = useSensorsUnderPh();
+
+const sensor_type = ref("ARG");
+const sensor_tabs = ref([
+  { id: 1, name: "ARG", value: "ARG" },
+  { id: 2, name: "WLMS", value: "WLMS" },
+  { id: 3, name: "TANDEM", value: "TANDEM" }
+]);
+
+const headers = [
+  { key: "river.name", title: "River" },
+  { key: "municipality.name", title: "Region" },
+  { key: "name", title: "Sensor Name" },
+  { key: "sensor_type", title: "Type" },
+  { key: "status", title: "Status" },
+  { key: "updated_at", title: "Last Update" },
+  { key: "rain_amount", title: "Rain (mm)" }
+];
+
+const all_sensors = computed(() => [
+  ...sensors_under_alerto.value,
+  ...sensors_under_ph.value
+]);
+
+const filteredSensors = computed(() => {
+  return all_sensors.value.filter(sensor => {
+    const matchesType = sensor.sensor_type === sensor_type.value;
+    const matchesSearch = query.search
+      ? (sensor.name?.toLowerCase().includes(query.search.toLowerCase()) ||
+         sensor.river?.name?.toLowerCase().includes(query.search.toLowerCase()) ||
+         sensor.municipality?.name?.toLowerCase().includes(query.search.toLowerCase()))
+      : true;
+    return matchesType && matchesSearch;
+  });
+});
+
+const isLoading = computed(() => alertoLoading.value || phLoading.value);
+
+onMounted(async () => {
+  await getSensorsUnderAlerto({ sensor_type: sensor_type.value });
+  await getSensorsUnderPh({ sensor_type: sensor_type.value });
+});
+
+watch([() => sensor_type.value, () => query.search], async () => {
+  await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
+  await getSensorsUnderPh({ sensor_type: sensor_type.value, query: query.search });
+});
+</script>
+
 <template>
   <v-col class="threshold-container">
     <v-sheet class="threshold-sheet" rounded="lg">
@@ -64,71 +130,7 @@
   </v-col>
 </template>
 
-<script setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
-import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
-const {
-  sensors_under_alerto,
-  pagination,
-  query,
-  is_loading: alertoLoading,
-  getSensorsUnderAlerto
-} = useSensorsUnderAlerto();
-
-const {
-  sensors_under_ph,
-  is_loading: phLoading,
-  getSensorsUnderPh
-} = useSensorsUnderPh();
-
-const sensor_type = ref("ARG");
-const sensor_tabs = ref([
-  { id: 1, name: "ARG", value: "ARG" },
-  { id: 2, name: "WLMS", value: "WLMS" },
-  { id: 3, name: "TANDEM", value: "TANDEM" }
-]);
-
-const headers = [
-  { key: "river.name", title: "River" },
-  { key: "municipality.name", title: "Region" },
-  { key: "name", title: "Sensor Name" },
-  { key: "sensor_type", title: "Type" },
-  { key: "status", title: "Status" },
-  { key: "updated_at", title: "Last Update" },
-  { key: "rain_mm", title: "Rain (mm)" }
-];
-
-const all_sensors = computed(() => [
-  ...sensors_under_alerto.value,
-  ...sensors_under_ph.value
-]);
-
-const filteredSensors = computed(() => {
-  return all_sensors.value.filter(sensor => {
-    const matchesType = sensor.sensor_type === sensor_type.value;
-    const matchesSearch = query.search
-      ? (sensor.name?.toLowerCase().includes(query.search.toLowerCase()) ||
-         sensor.river?.name?.toLowerCase().includes(query.search.toLowerCase()) ||
-         sensor.municipality?.name?.toLowerCase().includes(query.search.toLowerCase()))
-      : true;
-    return matchesType && matchesSearch;
-  });
-});
-
-const isLoading = computed(() => alertoLoading.value || phLoading.value);
-
-onMounted(async () => {
-  await getSensorsUnderAlerto({ sensor_type: sensor_type.value });
-  await getSensorsUnderPh({ sensor_type: sensor_type.value });
-});
-
-watch([() => sensor_type.value, () => query.search], async () => {
-  await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
-  await getSensorsUnderPh({ sensor_type: sensor_type.value, query: query.search });
-});
-</script>
 
 <style scoped>
 .threshold-container {

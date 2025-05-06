@@ -16,12 +16,12 @@ return new class extends Migration
             $table->timestamps();
             $table->string('name');
                  // Foreign keys
-           $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
-           $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
-           $table->decimal('long', 8, 2);
-           $table->decimal('lat', 8, 2);
-           $table->enum('status', ['enabled','disabled']);
-           $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
+            $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
+            $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
+            $table->decimal('long', 8, 2);
+            $table->decimal('lat', 8, 2);
+            $table->enum('status', ['warning','alert', 'critical'])->nullable();
+            $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
             $table->softDeletes();
         });
     }

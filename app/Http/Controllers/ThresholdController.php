@@ -48,7 +48,8 @@ class ThresholdController extends Controller
                     'eighty_percent' => $request->eighty_percent,
                     'one_hundred_percent' => $request->one_hundred_percent,
                     'xs_date' => $request->xs_date,
-                    'water_level' => $request->water_level
+                    'water_level' => $request->water_level,
+                    'rain_amount' => $request->rain_amount
                 ]);
         
                 $this->createAlertIfNeeded($threshold);
@@ -78,7 +79,8 @@ class ThresholdController extends Controller
                     'eighty_percent' => $request->eighty_percent,
                     'one_hundred_percent' => $request->one_hundred_percent,
                     'xs_date' => $request->xs_date,
-                    'water_level' => $request->water_level
+                    'water_level' => $request->water_level,
+                    'rain_amount' => $request->rain_amount
                 ]);
         
                 $this->createAlertIfNeeded($threshold);
@@ -102,32 +104,58 @@ class ThresholdController extends Controller
         {
             $details = '';
             $status = 'pending';
-            $type = '';
+            $type = null;
         
-            // Get both river object and ID
             $river = optional($threshold->sensorable)->river;
-            
             if (!$river) return;
         
-            $riverId = $river->id; // Get the ID from the river object
+            $riverId = $river->id;
         
-            if ($threshold->water_level >= $threshold->one_hundred_percent) {
-                $details = $river->name . ' is at critical level. Current level: ' . $threshold->water_level;
-                $type = 'critical';
-            } elseif ($threshold->water_level >= $threshold->eighty_percent) {
-                $details = $river->name . ' is on alert. Current level: ' . $threshold->water_level;
-                $type = 'alert';
-            } elseif ($threshold->water_level >= $threshold->sixty_percent) {
-                $details = 'Please monitor ' . $river->name . '. Current level: ' . $threshold->water_level;
-                $type = 'warning';
+            // Default to sensor status being 'warning'
+            $sensorStatus = 'warning';
+        
+            // Check for water level
+            if ($threshold->water_level !== null) {
+                if ($threshold->water_level >= $threshold->one_hundred_percent) {
+                    $details = $river->name . ' is at critical water level: ' . $threshold->water_level . 'm';
+                    $type = 'critical';
+                    $sensorStatus = 'critical';
+                } elseif ($threshold->water_level >= $threshold->eighty_percent) {
+                    $details = $river->name . ' is on alert. Water level: ' . $threshold->water_level . 'm';
+                    $type = 'alert';
+                    $sensorStatus = 'alert';
+                } elseif ($threshold->water_level >= $threshold->sixty_percent) {
+                    $details = 'Please monitor ' . $river->name . '. Water level: ' . $threshold->water_level . 'm';
+                    $type = 'warning';
+                    $sensorStatus = 'warning';
+                }
             }
         
-            if (empty($details)) {
-                return; // No alert needed
+            // Check for rain amount
+            if ($threshold->rain_amount !== null) {
+                if ($threshold->rain_amount >= 30) {
+                    $details = 'Evacuation Alert! Rain amount is critical: ' . $threshold->rain_amount . 'mm';
+                    $type = 'critical';
+                    $sensorStatus = 'critical';
+                } elseif ($threshold->rain_amount >= 15) {
+                    $details = 'Rain Alert: ' . $threshold->rain_amount . 'mm';
+                    $type = 'alert';
+                    $sensorStatus = 'alert';
+                } elseif ($threshold->rain_amount >= 7.5) {
+                    $details = 'Rain Monitoring: ' . $threshold->rain_amount . 'mm';
+                    $type = 'warning';
+                    $sensorStatus = 'warning';
+                }
             }
         
-            // Create the alert
-            $alert = Alert::create([
+            if (!$type || !$details) return;
+        
+            // Update sensor status
+            $sensor = $threshold->sensorable;
+            $sensor->update(['status' => $sensorStatus]);
+        
+            // Create alert
+            Alert::create([
                 'threshold_id' => $threshold->id,
                 'details' => $details,
                 'status' => $status,
@@ -135,20 +163,17 @@ class ThresholdController extends Controller
                 'user_id' => auth()->id(),
             ]);
         
-            // Notify users with the same river via staff
+            // Notify users
             $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
                 $query->where('river_id', $riverId);
             })->get();
         
-            // Notify administrators (regardless of river)
             $adminUsers = \App\Models\User::whereHas('roles', function ($query) {
                 $query->where('slug', 'administrator');
             })->get();
         
-            // Combine users and remove duplicates
             $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
         
-            // Create notifications
             foreach ($usersToNotify as $user) {
                 \App\Models\Notification::create([
                     'user_id' => $user->id,
@@ -158,6 +183,7 @@ class ThresholdController extends Controller
                 ]);
             }
         }
+        
         
         
 
