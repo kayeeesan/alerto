@@ -31,6 +31,7 @@ const headers = [
   { key: "sensor_type", title: "Type" },
   { key: "status", title: "Status" },
   { key: "updated_at", title: "Last Update" },
+  { key: "water_level", title: "Water Level" },
   { key: "rain_amount", title: "Rain (mm)" }
 ];
 
@@ -114,8 +115,13 @@ watch([() => sensor_type.value, () => query.search], async () => {
               {{ new Date(item.updated_at).toLocaleString() }}
             </template>
 
+            <template v-slot:item["water_level"]="{ item }">
+              {{ item.water_level || '0' }}
+            </template>
+
+
             <template v-slot:item["rain_mm"]="{ item }">
-              {{ item.rain_mm || '0' }}
+              {{ item.rain_amount || '0' }}
             </template>
 
             <template v-slot:bottom>

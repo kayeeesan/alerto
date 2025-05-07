@@ -33,8 +33,8 @@ class SensorUnderPh extends Model
         return $this->belongsTo(Municipality::class, 'municipality_id');
     }
 
-    public function thresholds()
+    public function threshold()
     {
-        return $this->morphMany(Threshold::class, 'sensorable');
+        return $this->morphOne(Threshold::class, 'sensorable');
     }
 }

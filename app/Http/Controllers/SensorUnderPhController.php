@@ -23,7 +23,7 @@ class SensorUnderPhController extends Controller
 
     public function index(Request $request)
     {
-        $query = SensorUnderPh::with(['river', 'municipality.province']);
+        $query = SensorUnderPh::with(['river', 'municipality.province', 'threshold']);
 
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');

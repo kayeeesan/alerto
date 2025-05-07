@@ -34,7 +34,9 @@ class SensorUnderPh extends JsonResource
             'long' => $this->long,
             'lat' => $this->lat,
             'status' => $this->status,
-            'sensor_type' => $this->sensor_type
+            'sensor_type' => $this->sensor_type,
+            'rain_amount' => $this->threshold?->rain_amount,
+            'water_level' => $this->threshold?->water_level
         ];
     }
 }
