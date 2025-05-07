@@ -22,20 +22,10 @@ class SensorUnderAlertoController extends Controller
         $this->logService = $logService;
     }
 
-    // public function index()
-    // {
-    //     $sensors_under_alerto = [];
-    //     if (isset($request->search)) {
-    //         $sensors_under_alerto = SensorUnderAlerto::where('name', 'like', '%' . $request->search . '%');
-    //     }
-
-    //     $sensors_under_alerto = isset($request->search) && $request->search ? $sensors_under_alerto->paginate(10) : SensorUnderAlerto::paginate(10);
-    //     return ResourcesSensorUnderAlerto::collection($sensors_under_alerto);
-    // }
 
     public function index(Request $request)
     {
-    $query = SensorUnderAlerto::with(['river', 'municipality.province']);
+    $query = SensorUnderAlerto::with(['river', 'municipality.province', 'threshold']);
 
     if ($request->has('search')) {
         $query->where('name', 'like', '%' . $request->search . '%');
