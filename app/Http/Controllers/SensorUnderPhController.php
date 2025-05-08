@@ -73,7 +73,7 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph->sensor_type = $request->sensor_type;
             $sensor_under_ph->update();
 
-            $threshold = $sensor_under_alerto->threshold;
+            $threshold = $sensor_under_ph->threshold;
             if ($threshold) {
                 $this->alertService->createAlertIfNeeded($threshold);
             }
