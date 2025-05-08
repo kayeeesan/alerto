@@ -23,6 +23,7 @@ class SensorUnderPhRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'device_id' => 'required|numeric|min:0',
             'device_water_level' => 'nullable|numeric|min:0',
             'device_rain_amount' => 'nullable|numeric|min:0',
             'river.id' => 'required|exists:rivers,id',

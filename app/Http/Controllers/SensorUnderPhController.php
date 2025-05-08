@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AlertService;
+use Illuminate\Support\Facades\Http;
 
 use App\Http\Requests\SensorUnderPhRequest;
 use App\Http\Resources\SensorUnderPh as ResourcesSensorUnderPh;
@@ -36,11 +37,47 @@ class SensorUnderPhController extends Controller
         return ResourcesSensorUnderPh::collection($sensors_under_ph);
     }
 
+    public function fetchDevices()
+    {
+        try {
+            $response = Http::get('https://alertofews.com/api/index.php?ep=saka');
+    
+            if ($response->successful()) {
+                $devices = collect($response->json())
+                    ->filter(function ($data) {
+                        return isset($data['msg']['LrrLON']) && 
+                               isset($data['msg']['LrrLAT']) &&
+                               isset($data['metadata']['deviceName']) &&
+                               isset($data['msg']['DevEUI']) &&
+                               isset($data['msg']['EventAcc']);
+                    })
+                    ->map(function ($data) {
+                        return [
+                            'name' => $data['metadata']['deviceName'],
+                            'device_id' => $data['msg']['DevEUI'],
+                            'device_rain_amount' => $data['msg']['EventAcc'],
+                            'long' => $data['msg']['LrrLON'],
+                            'lat' => $data['msg']['LrrLAT'],
+                        ];
+                    })
+                    ->unique('device_id') // Remove duplicates
+                    ->values();
+    
+                return response()->json($devices);
+            }
+            return response()->json(['message' => 'Failed to fetch devices.'], 500);
+    
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(SensorUnderPhRequest $request)
     {
         try {
             $sensor_under_ph = new SensorUnderPh();
             $sensor_under_ph->name = ucwords($request->name);
+            $sensor_under_ph->device_id = $request->device_id;
             $sensor_under_ph->device_rain_amount = $request->device_rain_amount;
             $sensor_under_ph->device_water_level = $request->device_water_level;
             $sensor_under_ph->river_id = $request->input('river.id');
@@ -64,6 +101,7 @@ class SensorUnderPhController extends Controller
             $sensor_under_ph = SensorUnderPh::findOrFail($id);
             $oldData = $sensor_under_ph->toArray();
             $sensor_under_ph->name = ucwords($request->name);
+            $sensor_under_ph->device_id = $request->device_id;
             $sensor_under_ph->device_rain_amount = $request->device_rain_amount;
             $sensor_under_ph->device_water_level = $request->device_water_level;
             $sensor_under_ph->river_id = $request->river['id'];

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
+            $table->unsignedBigInteger('device_id'); 
             $table->string('device_water_level')->nullable();
             $table->string('device_rain_amount')->nullable();
             $table->float('previous_water_level')->nullable();
