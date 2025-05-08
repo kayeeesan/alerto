@@ -66,4 +66,5 @@ Route::middleware('auth:sanctum')->group(function  () {
         Route::patch('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
     });
      Route::get('/fetch-devices', [SensorUnderAlertoController::class, 'fetchDevices']);
+     Route::get('/fetch-devices', [SensorUnderPhController::class, 'fetchDevices']);
 });
