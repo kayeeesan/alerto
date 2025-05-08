@@ -31,7 +31,9 @@ const initialState = {
     municipality: {},
     long: null,
     lat: null,
-    sensor_type: null
+    sensor_type: null,
+    device_rain_amount: null,
+    device_water_level: null
 };
 const form = reactive({ ...initialState });
 
@@ -46,6 +48,8 @@ watch(
             form.long = value.long;
             form.lat = value.lat;
             form.sensor_type = value.sensor_type;
+            form.device_rain_amount = value.device_rain_amount;
+            form.device_water_level = value.device_water_level;
          }
     }
 );
@@ -179,6 +183,22 @@ const filteredRivers = computed(() => {
                             :options="sensorType"
                             placeholder="Sensor Type"
                         ></vue-multiselect>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.device_rain_amount"
+                            label="rain amount"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field
+                            v-model="form.device_water_level"
+                            label="water level"
+                            variant="outlined"
+                            @keyup.enter="save()"
+                        ></v-text-field>
                     </v-row>
                 </v-container>
             </v-card-text>

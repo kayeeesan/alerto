@@ -17,6 +17,8 @@ class SensorUnderAlerto extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'device_water_level' => $this->device_water_level,
+            'device_rain_amount' => $this->device_rain_amount,
             'municipality' => [
                 'id' => $this->municipality?->id,
                 'name' => $this->municipality?->name,
@@ -34,9 +36,7 @@ class SensorUnderAlerto extends JsonResource
             'long' => $this->long,
             'lat' => $this->lat,
             'status' => $this->status,
-            'sensor_type' => $this->sensor_type,
-            'rain_amount' => $this->threshold?->rain_amount,
-            'water_level' => $this->threshold?->water_level
+            'sensor_type' => $this->sensor_type
         ];
     }
 }

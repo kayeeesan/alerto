@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
+            $table->string('device_water_level')->nullable();
+            $table->string('device_rain_amount')->nullable();
+            $table->float('previous_water_level')->nullable();
+            $table->float('previous_rain_amount')->nullable();
                // Foreign keys
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');

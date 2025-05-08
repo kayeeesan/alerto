@@ -21,8 +21,6 @@ return new class extends Migration
             $table->decimal('eighty_percent', 8,2)->nullable();
             $table->decimal('one_hundred_percent', 8,2)->nullable();
             $table->date('xs_date')->nullable();
-            $table->decimal('water_level', 8, 2)->nullable();
-            $table->decimal('rain_amount', 5, 2)->nullable(); 
             $table->softDeletes();
         });
     }
