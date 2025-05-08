@@ -23,9 +23,7 @@ const initialState = {
     sixty_percent: null,
     eighty_percent: null,
     one_hundred_percent: null,
-    xs_date: null,
-    water_level: null,
-    rain_amount: null
+    xs_date: null
 };
 
 const form = reactive({ ...initialState });
@@ -42,8 +40,6 @@ watch(() => props.threshold, async (value) => {
         form.eighty_percent = value.eighty_percent;
         form.one_hundred_percent = value.one_hundred_percent;
         form.xs_date = value.xs_date;
-        form.water_level = value.water_level;
-        form.rain_amount = value.rain_amount;
 
         // Set sensor group based on type
         if (value.sensor?.type) {
@@ -205,12 +201,6 @@ onMounted(() => {
                     </v-row>
                     <v-row>
                         <v-text-field v-model="form.xs_date" label="XS Date" type="date" variant="outlined" @keyup.enter="save" />
-                    </v-row>
-                    <v-row>
-                        <v-text-field v-model="form.water_level" label="Water Level" variant="outlined" @keyup.enter="save" />
-                    </v-row>
-                    <v-row>
-                        <v-text-field v-model="form.rain_amount" label="Rain Level" variant="outlined" @keyup.enter="save" />
                     </v-row>
                 </v-container>
             </v-card-text>

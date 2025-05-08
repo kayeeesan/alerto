@@ -15,6 +15,10 @@ class SensorUnderPh extends Model
 
     protected $fillable = [
         'name',
+        'device_rain_amount',
+        'device_water_level',
+        'previous_water_level',
+        'previous_rain_amount',  
         'river_id',
         'municipality_id',
         'long',
@@ -31,6 +35,15 @@ class SensorUnderPh extends Model
     public function municipality()
     {
         return $this->belongsTo(Municipality::class, 'municipality_id');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($sensor) {
+            $sensor->threshold()->delete();
+        });
     }
 
     public function threshold()
