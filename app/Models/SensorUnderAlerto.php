@@ -15,6 +15,7 @@ class SensorUnderAlerto extends Model
 
     protected $fillable = [
         'name',
+        'device_id',
         'device_rain_amount',
         'device_water_level',
         'previous_water_level',

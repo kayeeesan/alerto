@@ -3,10 +3,14 @@ import { ref, reactive, watch, onMounted, computed } from "vue";
 import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 import useRivers from "../../../composables/river";
 import useMunicipalities from "../../../composables/municipality";
+import axios from "axios";
 
 const { errors, is_loading, is_success, storeSensorUnderAlerto, updateSensorUnderAlerto } = useSensorsUnderAlerto();
-const {rivers, getRivers} = useRivers();
-const {municipalities, getMunicipalities} = useMunicipalities();
+const { rivers, getRivers } = useRivers();
+const { municipalities, getMunicipalities } = useMunicipalities();
+
+const devices = ref([]);
+const selectedDevice = ref(null);
 
 const emit = defineEmits(["input", "reloadSensorsUnderAlerto"]);
 const props = defineProps({
@@ -15,9 +19,9 @@ const props = defineProps({
         default: null
     },
     action_type: {
-         type: String,
-         default: null,
-     },
+        type: String,
+        default: null,
+    },
     value: {
         type: Boolean,
         default: false,
@@ -33,8 +37,10 @@ const initialState = {
     lat: null,
     sensor_type: null,
     device_rain_amount: null,
-    device_water_level: null
+    device_water_level: null,
+    device_id: null, 
 };
+
 const form = reactive({ ...initialState });
 
 watch(
@@ -50,21 +56,13 @@ watch(
             form.sensor_type = value.sensor_type;
             form.device_rain_amount = value.device_rain_amount;
             form.device_water_level = value.device_water_level;
-         }
+            form.device_id = value.device_id;
+            selectedDevice.value = devices.value.find(d => d.device_id === value.device_id);
+        }
     }
 );
 
-const sensorType = [
-    'ARG',
-    'WLMS',
-    'TANDEM'
-];
-
-// const sensorStatus = [
-//     'ENABLED',
-//     'DISABLED'
-// ];
-
+const sensorType = ['ARG', 'WLMS', 'TANDEM'];
 const show_form_modal = ref(false);
 
 watch(
@@ -75,72 +73,106 @@ watch(
 );
 
 const close = () => {
-    // Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
+    Object.assign(form, initialState);
+    selectedDevice.value = null;
 };
 
 const save = async () => {
-    if (props.sensor_under_alerto && props.sensor_under_alerto.id) {
+    if (props.sensor_under_alerto?.id) {
         await updateSensorUnderAlerto({ ...form });
     } else {
         await storeSensorUnderAlerto({ ...form });
     }
 
-    if (is_success.value == true) {
+    if (is_success.value) {
         emit("reloadSensorsUnderAlerto");
-        emit("input", false);
+        close();
     }
 };
 
-onMounted(() => {
-    getRivers();
-    getMunicipalities();
+const filteredRivers = computed(() => {
+    if (!form.municipality?.id) return [];
+    return rivers.value.filter(r => r.municipality.id === form.municipality.id);
 });
 
-const filteredRivers = computed(() => {
-    if (!form.municipality || !form.municipality.id) return [];
-    return rivers.value.filter(r => r.municipality.id === form.municipality.id );
- });
+const fetchDevices = async () => {
+    try {
+        const response = await axios.get('/api/fetch-devices');
+        devices.value = response.data;
+    } catch (error) {
+        console.error("Failed to fetch devices:", error);
+        devices.value = [];
+    }
+};
+
+const onDeviceSelected = (device) => {
+    if (device) {
+        form.name = device.name;
+        form.device_id = device.device_id;
+        form.device_rain_amount = device.device_rain_amount;
+        form.long = device.long;
+        form.lat = device.lat;
+        selectedDevice.value = device;
+    }
+};
+
+onMounted(async () => {
+    await Promise.all([
+        getRivers(),
+        getMunicipalities(),
+        fetchDevices()
+    ]);
+});
 </script>
 
 <template>
     <v-dialog v-model="show_form_modal" max-width="500px" scrollable>
         <v-card>
             <v-card-title>
-                <!-- <span class="text-h5">{{ props.sensor_under_alerto ? 'Edit Sensor' : 'New Sensor' }}</span> -->
-                <span class="text-h5" v-if="action_type == 'Update'">{{ action_type }} Sensor</span> 
-                <span class="text-h5" v-else>New Sensor</span>
+                <span class="text-h5">{{ action_type || 'New' }} Sensor</span>
             </v-card-title>
     
             <v-card-text>
                 <v-container fluid>
                     <v-row>
+                        <vue-multiselect
+                            v-model="selectedDevice"
+                            :options="devices"
+                            label="name"
+                            placeholder="Select Device"
+                            @select="onDeviceSelected"
+                            track-by="device_id"
+                            class="mb-3"
+                        />
+                    </v-row>
+                    <v-row>
                         <v-text-field
                             v-model="form.name"
-                            label="Sensor name"
+                            label="Name"
                             variant="outlined"
-                            :error-messages="errors['name'] ? errors['name'] : []"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                            readonly
+                        />
                     </v-row>
-                    
+                    <v-row>
+                        <v-text-field
+                            v-model="form.device_id"
+                            label="Device ID"
+                            variant="outlined"
+                            readonly
+                        />
+                    </v-row>
                     <v-row>
                         <vue-multiselect
                             v-model="form.municipality"
                             :options="municipalities"
                             :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
                             placeholder="Select Municipality"
                             label="name"
                             track-by="id"
-                            select-label=""
-                            deselect-label=""
                             class="mb-3"
-                        >
-                        </vue-multiselect>
+                        />
                     </v-row>
                     <v-row>
                         <vue-multiselect
@@ -148,67 +180,59 @@ const filteredRivers = computed(() => {
                             :options="filteredRivers"                              
                             :disabled="!form.municipality"
                             :multiple="false"
-                            :close-on-select="true"
-                            :clear-on-select="true"
-                            :preserve-search="true"
                             placeholder="Select River"
                             label="name"
                             track-by="id"
-                            select-label=""
-                            deselect-label=""
                             class="mb-3"
-                        >
-                        </vue-multiselect>
+                        />
                     </v-row>
-                   
                     <v-row>
                         <v-text-field
                             v-model="form.long"
-                            label="long"
+                            label="Longitude"
                             variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                            readonly
+                        />
                     </v-row>
                     <v-row>
                         <v-text-field
                             v-model="form.lat"
-                            label="lat"
+                            label="Latitude"
                             variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                            readonly
+                        />
                     </v-row>
                     <v-row>
                         <vue-multiselect
                             v-model="form.sensor_type"
                             :options="sensorType"
                             placeholder="Sensor Type"
-                        ></vue-multiselect>
+                            class="mb-3"
+                        />
                     </v-row>
                     <v-row>
                         <v-text-field
                             v-model="form.device_rain_amount"
-                            label="rain amount"
+                            label="Rain Amount"
                             variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                        />
                     </v-row>
                     <v-row>
                         <v-text-field
                             v-model="form.device_water_level"
-                            label="water level"
+                            label="Water Level"
                             variant="outlined"
-                            @keyup.enter="save()"
-                        ></v-text-field>
+                        />
                     </v-row>
                 </v-container>
             </v-card-text>
     
             <v-card-actions class="mb-4 mr-5">
                 <v-spacer></v-spacer>
-                <v-btn color="blue-grey-lighten-2" @click="close()" variant="flat">
+                <v-btn color="blue-grey-lighten-2" @click="close" variant="flat">
                     Cancel
                 </v-btn>
-                <v-btn color="primary" @click="save()" variant="flat" :loading="is_loading">
+                <v-btn color="primary" @click="save" variant="flat" :loading="is_loading">
                     Save
                 </v-btn>
             </v-card-actions>

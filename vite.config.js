@@ -33,4 +33,15 @@ export default defineConfig({
         chunkSizeWarningLimit: 1600,
         minify: true,
     },
+
+    server: {
+        proxy: {
+          '/api': {
+            target: 'https://alertofews.com',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api/, '')
+          }
+        }
+      }
+
 });

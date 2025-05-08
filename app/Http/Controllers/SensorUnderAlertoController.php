@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AlertService;
+use Illuminate\Support\Facades\Http;
 
 use App\Http\Requests\SensorUnderAlertoRequest;
 use App\Http\Resources\SensorUnderAlerto as ResourcesSensorUnderAlerto;
@@ -25,26 +26,63 @@ class SensorUnderAlertoController extends Controller
         $this->alertService = $alertService; 
     }
 
+  
+
 
     public function index(Request $request)
-    {
-    $query = SensorUnderAlerto::with(['river', 'municipality.province', 'threshold']);
+        {
+        $query = SensorUnderAlerto::with(['river', 'municipality.province', 'threshold']);
 
-    if ($request->has('search')) {
-        $query->where('name', 'like', '%' . $request->search . '%');
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $sensors_under_alerto = $query->paginate(10);
+
+        return ResourcesSensorUnderAlerto::collection($sensors_under_alerto);
     }
 
-    $sensors_under_alerto = $query->paginate(10);
-
-    return ResourcesSensorUnderAlerto::collection($sensors_under_alerto);
-}
-
+    public function fetchDevices()
+    {
+        try {
+            $response = Http::get('https://alertofews.com/api/index.php?ep=saka');
+    
+            if ($response->successful()) {
+                $devices = collect($response->json())
+                    ->filter(function ($data) {
+                        return isset($data['msg']['LrrLON']) && 
+                               isset($data['msg']['LrrLAT']) &&
+                               isset($data['metadata']['deviceName']) &&
+                               isset($data['msg']['DevEUI']) &&
+                               isset($data['msg']['EventAcc']);
+                    })
+                    ->map(function ($data) {
+                        return [
+                            'name' => $data['metadata']['deviceName'],
+                            'device_id' => $data['msg']['DevEUI'],
+                            'device_rain_amount' => $data['msg']['EventAcc'],
+                            'long' => $data['msg']['LrrLON'],
+                            'lat' => $data['msg']['LrrLAT'],
+                        ];
+                    })
+                    ->unique('device_id') // Remove duplicates
+                    ->values();
+    
+                return response()->json($devices);
+            }
+            return response()->json(['message' => 'Failed to fetch devices.'], 500);
+    
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 
     public function store(SensorUnderAlertoRequest $request)
     {
         try {
             $sensor_under_alerto = new SensorUnderAlerto();
             $sensor_under_alerto->name = ucwords($request->name);
+            $sensor_under_alerto->device_id = $request->device_id;
             $sensor_under_alerto->device_rain_amount = $request->device_rain_amount;
             $sensor_under_alerto->device_water_level = $request->device_water_level;
             $sensor_under_alerto->river_id = $request->input('river.id');
@@ -69,6 +107,7 @@ class SensorUnderAlertoController extends Controller
             $sensor_under_alerto = SensorUnderAlerto::findOrFail($id);
             $oldData = $sensor_under_alerto->toArray();
             $sensor_under_alerto->name = ucwords($request->name);
+            $sensor_under_alerto->device_id = $request->device_id;
             $sensor_under_alerto->device_rain_amount = $request->device_rain_amount;
             $sensor_under_alerto->device_water_level = $request->device_water_level;
             $sensor_under_alerto->river_id = $request->river['id'];
@@ -93,17 +132,6 @@ class SensorUnderAlertoController extends Controller
             return response(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
-
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $sensor_under_alerto = SensorUnderAlerto::findOrFail($id);
-    //         $sensor_under_alerto->forceDelete();
-    //         return response(['message' => 'Sensor has been successfully deleted'], Response::HTTP_OK);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-    //     }
-    // }
 
     
     public function destroy($id)
