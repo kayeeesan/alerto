@@ -11,10 +11,9 @@ import Alert from "../components/dashboard/dashboard/alert.vue";
 
 const { staffs, getStaffs } = useStaffs();
 const {
-  notification, notifications, is_loading, unread_count, getNotifications, markAsRead, markAllAsRead
+  notification, notifications, is_loading, unread_count, getNotifications, markAsRead, markAllAsRead, echo
 } = useNotifications();
 
-let notifInterval = null;
 const staff = ref({});
 const { logout } = useAuth();
 const user = store.state.auth.user;
@@ -86,9 +85,6 @@ onMounted(async () => {
   window.addEventListener('resize', resizeListener);
 
   await getNotifications();
-  notifInterval = setInterval(async () => {
-    await getNotifications();
-  }, 3000);
 
   await getStaffs();
   const matched = staffs.value.find(
@@ -97,13 +93,13 @@ onMounted(async () => {
   if (matched) {
     staff.value = matched;
   }
+
+  
 });
 
 onUnmounted(() => {
   clearInterval(interval);
-  if (notifInterval) {
-    clearInterval(notifInterval);
-  }
+ 
   if (resizeListener) {
     window.removeEventListener('resize', resizeListener);
   }

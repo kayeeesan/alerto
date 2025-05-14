@@ -3,11 +3,10 @@ import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import store from "@/store";
 import useNotifications from "../../../composables/notification";
 
-const { notifications, getNotifications, markAsSeen } = useNotifications();
+const { notifications, getNotifications, markAsSeen, onNewNotification, echo } = useNotifications();
 const user = store.state.auth.user;
 const visibleAlerts = ref([]);
 const alertTimeouts = ref({}); // To track timeouts for each alert
-let pollingInterval = null;
 
 const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
 const userRiverId = computed(() => user?.river?.id);
@@ -30,6 +29,7 @@ const filteredPopUpAlerts = computed(() => {
 });
 
 const showAlert = async (alert) => {
+
   // Don't show if already visible
   if (visibleAlerts.value.some(a => a.id === alert.id)) return;
 
@@ -61,14 +61,23 @@ const closeAlert = (id) => {
 
 onMounted(async () => {
   await getNotifications();
-  pollingInterval = setInterval(async () => {
-    await getNotifications();
-  }, 3000);
+
+  // Initialize Echo connection
+echo.channel('public-alerts')
+    .listen('.AlertCreated', (event) => {
+      console.log('⚡ Event received on public-alerts:', event);
+      const notif = event.notification;
+      const notifRiverId = notif.river_id || notif.river?.id;
+      
+      if (isAdmin.value || (!isAdmin.value && Number(notifRiverId) === Number(userRiverId.value))) {
+        showAlert(notif);
+      }
+    });
 });
 
 onUnmounted(() => {
-  if (pollingInterval) {
-    clearInterval(pollingInterval);
+  if (echo) {
+    echo.leave('public-alerts');
   }
 });
 

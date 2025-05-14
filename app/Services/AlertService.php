@@ -6,6 +6,7 @@ use App\Models\Alert;
 use App\Models\Notification;
 use App\Models\Threshold;
 use App\Models\Sensor;
+use App\Events\AlertCreated; 
 
 class AlertService
 {
@@ -142,6 +143,7 @@ class AlertService
             'alert_type' => $alertType,
         ]);
 
+
         $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
             $query->where('river_id', $riverId);
         })->get();
@@ -152,14 +154,16 @@ class AlertService
 
         $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
 
-        foreach ($usersToNotify as $user) {
-            Notification::create([
-                'user_id' => $user->id,
-                'river_id' => $riverId,
-                'text' => $details,
-                'type' => $type,
-                'alert_type' => $alertType,
-            ]);
+         foreach ($usersToNotify as $user) {
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'river_id' => $riverId,
+            'text' => $details,
+            'type' => $type,
+            'alert_type' => $alertType,
+        ]);
+        \Log::info('Broadcasting AlertCreated event', ['notification_id' => $notification->id]);
+        broadcast(new AlertCreated($notification))->toOthers();
         }
     }
 }
