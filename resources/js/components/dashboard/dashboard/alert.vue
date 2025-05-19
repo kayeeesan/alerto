@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import store from "@/store";
 import useNotifications from "../../../composables/notification";
+import { eventBus } from "../../../composables/eventBus";
 
-const { notifications, getNotifications, markAsSeen, onNewNotification, echo } = useNotifications();
+const { notifications, getNotifications, markAsSeen, reloadNotifications } = useNotifications();
 const user = store.state.auth.user;
 const visibleAlerts = ref([]);
 const alertTimeouts = ref({}); // To track timeouts for each alert
@@ -13,7 +14,6 @@ const userRiverId = computed(() => user?.river?.id);
 
 const filteredPopUpAlerts = computed(() => {
   if (!notifications.value?.length) return [];
-
   let filtered = [...notifications.value];
 
   if (!isAdmin.value && userRiverId.value) {
@@ -29,12 +29,11 @@ const filteredPopUpAlerts = computed(() => {
 });
 
 const showAlert = async (alert) => {
-
   // Don't show if already visible
   if (visibleAlerts.value.some(a => a.id === alert.id)) return;
 
-  const audio = new Audio('/sounds/notification.mp3');
-  audio.play().catch(e => console.error("Audio error:", e));
+  const audio = new Audio("/sounds/notification.mp3");
+  audio.play().catch((e) => console.error("Audio error:", e));
 
   visibleAlerts.value.push(alert);
   await markAsSeen(alert.id);
@@ -44,6 +43,8 @@ const showAlert = async (alert) => {
     closeAlert(alert.id);
     delete alertTimeouts.value[alert.id];
   }, 4000);
+
+  eventBus.$emit("new-alert", alert);
 };
 
 const closeAlert = (id) => {
@@ -61,24 +62,6 @@ const closeAlert = (id) => {
 
 onMounted(async () => {
   await getNotifications();
-
-  // Initialize Echo connection
-echo.channel('public-alerts')
-    .listen('.AlertCreated', (event) => {
-      console.log('⚡ Event received on public-alerts:', event);
-      const notif = event.notification;
-      const notifRiverId = notif.river_id || notif.river?.id;
-      
-      if (isAdmin.value || (!isAdmin.value && Number(notifRiverId) === Number(userRiverId.value))) {
-        showAlert(notif);
-      }
-    });
-});
-
-onUnmounted(() => {
-  if (echo) {
-    echo.leave('public-alerts');
-  }
 });
 
 watch(filteredPopUpAlerts, (newAlerts) => {
@@ -111,6 +94,7 @@ watch(filteredPopUpAlerts, (newAlerts) => {
   </div>
 </template>
 
+
 <style scoped>
 .alert-container {
   position: fixed;
@@ -121,6 +105,7 @@ watch(filteredPopUpAlerts, (newAlerts) => {
   pointer-events: none;
 }
 
+
 .alert-item {
   margin-bottom: 10px;
   background-color: white;
@@ -130,6 +115,7 @@ watch(filteredPopUpAlerts, (newAlerts) => {
   pointer-events: auto;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 /* Transition effects */
 .alert-fade-enter-active,
@@ -145,3 +131,5 @@ watch(filteredPopUpAlerts, (newAlerts) => {
   transform: translateY(-20px) scale(0.95);
 }
 </style>
+
+
