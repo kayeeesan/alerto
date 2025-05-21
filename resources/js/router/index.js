@@ -43,6 +43,9 @@ import Staffs from "../views/clientRegistration/Walkin.vue";
 
 //User Settings
 import Alerts from "../views/userSettings/alert.vue";
+import Pending from "../views/userSettings/pending.vue";
+import Responded from "../views/userSettings/responded.vue";
+import Expired from "../views/userSettings/expired.vue";
 
 const routes = [
     // Catch-all for 404
@@ -238,9 +241,19 @@ const routes = [
                 component: Responses
             },
             {
-                path: 'alerts',
-                name: 'private-alerts',
-                component: Alerts
+                path: 'alerts-pending',
+                name: 'private-alerts-pending',
+                component: Pending
+            },
+              {
+                path: 'alerts-responded',
+                name: 'private-alerts-responded',
+                component: Responded
+            },
+              {
+                path: 'alerts-expired',
+                name: 'private-alerts-expired',
+                component: Expired
             },
             {
                 path: 'staffs',

@@ -46,7 +46,9 @@ const libraries = [
 ];
 
 const alerts = [
-  { title: "Monitoring", icon: "mdi-cog-outline", route: "/home/alerts" },
+  { title: "Pending", icon: "mdi-cog-outline", route: "/home/alerts-pending" },
+  { title: "Responded", icon: "mdi-cog-outline", route: "/home/alerts-responded" },
+  { title: "Expired", icon: "mdi-cog-outline", route: "/home/alerts-expired" },
 ];
 
 const rail = ref(true);
@@ -156,19 +158,38 @@ watch(
         </v-list-item>
       </v-list-group>
 
-      <v-list-item
-        v-for="item in alerts"
-        :key="item.title"
-        :to="item.route"
-        class="sidebar-item"
-        link
-        :prepend-icon="item.icon"
+       <v-list-group
+        v-if="hasRole('administrator')"
+        value="Alerts"
+        class="sidebar-group"
       >
-        <template v-slot:prepend>
-          <v-icon class="sidebar-icon"></v-icon>
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            class="sidebar-item"
+            prepend-icon="mdi-folder-outline"
+          >
+            <template v-slot:prepend>
+              <v-icon class="sidebar-icon"></v-icon>
+            </template>
+            <span class="sidebar-text">Monitoring</span>
+          </v-list-item>
         </template>
-        <span class="sidebar-text">{{ item.title }}</span>
-      </v-list-item>
+
+        <v-list-item
+          v-for="item in alerts"
+          :key="item.title"
+          :to="item.route"
+          class="sidebar-subitem"
+          link
+        >
+          <template v-slot:prepend>
+            <v-icon class="subitem-icon">{{ item.icon }}</v-icon>
+          </template>
+          <span class="sidebar-text">{{ item.title }}</span>
+        </v-list-item>
+      </v-list-group>
+     
     </v-list>
 
     <!-- Footer with Logos -->
