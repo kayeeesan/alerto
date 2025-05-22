@@ -5,13 +5,16 @@ import store from "@/store";
 
 const { expiredAlerts, respondedAlerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts, expiredPagination, expiredPage,  } = useAlerts();
 
+const user = store.state.auth.user;
+const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
+const userRiverId = computed(() => user?.river?.id);
+
 const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
     { title: "Details", key: "details", width: "20%" },
     { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
     { title: "Action Needed", key: "response.action", width: "20%" },
     { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
-    { title: "Responder", key: "user.username", width: "10%" },
     { title: "Status", key: "status", width: "10%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
 ];
@@ -39,6 +42,17 @@ const deleteItem = async (value) => {
     await destroyAlert(value.id);
     reloadAlerts();
 };
+
+
+const filteredAlerts = computed(() => {
+    if (isAdmin.value){
+        return expiredAlerts.value;
+    }
+
+    return expiredAlerts.value.filter(alert =>
+        alert?.threshold?.sensorable?.river?.name === user?.river?.name);
+});
+
 
 onMounted(async() => {
     await getAlerts();
@@ -77,7 +91,7 @@ onMounted(async() => {
 
             <v-data-table
             :headers="headers"
-            :items="expiredAlerts"
+            :items="filteredAlerts"
             :search="query.search"
             :loading="is_loading"
             loading-text="Loading alert data..."
