@@ -8,6 +8,9 @@ const { respondedAlerts, pagination, query, is_loading, destroyAlert, updateAler
 
 const respondedAlert = ref([]);
 const show_form_modal = ref(false);
+const user = store.state.auth.user;
+const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
+const userRiverId = computed(() => user?.river?.id);
 
 const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
@@ -29,9 +32,9 @@ const getColor = (alert) => {
 
 const statusColor = (status) => {
   return {
-    responded: 'error',
+     pending: 'warning',
     responded: 'success', 
-    responded: 'warning'
+    expired: 'error'
   }[status] || 'grey';
 };
 
@@ -64,7 +67,16 @@ const save = async (formData) => {
     } catch (error) {
     console.error("Failed to update alert:", error);
   }
-}
+};
+
+const filteredAlerts = computed(() => {
+    if (isAdmin.value){
+        return respondedAlerts.value;
+    }
+
+    return respondedAlerts.value.filter(alert =>
+        alert?.threshold?.sensorable?.river?.name === user?.river?.name);
+});
 
 onMounted(async() => {
     await getAlerts();
@@ -103,7 +115,7 @@ onMounted(async() => {
 
             <v-data-table
             :headers="headers"
-            :items="respondedAlerts"
+            :items="filteredAlerts"
             :search="query.search"
             :loading="is_loading"
             loading-text="Loading alert data..."

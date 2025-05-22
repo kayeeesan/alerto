@@ -8,6 +8,9 @@ const { pendingAlerts, respondedAlerts, pagination, query, is_loading, destroyAl
 
 const pendingAlert = ref([]);
 const show_form_modal = ref(false);
+const user = store.state.auth.user;
+const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
+const userRiverId = computed(() => user?.river?.id);
 
 const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
@@ -15,7 +18,6 @@ const headers = [
     { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
     { title: "Action Needed", key: "response.action", width: "20%" },
     { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
-    { title: "Responder", key: "user.username", width: "10%" },
     { title: "Status", key: "status", width: "10%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
 ];
@@ -66,6 +68,15 @@ const save = async (formData) => {
   }
 }
 
+const filteredAlerts = computed(() => {
+    if (isAdmin.value){
+        return pendingAlerts.value;
+    }
+
+    return pendingAlerts.value.filter(alert =>
+        alert?.threshold?.sensorable?.river?.name === user?.river?.name);
+});
+
 onMounted(async() => {
     await getAlerts();
 });
@@ -75,7 +86,7 @@ onMounted(async() => {
     <v-container fluid class="pa-6">
         <v-row class="mb-4" align="center">
             <v-col cols="12" md="6">
-                <h2 class="text-h5 font-weight-bold">Pendings </h2>
+                <h2 class="text-h5 font-weight-bold">Pendings</h2>
                 <v-breadcrumbs :items="[{ title: 'Settings', disabled: true }, { title: 'Pendings' }]" class="pa-0"></v-breadcrumbs>
             </v-col>
         </v-row>
@@ -103,7 +114,7 @@ onMounted(async() => {
 
             <v-data-table
             :headers="headers"
-            :items="pendingAlerts"
+            :items="filteredAlerts"
             :search="query.search"
             :loading="is_loading"
             loading-text="Loading alert data..."

@@ -159,7 +159,7 @@ watch(
       </v-list-group>
 
        <v-list-group
-        v-if="hasRole('administrator')"
+        v-if="hasRole('project-staff') || hasRole('administrator')"
         value="Alerts"
         class="sidebar-group"
       >
