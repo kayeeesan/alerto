@@ -92,7 +92,6 @@ const reloadRivers = async () => {
                 class="elevation-0"
                 :items-per-page="pagination.per_page"
                 :page="query.page"
-                @update:page="getRivers"
             >
                 <template v-slot:item.name="{ item }">
                     <span class="font-weight-medium">{{ item.name }}</span>
