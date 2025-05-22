@@ -41,14 +41,19 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function markAsSeen($id)
+   public function markAsSeen($id)
     {
+        $user = auth()->user();
+
         $notification = Notification::where('id', $id)
-            ->where('user_id', auth()->id())
+            ->when(!$user->roles->contains('slug', 'administrator'), function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
             ->firstOrFail();
 
         if (!$notification->seen_at) {
             $notification->update(['seen_at' => now()]);
+            $notification->refresh();
             return response()->json([
                 'success' => true,
                 'data' => new ResourcesNotification($notification)

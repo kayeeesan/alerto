@@ -30,6 +30,35 @@ class AlertController extends Controller
         return ResourcesAlert::collection($alerts);
     }
 
+    // Filter: Pending
+    public function pending()
+    {
+        return $this->getAlertsByStatus('pending');
+    }
+
+    // Filter: Responded
+    public function responded()
+    {
+        return $this->getAlertsByStatus('responded');
+    }
+
+    // Filter: Expired
+    public function expired()
+    {
+        return $this->getAlertsByStatus('expired');
+    }
+
+    // Reusable filter method
+    private function getAlertsByStatus($status)
+    {
+        $alerts = Alert::with('threshold', 'threshold.sensorable.municipality', 'threshold.sensorable.river', 'user')
+            ->where('status', $status)
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return ResourcesAlert::collection($alerts);
+    }
+
 
     /**
      * Remove the specified alert from storage.

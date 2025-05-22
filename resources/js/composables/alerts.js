@@ -11,25 +11,47 @@ export default function useAlerts() {
     const pagination = ref({});
     const query = ref({
         search: null,
-        page: 1,
     });
 
+    const pendingPage = ref(1);
+    const respondedPage = ref(1);
+    const expiredPage = ref(1);
+
+    
+    const pendingAlerts = ref([]);
+    const respondedAlerts = ref([]);
+    const expiredAlerts = ref([]);
+
+    const pendingPagination = ref({});
+    const respondedPagination = ref({});
+    const expiredPagination = ref({});
    
-    const getAlerts = async (params = {}) => {
+    const getAlerts = async () => {
         is_loading.value = true;
-        
-        let query_str = { ...query.value, ...params };
-        await axios
-            .get('/api/alerts?page=' + query.value.page, { params: query_str })
-            .then((response) => {
-                alerts.value = response.data.data;
-                pagination.value = response.data.meta;
-                is_loading.value = false;
-            })
-            .catch(() => {
-                is_loading.value = false;
-            });
+
+        try {
+            const [pending, responded, expired] = await Promise.all([
+                axios.get('/api/alerts-pending', { params: { ...query.value, page: pendingPage.value } }),
+                axios.get('/api/alerts-responded', { params: { ...query.value, page: respondedPage.value } }),
+                axios.get('/api/alerts-expired', { params: { ...query.value, page: expiredPage.value } }),
+            ]);
+
+            pendingAlerts.value = pending.data.data;
+            pendingPagination.value = pending.data.meta;
+
+            respondedAlerts.value = responded.data.data;
+            respondedPagination.value = responded.data.meta;
+
+            expiredAlerts.value = expired.data.data;
+            expiredPagination.value = expired.data.meta;
+
+        } catch (error) {
+            console.error('Error fetching alerts:', error);
+        } finally {
+            is_loading.value = false;
+        }
     };
+
 
 
     // Update an alert by its ID
@@ -109,5 +131,14 @@ export default function useAlerts() {
         destroyAlert,
         getAlerts,
         respondToAlert,
+        pendingAlerts,
+        expiredAlerts,
+        respondedAlerts,
+        pendingPage,
+        respondedPage,
+        expiredPage,
+        pendingPagination,
+        respondedPagination,
+        expiredPagination
     };
 }

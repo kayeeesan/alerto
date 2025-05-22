@@ -50,7 +50,13 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/thresholds', ThresholdController::class);
     Route::get('/user-logs', [UserLogController::class, 'index']);
     Route::resource('/responses', ResponseController::class);
-    Route::resource('/alerts', AlertController::class);
+    //alerts
+    Route::get('/alerts-pending', [AlertController::class, 'pending']);
+    Route::get('/alerts-responded', [AlertController::class, 'responded']);
+    Route::get('/alerts-expired', [AlertController::class, 'expired']);
+    Route::delete('/alerts/{id}', [AlertController::class, 'destroy']);
+    Route::patch('/alerts/{id}', [AlertController::class, 'update']);
+
     Route::resource('/staffs', StaffController::class);
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
     Route::patch('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);

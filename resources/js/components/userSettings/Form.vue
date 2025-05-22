@@ -20,7 +20,7 @@ const props = defineProps({
 
 const initialState = {
     id: null,
-    response: {}, // You only need to manage response, user_id is not needed
+    response: null,
     action: null
 }
 
@@ -31,7 +31,7 @@ watch(
     (value) => {
         if (value) {
             form.id = value.id;
-            form.response = value.response || {}; 
+            form.response = value.response || null; 
             form.details = value.details;
         }
     }
