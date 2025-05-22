@@ -102,7 +102,6 @@ const reloadThresholds = async () => {
                     class="elevation-0"
                     :items-per-page="pagination.per_page"
                     :page="query.page"
-                    @update:page="getThresholds"
                 >
                     <template v-slot:item.sensor.river.name="{ item }">
                         <span>{{ item.sensor?.river?.name || '-' }}</span>

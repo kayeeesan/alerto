@@ -92,7 +92,6 @@ const reloadResponses = async () => {
                 class="elevation-0"
                 :items-per-page="pagination.per_page"
                 :page="query.page"
-                @update:page="getResponses"
             >
                 <template v-slot:item.color="{ item }">
                     <!-- <v-chip 
