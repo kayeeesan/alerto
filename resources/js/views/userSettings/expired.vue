@@ -3,7 +3,7 @@ import { ref, onMounted, watch, computed} from "vue";
 import useAlerts from "../../composables/alerts";
 import store from "@/store";
 
-const { pendingAlerts, respondedAlerts, expiredAlerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts, expiredPagination, expiredPage,  } = useAlerts();
+const { expiredAlerts, respondedAlerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts, expiredPagination, expiredPage,  } = useAlerts();
 
 const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
@@ -25,10 +25,19 @@ const getColor = (alert) => {
 
 const statusColor = (status) => {
   return {
-    pending: 'error',
+    pending: 'warning',
     responded: 'success', 
-    expired: 'warning'
+    expired: 'error'
   }[status] || 'grey';
+};
+
+const reloadAlerts = async () => {
+    await getAlerts( {query:query.search });
+};
+
+const deleteItem = async (value) => {
+    await destroyAlert(value.id);
+    reloadAlerts();
 };
 
 onMounted(async() => {
@@ -40,8 +49,8 @@ onMounted(async() => {
     <v-container fluid class="pa-6">
         <v-row class="mb-4" align="center">
             <v-col cols="12" md="6">
-                <h2 class="text-h5 font-weight-bold">Pendings </h2>
-                <v-breadcrumbs :items="[{ title: 'Settings', disabled: true }, { title: 'Pendings' }]" class="pa-0"></v-breadcrumbs>
+                <h2 class="text-h5 font-weight-bold">Expired </h2>
+                <v-breadcrumbs :items="[{ title: 'Settings', disabled: true }, { title: 'Expired' }]" class="pa-0"></v-breadcrumbs>
             </v-col>
         </v-row>
 
@@ -50,7 +59,7 @@ onMounted(async() => {
                 <v-text-field
                     v-model="query.search"
                     append-inner-icon="mdi-magnify"
-                    label="Search pendings..."
+                    label="Search Expired..."
                     single-line
                     hide-details
                     density="comfortable"
@@ -61,7 +70,7 @@ onMounted(async() => {
                 <v-btn
                     variant="text"
                     icon="mdi-refresh"
-                    @click=""
+                    @click="reloadAlerts"
                     title="Refresh"
                 ></v-btn>
             </v-card-title>
@@ -96,16 +105,10 @@ onMounted(async() => {
             <template #item.actions="{ item }">
                 <v-btn 
                 icon 
-                @click="" 
+                @click="deleteItem(item)" 
                 title="Delete">
-                <v-icon color="red">mdi-delete
-                </v-icon>
-                </v-btn>
-                <v-btn 
-                icon 
-                @click="" 
-                title="Edit">
-                <v-icon color="blue">mdi-pencil</v-icon>
+                    <v-icon color="red">mdi-delete
+                    </v-icon>
                 </v-btn>
             </template>
 

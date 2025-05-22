@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Alert;
 use Carbon\Carbon;
 
-class ExpiredAlerts extends Command
+class expiredAlerts extends Command
 {
     protected $signature = 'alerts:expire';
     protected $description = 'Expire alerts that are pending for more than 2 minutes';

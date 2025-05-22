@@ -245,7 +245,7 @@ const routes = [
                 name: 'private-alerts-pending',
                 component: Pending
             },
-              {
+            {
                 path: 'alerts-responded',
                 name: 'private-alerts-responded',
                 component: Responded

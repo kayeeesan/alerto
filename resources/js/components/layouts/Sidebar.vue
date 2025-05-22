@@ -46,9 +46,9 @@ const libraries = [
 ];
 
 const alerts = [
-  { title: "Pending", icon: "mdi-cog-outline", route: "/home/alerts-pending" },
-  { title: "Responded", icon: "mdi-cog-outline", route: "/home/alerts-responded" },
-  { title: "Expired", icon: "mdi-cog-outline", route: "/home/alerts-expired" },
+  { title: "Pending", icon: "mdi-timer-sand", route: "/home/alerts-pending" },
+  { title: "Responded", icon: "mdi-check-circle-outline", route: "/home/alerts-responded" },
+  { title: "Expired", icon: "mdi-alert-circle-outline", route: "/home/alerts-expired" },
 ];
 
 const rail = ref(true);

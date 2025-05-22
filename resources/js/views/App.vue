@@ -185,7 +185,7 @@ const getNotificationIcon = (type) => {
                     color="white"
                     @click="markAllAsRead"
                   >
-                    Mark All Raed
+                    Mark All Read
                   </v-btn>
                 </v-toolbar>
 

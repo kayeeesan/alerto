@@ -1,44 +1,73 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed} from "vue";
 import useAlerts from "../../composables/alerts";
-import AlertForm from "../../components/userSettings/Form.vue";
+import AlertForm from "../../components/userSettings/Form.vue"
 import store from "@/store";
 
-const { pendingAlerts, respondedAlerts, expiredAlerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts } = useAlerts();
+const { pendingAlerts, respondedAlerts, pagination, query, is_loading, destroyAlert, updateAlert, getAlerts, pendingPagination, pendingPage,  } = useAlerts();
 
+const pendingAlert = ref([]);
+const show_form_modal = ref(false);
 
 const headers = [
-  { title: "Alert Level", key: "color", width: "10%" },
-  { title: "Details", key: "details", width: "20%" },
-  { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
-  { title: "Action Needed", key: "response.action", width: "20%" },
-  { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
-  { title: "Responder", key: "user.username", width: "10%" },
-  { title: "Status", key: "status", width: "10%" },
-  { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
+    { title: "Alert Level", key: "color", width: "10%" },
+    { title: "Details", key: "details", width: "20%" },
+    { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
+    { title: "Action Needed", key: "response.action", width: "20%" },
+    { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
+    { title: "Responder", key: "user.username", width: "10%" },
+    { title: "Status", key: "status", width: "10%" },
+    { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
 ];
 
 const getColor = (alert) => {
-  if (alert.details.includes("critical")) return 'red';
-  if (alert.details.includes("alert")) return 'orange';
-  if (alert.details.includes("monitor")) return 'yellow';
-  return 'grey';
+    if (alert.details.includes("critical")) return 'red';
+    if (alert.details.includes("alert")) return 'orange';
+    if (alert.details.includes("monitor")) return 'yellow';
+    return 'grey';
 };
 
 const statusColor = (status) => {
   return {
     pending: 'error',
     responded: 'success', 
-    expired: 'warning'
+    pending: 'warning'
   }[status] || 'grey';
 };
 
+const reloadAlerts = async () => {
+    await getAlerts( {query:query.search });
+    pendingAlert.value = {};
+};
+
+
+const deleteItem = async (value) => {
+    await destroyAlert(value.id);
+    reloadAlerts();
+};
+
+const showModalForm = (val) => {
+  show_form_modal.value = val;
+  alert.value = {};
+};
+
+const editItem = (value) => {
+    pendingAlert.value = value;
+    show_form_modal.value = true;
+}
+
+const save = async (formData) => {
+    try {
+        await updateAlert(formData);
+        show_form_modal.value = false;
+        reloadAlerts();
+    } catch (error) {
+    console.error("Failed to update alert:", error);
+  }
+}
+
 onMounted(async() => {
-    console.log('Fetching alerts...');
     await getAlerts();
-    console.log('Pending Alerts:', pendingAlerts.value);
-    console.log('Responded Alerts:', respondedAlerts.value);
-    console.log('Expired Alerts:', expiredAlerts.value);
 });
 </script>
 
@@ -67,7 +96,7 @@ onMounted(async() => {
                 <v-btn
                     variant="text"
                     icon="mdi-refresh"
-                    @click=""
+                    @click="reloadAlerts"
                     title="Refresh"
                 ></v-btn>
             </v-card-title>
@@ -79,15 +108,17 @@ onMounted(async() => {
             :loading="is_loading"
             loading-text="Loading alert data..."
             class="elevation-0"
-            :items-per-page="pagination.per_page || 10"
-            :page="pagination.current_page"
-            @update:page="(page) => {
-                query.page = page;
-                getAlerts();
-            }"
+            :items-per-page="pendingPagination.per_page"
+            :page="pendingPage"
+          
             >
-            <template #item.color="{ item }">
-                <v-chip :color="getColor(item)" dark>{{ item.details }}</v-chip>
+
+            <template v-slot:item.color="{ item }">
+                <v-btn
+                class="ma-2"
+                :color="getColor(item)"
+                icon="mdi-alert-circle-outline"
+                ></v-btn>
             </template>
 
             <template #item.status="{ item }">
@@ -97,24 +128,53 @@ onMounted(async() => {
             </v-chip>
             </template>
 
-            <template #item.actions="{ item }">
-                <v-btn 
-                icon 
-                @click="" 
-                title="Delete">
-                <v-icon color="red">mdi-delete
-                </v-icon>
-                </v-btn>
-                <v-btn 
-                icon 
-                @click="" 
-                title="Edit">
-                <v-icon color="blue">mdi-pencil</v-icon>
-                </v-btn>
+               <template v-slot:item.actions="{ item }">
+                <div class="d-flex justify-end">
+                    <v-btn
+                    variant="text"
+                    color="primary"
+                    icon="mdi-pencil"
+                    size="small"
+                    @click="editItem(item)"
+                    class="mr-1"
+                    :title="tab === 'pending' ? 'Respond' : 'Update'"
+                ></v-btn>
+                <v-btn
+                    variant="text"
+                    color="error"
+                    icon="mdi-delete"
+                    size="small"
+                    @click="deleteItem(item)"
+                    title="Delete"
+                    ></v-btn>
+                </div>
+                </template>
+
+            <template v-slot:bottom>
+            <div class="d-flex flex-column flex-md-row justify-space-between align-center pa-4">
+                <div class="text-caption text-medium-emphasis mb-2 mb-md-0">
+                Showing {{ pendingPagination.from }} to {{ pendingPagination.to }} of {{ pendingPagination.total }} entries
+                </div>
+                <v-pagination
+                    v-model="pendingPage"
+                    :length="pendingPagination.last_page"
+                    :total-visible="5"
+                    density="comfortable"
+                    @update:model-value="getAlerts"
+                    />
+
+            </div>
             </template>
         </v-data-table>
-
         </v-card>
+
+        <AlertForm
+        :value="show_form_modal"
+        :alert="pendingAlert"
+        @input="showModalForm"
+        @reloadAlerts="reloadAlerts"
+        @save="save" 
+        />
     </v-container>
 </template>
 
