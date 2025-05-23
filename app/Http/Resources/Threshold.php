@@ -28,6 +28,8 @@ class Threshold extends JsonResource
                 'type' => $this->sensorable_type,
                 'river' => $sensor->river ?? null,
                 'municipality' => $sensor->municipality ?? null,
+                'device_water_level' => $sensor->device_water_level,
+                'device_rain_amount' => $sensor->device_rain_amount,
             ] : null,
             'baseline' => $this->baseline,
             'sixty_percent' => $this->sixty_percent,
