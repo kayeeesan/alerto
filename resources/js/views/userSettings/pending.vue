@@ -16,7 +16,6 @@ const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
     { title: "Details", key: "details", width: "20%" },
     { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
-    { title: "Action Needed", key: "response.action", width: "20%" },
     { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
     { title: "Status", key: "status", width: "10%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }

@@ -139,7 +139,7 @@ class AlertService
             'details' => $details,
             'status' => 'pending',
             'expired_at' => now()->addMinutes(30),
-            'user_id' => auth()->id() ?? null,
+            // 'user_id' => auth()->id() ?? null,
             'alert_type' => $alertType,
         ]);
 
@@ -162,7 +162,6 @@ class AlertService
             'type' => $type,
             'alert_type' => $alertType,
         ]);
-        \Log::info('Broadcasting AlertCreated event', ['notification_id' => $notification->id]);
         broadcast(new AlertCreated($notification))->toOthers();
         }
     }
