@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('alerts:expire')->everyMinute();
+Schedule::command('devices:update-rain-amount')->everyMinute();
