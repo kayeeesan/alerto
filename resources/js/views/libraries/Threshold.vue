@@ -19,8 +19,8 @@ const headers = [
     { title: "100%", key: "one_hundred_percent", width: "7%" },
     { title: "Municipality", key: "sensor.municipality.name", width: "12%" },
     { title: "XS Date", key: "xs_date", width: "10%" },
-    { title: "Water Level", key: "water_level", width: "8%" },
-    { title: "Rain Amount", key: "rain_amount", width: "8%" },
+    { title: "Water Level", key: "sensor.device_water_level", width: "8%" },
+    { title: "Rain Amount", key: "sensor.device_rain_amount", width: "8%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "9%" },
 ];
 

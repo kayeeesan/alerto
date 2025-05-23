@@ -31,8 +31,8 @@ const headers = [
   { key: "sensor_type", title: "Type" },
   { key: "status", title: "Status" },
   { key: "updated_at", title: "Last Update" },
-  { key: "water_level", title: "Water Level" },
-  { key: "rain_amount", title: "Rain (mm)" }
+  { key: "device_water_level", title: "Water Level" },
+  { key: "device_rain_amount", title: "Rain (mm)" }
 ];
 
 const all_sensors = computed(() => [

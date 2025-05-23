@@ -37,7 +37,8 @@ class SensorUnderAlerto extends JsonResource
             'long' => $this->long,
             'lat' => $this->lat,
             'status' => $this->status,
-            'sensor_type' => $this->sensor_type
+            'sensor_type' => $this->sensor_type,
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }
