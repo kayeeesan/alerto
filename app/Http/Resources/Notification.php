@@ -23,6 +23,12 @@ class Notification extends JsonResource
             'seen_at' => $this->seen_at,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
+            'alert' => $this->whenLoaded('alert', function () {
+                return [
+                    'id' => $this->alert->id,
+                'status' => $this->alert->status,
+                ];
+            })
         ];
     }
 }

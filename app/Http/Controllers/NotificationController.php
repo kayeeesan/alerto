@@ -10,7 +10,7 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::with('river')
+        $notifications = Notification::with('river', 'alert')
         ->where('user_id', auth()->id())
         ->latest()
         ->paginate(10);

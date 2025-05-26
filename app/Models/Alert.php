@@ -39,4 +39,9 @@ class Alert extends Model
                     ->where('expired_at', '<=', now());
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'alert_id');
+    }
+
 }

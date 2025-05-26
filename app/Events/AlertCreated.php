@@ -25,7 +25,6 @@ class AlertCreated implements ShouldBroadcastNow
 
     public function broadcastOn()
     {
-        \Log::info('Broadcasting on public-alerts channel', ['notification' => $this->notification]);
         return new Channel('public-alerts');
     }
 

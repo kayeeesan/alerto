@@ -131,6 +131,21 @@ const getNotificationIcon = (type) => {
     default: return 'mdi-information';
   }
 };
+
+const getAlertRoute = (notification) => {
+  if (notification.alert && notification.alert.status) {
+    switch (notification.alert.status.toLowerCase()) {
+       case 'pending':
+        return '/home/alerts-pending';
+      case 'responded':
+        return '/home/alerts-responded';
+      case 'expired':
+        return '/home/alerts-expired';
+      default:
+        return '/home';
+    }
+  }
+}
 </script>
 
 <template>
@@ -190,39 +205,42 @@ const getNotificationIcon = (type) => {
                 </v-toolbar>
 
                 <div style="max-height: 400px; overflow-y: auto;">
-                  <v-list v-if="filteredNotifications.length > 0" class="pa-2">
-                    <RouterLink to="/home/alerts" class="text-decoration-none">
-                      <v-list-item
-                        v-for="notif in filteredNotifications"
-                        :key="notif.id"
+                 <v-list v-if="filteredNotifications.length > 0" class="pa-2">
+                    <template v-for="notif in filteredNotifications" :key="notif.id">
+                      <RouterLink 
+                        :to="getAlertRoute(notif)" 
+                        class="text-decoration-none"
                         @click="markAsRead(notif.id)"
-                        class="rounded-lg mb-2 pa-3"
-                        :class="{
-                          'bg-blue-lighten-5': !notif.read_at,
-                          'bg-grey-lighten-4': notif.read_at
-                        }"
                       >
-                        <template v-slot:prepend>
-                          <v-avatar
-                            size="36"
-                            :color="getNotificationColor(notif.type)"
-                          >
-                            <v-icon
-                              :icon="getNotificationIcon(notif.type)"
-                              color="white"
-                              size="20"
-                            ></v-icon>
-                          </v-avatar>
-                        </template>
+                        <v-list-item
+                          class="rounded-lg mb-2 pa-3"
+                          :class="{
+                            'bg-blue-lighten-5': !notif.read_at,
+                            'bg-grey-lighten-4': notif.read_at
+                          }"
+                        >
+                          <template v-slot:prepend>
+                            <v-avatar
+                              size="36"
+                              :color="getNotificationColor(notif.type)"
+                            >
+                              <v-icon
+                                :icon="getNotificationIcon(notif.type)"
+                                color="white"
+                                size="20"
+                              ></v-icon>
+                            </v-avatar>
+                          </template>
 
-                        <v-list-item-title class="font-weight-medium">
-                          {{ notif.data?.message || notif.text || 'New notification' }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle class="text-caption grey--text text--darken-2 mt-1">
-                          {{ new Date(notif.created_at).toLocaleString() }}
-                        </v-list-item-subtitle>
-                      </v-list-item>
-                    </RouterLink>
+                          <v-list-item-title class="font-weight-medium">
+                            {{ notif.data?.message || notif.text || 'New notification' }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle class="text-caption grey--text text--darken-2 mt-1">
+                            {{ new Date(notif.created_at).toLocaleString() }}
+                          </v-list-item-subtitle>
+                        </v-list-item>
+                      </RouterLink>
+                    </template>
                   </v-list>
 
                   <v-card-text v-else class="text-center py-6">

@@ -15,7 +15,8 @@ class Notification extends Model
         'text',
         'type',
         'read_at',
-        'seen_at'
+        'seen_at',
+        'alert_id'
     ];
 
     protected $dates = [
@@ -33,5 +34,10 @@ class Notification extends Model
     public function river()
     {
         return $this->belongsTo(River::class, 'river_id');
+    }
+
+    public function alert()
+    {
+        return $this->belongsTo(Alert::class, 'alert_id');
     }
 }
