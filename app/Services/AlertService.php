@@ -134,7 +134,7 @@ class AlertService
 
     private function createAlertAndNotify(Threshold $threshold, $riverId, $details, $type, $alertType)
     {
-        Alert::create([
+        $alert = Alert::create([
             'threshold_id' => $threshold->id,
             'details' => $details,
             'status' => 'pending',
@@ -161,6 +161,7 @@ class AlertService
             'text' => $details,
             'type' => $type,
             'alert_type' => $alertType,
+            'alert_id' => $alert->id,
         ]);
         broadcast(new AlertCreated($notification))->toOthers();
         }

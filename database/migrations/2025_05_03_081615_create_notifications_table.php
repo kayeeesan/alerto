@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('type');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
+            $table->foreignId('alert_id')->constrained('alerts')->onDelete('cascade');
         });
     }
 
