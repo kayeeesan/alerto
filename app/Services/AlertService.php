@@ -134,6 +134,7 @@ class AlertService
 
     private function createAlertAndNotify(Threshold $threshold, $riverId, $details, $type, $alertType)
     {
+        
         $alert = Alert::create([
             'threshold_id' => $threshold->id,
             'details' => $details,
@@ -142,6 +143,8 @@ class AlertService
             // 'user_id' => auth()->id() ?? null,
             'alert_type' => $alertType,
         ]);
+
+        broadcast(new AlertCreated($alert))->toOthers();
 
 
         $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
@@ -155,15 +158,14 @@ class AlertService
         $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
 
          foreach ($usersToNotify as $user) {
-        $notification = Notification::create([
-            'user_id' => $user->id,
-            'river_id' => $riverId,
-            'text' => $details,
-            'type' => $type,
-            'alert_type' => $alertType,
-            'alert_id' => $alert->id,
-        ]);
-        broadcast(new AlertCreated($notification))->toOthers();
+            $notification = Notification::create([
+                'user_id' => $user->id,
+                'river_id' => $riverId,
+                'text' => $details,
+                'type' => $type,
+                'alert_type' => $alertType,
+                'alert_id' => $alert->id,
+            ]);
         }
     }
 }

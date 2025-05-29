@@ -1,6 +1,9 @@
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import Swal from "sweetalert2";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import { eventBus } from './eventBus';
 
 export default function useAlerts() {
     const alert = ref(null);
@@ -12,6 +15,20 @@ export default function useAlerts() {
     const query = ref({
         search: null,
     });
+
+  const handleNewAlert = () => {
+    console.log('New alert received, refreshing notifications...');
+    getAlerts();
+  };
+
+  onMounted(() => {
+    eventBus.$on('alert-received', handleNewAlert);
+  });
+
+  onUnmounted(() => {
+    eventBus.$off('alert-received', handleNewAlert);
+  });
+
 
     const pendingPage = ref(1);
     const respondedPage = ref(1);
@@ -44,6 +61,12 @@ export default function useAlerts() {
 
             expiredAlerts.value = expired.data.data;
             expiredPagination.value = expired.data.meta;
+
+            alerts.value = [
+            ...pending.data.data,
+            ...responded.data.data,
+            ...expired.data.data
+            ];
 
         } catch (error) {
             console.error('Error fetching alerts:', error);
