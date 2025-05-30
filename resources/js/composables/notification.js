@@ -2,6 +2,7 @@ import { onMounted, ref, onUnmounted } from 'vue';
 import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { eventBus } from './eventBus'; 
 
 export default function useNotifications() {
   const notification = ref(null);
@@ -29,6 +30,7 @@ export default function useNotifications() {
         .listen('.AlertCreated', (event) => {
             getNotifications();
             console.log('Event received on public-alerts', event);
+            eventBus.$emit('alert-received', event);
     });
 
   const getNotifications = async (params = {}) => {
