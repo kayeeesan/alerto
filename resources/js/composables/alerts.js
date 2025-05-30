@@ -1,9 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import Swal from "sweetalert2";
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-import { eventBus } from './eventBus';
 
 export default function useAlerts() {
     const alert = ref(null);
@@ -16,18 +13,6 @@ export default function useAlerts() {
         search: null,
     });
 
-  const handleNewAlert = () => {
-    console.log('New alert received, refreshing notifications...');
-    getAlerts();
-  };
-
-  onMounted(() => {
-    eventBus.$on('alert-received', handleNewAlert);
-  });
-
-  onUnmounted(() => {
-    eventBus.$off('alert-received', handleNewAlert);
-  });
 
 
     const pendingPage = ref(1);
