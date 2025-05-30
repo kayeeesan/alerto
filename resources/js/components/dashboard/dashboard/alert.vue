@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, watch } from "vue";
 import store from "@/store";
 import useNotifications from "../../../composables/notification";
-import { eventBus } from "../../../composables/eventBus";
 
 const { notifications, getNotifications, markAsSeen, reloadNotifications } = useNotifications();
 const user = store.state.auth.user;
@@ -44,11 +43,9 @@ const showAlert = async (alert) => {
     delete alertTimeouts.value[alert.id];
   }, 4000);
 
-  eventBus.$emit("new-alert", alert);
 };
 
 const closeAlert = (id) => {
-  // Clear the timeout if alert is manually closed
   if (alertTimeouts.value[id]) {
     clearTimeout(alertTimeouts.value[id]);
     delete alertTimeouts.value[id];

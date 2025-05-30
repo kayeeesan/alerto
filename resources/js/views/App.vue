@@ -8,7 +8,6 @@ import useStaffs from "../composables/staff.js";
 import useNotifications from "../composables/notification.js";
 import { RouterLink } from "vue-router";
 import Alert from "../components/dashboard/dashboard/alert.vue";
-import { eventBus } from "../composables/eventBus.js";
 
 const { staffs, getStaffs } = useStaffs();
 const {
@@ -76,10 +75,6 @@ const checkMobile = () => {
   }
 };
 
-eventBus.$on("new-alert", async () => {
-  console.log("New alert received. Reloading notifications...");
-  await reloadNotifications();
-});
 
 onMounted(async () => {
   interval = setInterval(cleanUpExpiredItems, 28800000);

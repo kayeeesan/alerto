@@ -71,6 +71,7 @@ class AlertService
         if (!empty($statuses)) {
             $sensor->save();
         }
+        
     }
 
     private function checkWaterLevelStatus($waterLevel, $threshold, $river)
@@ -155,15 +156,17 @@ class AlertService
         $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
 
          foreach ($usersToNotify as $user) {
-        $notification = Notification::create([
-            'user_id' => $user->id,
-            'river_id' => $riverId,
-            'text' => $details,
-            'type' => $type,
-            'alert_type' => $alertType,
-            'alert_id' => $alert->id,
-        ]);
-        broadcast(new AlertCreated($notification))->toOthers();
+            $notification = Notification::create([
+                'user_id' => $user->id,
+                'river_id' => $riverId,
+                'text' => $details,
+                'type' => $type,
+                'alert_type' => $alertType,
+                'alert_id' => $alert->id,
+            ]);
+            
+        broadcast(new AlertCreated($notification));
         }
+        
     }
 }

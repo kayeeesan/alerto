@@ -1,8 +1,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
 export default function useNotifications() {
   const notification = ref(null);
@@ -13,16 +12,22 @@ export default function useNotifications() {
     page: 1,
     per_page: 10
   });
-  const onNewNotification = ref(null);
 
+   const echo = new Echo({
+        broadcaster: 'pusher',
+        key: '57206333aea283adecc8',
+        cluster: 'ap1',
+        forceTLS: true,
+    });
+    echo.connector.pusher.connection.bind('connected', () => {
+        console.log('✅ Pusher connected successfully');
+    });
 
-  const echo = new Echo({
-    broadcaster: 'pusher',
-    key: '57206333aea283adecc8', // Your Pusher key
-    cluster: 'ap1',
-    forceTLS: true,
-  });
-
+    echo.channel('public-alerts')
+        .listen('.AlertCreated', (event) => {
+            getNotifications();
+            console.log('Event received on public-alerts', event);
+    });
 
   const getNotifications = async (params = {}) => {
     is_loading.value = true;
@@ -83,16 +88,6 @@ export default function useNotifications() {
     }
   };
 
-  echo.channel('public-alerts')
-      .listen('.AlertCreated', (event) => {
-          console.log('Event received on public-alerts:', event);
-          notifications.value.push(event.notification); // Add the new notification
-          unread_count.value += 1; // Increment the unread count
-          if (onNewNotification.value) {
-            onNewNotification.value(event.notification); // Trigger callback
-          }
-            notifications.value = [...notifications.value];
-      });
 
 
   return {
@@ -106,7 +101,5 @@ export default function useNotifications() {
     markAsRead,
     markAsSeen, // Now included in the return object
     markAllAsRead,
-    onNewNotification,
-    echo
   };
 }
