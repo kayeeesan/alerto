@@ -47,7 +47,7 @@
                 <img src="../../../../img/riverstatus-icon/warning-rain.svg" alt="Alert" width="65">
               </div>
               <div class="card-content">
-                <div class="value-range">15-30</div>
+                <div class="value-range">16-30</div>
                 <div class="unit">MM</div>
                 <div class="status">ALERT</div>
               </div>
@@ -252,14 +252,13 @@ export default {
 }
 
 .monitor {
-  /* background: linear-gradient(145deg, #E3F2FD, #BBDEFB); */
-  background: #CAE8F9;
-  border-left: 5px solid #1976D2;
+  background: #FFF9C4; /* Light yellow background */
+  border-left: 5px solid #FFD600; /* Vibrant yellow border */
 }
 
 .alert {
-  background: #FFEFC6;
-  border-left: 5px solid #FFA000;
+  background: #FFE0B2; /* Light orange background */
+  border-left: 5px solid #FF9800; /* Vibrant orange border */
 }
 
 .evacuation {
@@ -311,12 +310,12 @@ export default {
 }
 
 .monitor .status {
-  color: #1565C0;
+  color: #FF8F00; /* Orange color for monitor status */
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 
 .alert .status {
-  color: #FF8F00;
+  color: #FF6D00; /* Darker orange for alert status */
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 
