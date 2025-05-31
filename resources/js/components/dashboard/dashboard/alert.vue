@@ -78,7 +78,7 @@ watch(filteredPopUpAlerts, (newAlerts) => {
         v-for="notif in visibleAlerts"
         :key="notif.id"
         border="start"
-        :color="notif.type === 'critical' ? 'error' : notif.type === 'alert' ? 'warning' : 'info'"
+        :color="notif.type === 'critical' ? 'error' : notif.type === 'alert' ? 'warning' : 'yellow-lighten-1'"
         title="ALERT"
         variant="flat"
         closable

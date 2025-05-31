@@ -77,7 +77,7 @@ const ShowModalForm = () => {
         <div class="profile-section">
           <v-avatar size="80" class="user-avatar">
             <img 
-              src="../../../img/icon/user_icon.svg" 
+              src="../../../img/icon/user_iconI.svg" 
               alt="User Avatar" 
               class="avatar-image"
             />

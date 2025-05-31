@@ -86,7 +86,7 @@ const statusColor = computed(() => {
                 <!-- Profile Header -->
                 <div class="profile-header">
                     <v-avatar size="80" class="profile-avatar">
-                        <img src="../../../../img/icon/user_icon.svg" alt="User Avatar" style="width: 100%;" />
+                        <img src="../../../../img/icon/user_iconI.svg" alt="User Avatar" style="width: 100%;" />
                     </v-avatar>
                     <div class="profile-info">
                         <h2 class="profile-name">{{ form.first_name }} {{ form.last_name }}</h2>
