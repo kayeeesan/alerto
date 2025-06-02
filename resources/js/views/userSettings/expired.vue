@@ -117,13 +117,14 @@ onMounted(async() => {
             </template>
 
             <template #item.actions="{ item }">
-                <v-btn 
-                icon 
-                @click="deleteItem(item)" 
-                title="Delete">
-                    <v-icon color="red">mdi-delete
-                    </v-icon>
-                </v-btn>
+                 <v-btn
+                    variant="text"
+                    color="error"
+                    icon="mdi-delete"
+                    size="small"
+                    @click="deleteItem(item)"
+                    title="Delete"
+                    ></v-btn>
             </template>
 
             <template v-slot:bottom>
