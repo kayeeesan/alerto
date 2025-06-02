@@ -1,50 +1,153 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Chart from 'chart.js/auto';
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
-const chartRef = ref(null);
-let chartInstance = null;
+const {
+  sensors_under_alerto,
+  is_loading: alertoLoading,
+  getSensorsUnderAlerto
+} = useSensorsUnderAlerto();
 
-const data = {
-  labels: ['MONITOR', 'ALERT', 'CRITICAL'],
-  datasets: [{
-    label: 'My First Dataset',
-    data: [300, 50, 100],
-    backgroundColor: [
-      'rgb(243,252,71)',
-      'rgb(249,128,35)',
-      'rgb(253,54,30)'
-    ],
-    hoverOffset: 4
-  }]
+const {
+  sensors_under_ph,
+  is_loading: phLoading,
+  getSensorsUnderPh
+} = useSensorsUnderPh();
+
+const tab = ref(0);
+const chartRefs = [ref(null), ref(null)];
+const chartInstances = [null, null];
+
+const statusLabels = ['WARNING', 'ALERT', 'CRITICAL'];
+
+// Count how many sensors per status
+const countStatus = (items) => {
+  const counts = {
+    WARNING: 0,
+    ALERT: 0,
+    CRITICAL: 0
+  };
+
+  items.forEach(item => {
+    const status = item.status?.toUpperCase();
+    if (counts[status] !== undefined) {
+      counts[status]++;
+    }
+  });
+
+  return [counts.WARNING, counts.ALERT, counts.CRITICAL];
 };
 
-const config = {
-  type: 'doughnut',
-  data: data,
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          boxWidth: 12,
-          padding: 20,
-          font: {
-            size: 12
+// Format labels to include counts
+const labelWithCount = (counts) =>
+  statusLabels.map((label, i) => `${label} (${counts[i]})`);
+
+// Initial chart configs
+const chartConfigs = [
+  {
+    type: 'doughnut',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Water Status',
+        data: [],
+        backgroundColor: ['#8ecae6', '#219ebc', '#023047'],
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            padding: 20,
+            font: { size: 12 }
           }
         }
       }
+    }
+  },
+  {
+    type: 'doughnut',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Rain Status',
+        data: [],
+        backgroundColor: ['#f3fc47', '#f98023', '#fd361e'],
+        hoverOffset: 4
+      }]
     },
-    cutout: '70%'
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            padding: 20,
+            font: { size: 12 }
+          }
+        }
+      }
+    }
+  }
+];
+
+// Create chart instance
+const createChart = (index) => {
+  if (chartRefs[index].value && !chartInstances[index]) {
+    chartInstances[index] = new Chart(chartRefs[index].value, chartConfigs[index]);
   }
 };
 
-onMounted(() => {
-  if (chartRef.value) {
-    chartInstance = new Chart(chartRef.value, config);
+// Update chart data and labels dynamically
+const updateChart = (index, dataCounts) => {
+  if (chartInstances[index]) {
+    chartInstances[index].data.datasets[0].data = dataCounts;
+    chartInstances[index].data.labels = labelWithCount(dataCounts);
+    chartInstances[index].update();
   }
+};
+
+onMounted(async () => {
+  await getSensorsUnderPh();
+  await getSensorsUnderAlerto();
+
+  const phCounts = countStatus(sensors_under_ph.value);
+  const alertoCounts = countStatus(sensors_under_alerto.value);
+
+  chartConfigs[0].data.datasets[0].data = phCounts;
+  chartConfigs[0].data.labels = labelWithCount(phCounts);
+
+  chartConfigs[1].data.datasets[0].data = alertoCounts;
+  chartConfigs[1].data.labels = labelWithCount(alertoCounts);
+
+  createChart(0);
+});
+
+// Create chart for other tab when selected
+watch(tab, (newIndex) => {
+  createChart(newIndex);
+});
+
+// Watch data for real-time updates
+watch(sensors_under_ph, (newData) => {
+  const counts = countStatus(newData);
+  updateChart(0, counts);
+});
+
+watch(sensors_under_alerto, (newData) => {
+  const counts = countStatus(newData);
+  updateChart(1, counts);
 });
 </script>
 
@@ -53,18 +156,26 @@ onMounted(() => {
     <v-sheet class="threshold-sheet" rounded="lg">
       <div class="header-container">
         <div class="alert-indicator"></div>
-        <h1 class="section-title">MONITORING OVERVIEW</h1>
+        <h1 class="section-title">WARNINGING OVERVIEW</h1>
       </div>
-      
+
       <v-divider class="divider"></v-divider>
-      
-      <div class="doughnut-container">
-        <canvas ref="chartRef" class="doughnut-chart"></canvas>
-      </div>
+
+      <v-tabs v-model="tab" background-color="white" grow>
+        <v-tab>Water</v-tab>
+        <v-tab>Rain</v-tab>
+      </v-tabs>
+
+      <v-window v-model="tab">
+        <v-window-item v-for="(refEl, index) in chartRefs" :key="index">
+          <div class="doughnut-container">
+            <canvas :ref="refEl" class="doughnut-chart"></canvas>
+          </div>
+        </v-window-item>
+      </v-window>
     </v-sheet>
   </v-col>
 </template>
-
 
 <style scoped>
 .threshold-container {
@@ -116,16 +227,15 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* center it vertically */
-  align-items: center; /* center it horizontally */
-  min-height: 400px; /* <-- ADD THIS */
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 .doughnut-chart {
   width: 100% !important;
   height: 100% !important;
-  max-width: 350px; /* optional: limit max size */
-  max-height: 350px; /* optional: limit max size */
+  max-width: 350px;
+  max-height: 350px;
 }
-
 </style>
