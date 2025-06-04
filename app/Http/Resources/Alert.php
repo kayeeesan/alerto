@@ -24,6 +24,13 @@ class Alert extends JsonResource
             'expired_at' => $this->expired_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'assigned_users' => $this->users->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                ];
+            }),
+             'assigned_user_names' => $this->users->pluck('username')->implode(', '),
         ];
     }
 }
