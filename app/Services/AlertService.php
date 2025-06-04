@@ -134,27 +134,33 @@ class AlertService
 
     private function createAlertAndNotify(Threshold $threshold, $riverId, $details, $type, $alertType)
     {
+        // Create the alert
         $alert = Alert::create([
             'threshold_id' => $threshold->id,
             'details' => $details,
             'status' => 'pending',
             'expired_at' => now()->addMinutes(30),
-            // 'user_id' => auth()->id() ?? null,
             'alert_type' => $alertType,
         ]);
 
-
+        // Get users assigned to this river
         $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
             $query->where('river_id', $riverId);
         })->get();
 
+        // Get admin users
         $adminUsers = \App\Models\User::whereHas('roles', function ($query) {
             $query->where('slug', 'administrator');
         })->get();
 
+        // Merge and remove duplicates
         $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
 
-         foreach ($usersToNotify as $user) {
+        // Associate users to alert
+        $alert->users()->attach($usersByRiver->pluck('id'));
+
+        // Create notifications
+        foreach ($usersToNotify as $user) {
             $notification = Notification::create([
                 'user_id' => $user->id,
                 'river_id' => $riverId,
@@ -163,8 +169,10 @@ class AlertService
                 'alert_type' => $alertType,
                 'alert_id' => $alert->id,
             ]);
+
+            // Broadcast once per user
+            broadcast(new AlertCreated($notification));
         }
-        
-        broadcast(new AlertCreated($notification));
     }
+
 }

@@ -44,4 +44,11 @@ class Alert extends Model
         return $this->hasMany(Notification::class, 'alert_id');
     }
 
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'alert_user', 'alert_id', 'user_id')
+                    ->withTimestamps();
+    }
+
 }
