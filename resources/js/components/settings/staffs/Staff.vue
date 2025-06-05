@@ -19,7 +19,7 @@ const initialState = {
     first_name: null,
     last_name: null,
     mobile_number: null,
-    role: {},
+    // role: {},
     region: {},
     province: {},
     municipality: {},
@@ -122,13 +122,13 @@ const statusColor = computed(() => {
                         <div class="detail-value">{{ form.mobile_number }}</div>
                     </div>
 
-                    <div class="detail-item mb-4" v-if="form.role?.name">
+                    <!-- <div class="detail-item mb-4" v-if="form.role?.name">
                         <div class="detail-label">
                             <v-icon size="20" class="detail-icon">mdi-account-cog</v-icon>
                             Role
                         </div>
                         <div class="detail-value">{{ form.role.name }}</div>
-                    </div>
+                    </div> -->
 
                     <div class="detail-item mb-4" v-if="form.municipality?.name">
                         <div class="detail-label">
