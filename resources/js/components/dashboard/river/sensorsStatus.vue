@@ -63,6 +63,21 @@ watch([() => sensor_type.value, () => query.search], async () => {
   await getSensorsUnderAlerto({ sensor_type: sensor_type.value, query: query.search });
   await getSensorsUnderPh({ sensor_type: sensor_type.value, query: query.search });
 });
+
+const formatDateTime = (isoString) => {
+    if (!isoString) return '';
+
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).format(date);
+};
 </script>
 
 <template>
@@ -103,6 +118,10 @@ watch([() => sensor_type.value, () => query.search], async () => {
             loading-text="Loading... Please wait"
             class="sensor-table"
           >
+            <template #item.updated_at="{ item }">
+                {{ formatDateTime(item.updated_at) }}
+            </template>
+
             <template v-slot:item["river.name"]="{ item }">
               {{ item.river?.name || 'N/A' }}
             </template>

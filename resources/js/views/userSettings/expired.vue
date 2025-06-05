@@ -13,9 +13,10 @@ const headers = [
     { title: "Alert Level", key: "color", width: "10%" },
     { title: "Details", key: "details", width: "20%" },
     { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
-    { title: "Action Needed", key: "response.action", width: "20%" },
     { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
     { title: "Status", key: "status", width: "10%" },
+    { title: "Assigned", key: "assigned_user_names", width: "10%" },
+    { title: "Time/date", key: "created_at", width: "10%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
 ];
 
@@ -32,6 +33,21 @@ const statusColor = (status) => {
     responded: 'success', 
     expired: 'error'
   }[status] || 'grey';
+};
+
+const formatDateTime = (isoString) => {
+    if (!isoString) return '';
+
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).format(date);
 };
 
 const reloadAlerts = async () => {
@@ -100,6 +116,9 @@ onMounted(async() => {
             :page="expiredPage"
           
             >
+            <template #item.created_at="{ item }">
+                {{ formatDateTime(item.created_at) }}
+            </template>
 
             <template v-slot:item.color="{ item }">
                 <v-btn
