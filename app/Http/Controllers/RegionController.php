@@ -27,7 +27,7 @@ class RegionController extends Controller
             $regions = Region::where('name', 'like', '%' . $request->search . '%');
         }
 
-        $regions = isset($request->search) && $request->search ? $regions->paginate(10) : Region::paginate(10);
+        $regions = isset($request->search) && $request->search ? $regions->paginate(17) : Region::paginate(17);
         return ResourcesRegion::collection($regions);
     }
 
