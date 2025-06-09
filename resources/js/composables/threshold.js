@@ -49,7 +49,28 @@ export default function useThresholds() {
                 errors.value = e.response.data;
                 is_success.value = false;
                 is_loading.value = false;
-            }
+
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "There was a problem with the information you provided. Please check and try again.",
+                    });
+            } else if (e.response.status === 409) {
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: e.response.data.message || "Duplicate entry detected.",
+                });
+                is_loading.value = false;
+                    is_success.value = false;
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "An unexpected error occurred. Please try again later.",
+                    });
+                    is_loading.value = false;
+                }
         }
     }
 

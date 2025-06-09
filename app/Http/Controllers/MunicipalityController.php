@@ -28,13 +28,21 @@ class MunicipalityController extends Controller
             $municipalities = Municipality::where('name', 'like', '%' . $request->search . '%');
         } 
 
-        $municipalities = isset($request->search) && $request->search ? $municipalities->paginate(9999) : Municipality::paginate(9999);
-        return ResourcesMunicipality::collection(Municipality::paginate(9999));
+        $municipalities = isset($request->search) && $request->search ? $municipalities->paginate(1574) : Municipality::paginate(1574);
+        return ResourcesMunicipality::collection(Municipality::paginate(1574));
     }
 
     public function store(MunicipalityRequest $request)
     {
         try {
+
+            $existingMunicipality = Municipality::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                ->where('province_id', $request->input('province.id'))
+                ->first();
+            if ($existingMunicipality) {
+                return response()->json(['message' => 'Municipality with this name already exists in the selected province.'], Response::HTTP_CONFLICT);
+            }
+
             $municipality = new Municipality();
             $municipality->province_id = $request->input('province.id');
             $municipality->name = ucwords($request->name);

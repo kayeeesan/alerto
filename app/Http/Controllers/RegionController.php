@@ -34,6 +34,13 @@ class RegionController extends Controller
     public function store(RegionRequest $request)
     {
         try {
+
+            $existingRegion = Region::whereRaw('LOWER(name) = ?', [strtolower($request->name)])->first();
+
+            if ($existingRegion) {
+                return response()->json(['message' => 'Region with this name already exists.'], Response::HTTP_CONFLICT);
+            }
+            
             $region = new Region();
             $region->name = ucwords($request->name);
             $region->save();
