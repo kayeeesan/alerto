@@ -35,6 +35,11 @@ class ProvinceController extends Controller
     public function store(ProvinceRequest $request)
     {
         try {
+
+            $existingProvince = Province::whereRaw('LOWER(name) = ? AND region_id = ?', [strtolower($request->name), $request->input('region.id')])->first();
+            if ($existingProvince) {
+                return response()->json(['message' => 'Province with this name already exists in the selected region.'], Response::HTTP_CONFLICT);
+            }
             $province = new Province();
             $province->region_id = $request->input('region.id');
             $province->name = ucwords($request->name);

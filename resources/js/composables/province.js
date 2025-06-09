@@ -57,9 +57,16 @@ export default function useProvinces() {
                     icon: "error",
                     text: "There was a problem with the information you provided. Please check and try again.",
                     });
-            }else {
-                                        // Handle other types of error
+            }else if (e.response.status === 409) { // Handle conflict (duplicate)
             Swal.fire({
+                title: "Duplicate Data",
+                icon: "error",
+                text: e.response.data.message || "This province already exists.",
+                });
+                is_loading.value = false;
+                is_success.value = false;
+                } else {
+                    Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred. Please try again later.",

@@ -62,6 +62,13 @@ export default function useSensorsUnderAlerto() {
                     icon: "error",
                     text: "There was a problem with the information you provided. Please check and try again.",
                     });
+            } else if (e.response.status === 409) {
+                Swal.fire({
+                    title: "Error",
+                    icon: "error",
+                    text: "A sensor with the same name already exists. Please choose a different device name.",
+                });
+                is_loading.value = false;
             } else {
                             // Handle other types of errors
                 Swal.fire({

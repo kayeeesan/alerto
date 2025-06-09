@@ -75,6 +75,14 @@ class SensorUnderPhController extends Controller
     public function store(SensorUnderPhRequest $request)
     {
         try {
+
+             if (
+                SensorUnderPh::where('device_id', $request->device_id)->exists() ||
+                \App\Models\SensorUnderAlerto::where('device_id', $request->device_id)->exists()
+            ) {
+                return response()->json(['message' => 'Device ID already exists in the system.'], Response::HTTP_CONFLICT);
+            }
+
             $sensor_under_ph = new SensorUnderPh();
             $sensor_under_ph->name = ucwords($request->name);
             $sensor_under_ph->device_id = $request->device_id;

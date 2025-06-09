@@ -21,7 +21,6 @@ export default function useMunicipalities() {
         let url = type === "/municipalities" ? "/api/municipalities" : "/api/form/municipalities"; 
 
         await axios
-            // .get('/api/municipalities?page=' + query.value.page, query_str)
             .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 municipalities.value = response.data.data;
@@ -33,8 +32,8 @@ export default function useMunicipalities() {
     const storeMunicipality = async (data) => {
         is_loading.value = true;
         errors.value = "";
-        
-        try{
+
+        try {
             await axios
                 .post(`/api/municipalities`, data)
                 .then((response) => {
@@ -45,30 +44,39 @@ export default function useMunicipalities() {
                     });
                     errors.value = {};
                     is_loading.value = false;
-                    is_success.value = true;                
+                    is_success.value = true;
                 });
         } catch (e) {
-            if(e.response.status == 422) {
+            if (e.response.status === 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
                 is_loading.value = false;
 
-                  Swal.fire({
+                Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "There was a problem with the information you provided. Please check and try again.",
-                    });
+                });
+            } else if (e.response.status === 409) {
+                // Handle duplicate data error
+                Swal.fire({
+                    title: "Duplicate Data",
+                    icon: "error",
+                    text: e.response.data.message || "Municipality with this name already exists in the selected province.",
+                });
+                is_loading.value = false;
+                is_success.value = false;
             } else {
-                            // Handle other types of errors
                 Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred. Please try again later.",
                 });
-                    is_loading.value = false;
+                is_loading.value = false;
             }
         }
-    }
+    };
+
 
     const updateMunicipality = async (data) => {
         errors.value = "";

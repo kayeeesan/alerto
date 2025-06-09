@@ -80,6 +80,13 @@ class SensorUnderAlertoController extends Controller
     public function store(SensorUnderAlertoRequest $request)
     {
         try {
+           if (
+                SensorUnderAlerto::where('device_id', $request->device_id)->exists() ||
+                \App\Models\SensorUnderPh::where('device_id', $request->device_id)->exists()
+            ) {
+                return response()->json(['message' => 'Device ID already exists in the system.'], Response::HTTP_CONFLICT);
+            }
+
             $sensor_under_alerto = new SensorUnderAlerto();
             $sensor_under_alerto->name = ucwords($request->name);
             $sensor_under_alerto->device_id = $request->device_id;

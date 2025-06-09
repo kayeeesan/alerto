@@ -20,7 +20,6 @@ export default function useRegions() {
         let query_str = { ...query.value, ...params };
         let url = type === "/regions" ? "/api/regions" : "/api/form/regions";
         await axios
-            // .get('/api/regions?page=' + query.value.page, query_str)
             .get(`${url}?page=${query.value.page}`, { params: query_str})
             .then((response) => {
                 regions.value = response.data.data;
@@ -29,13 +28,12 @@ export default function useRegions() {
             });
     };
 
-    const storeRegion = async (data) => {
+   const storeRegion = async (data) => {
         is_loading.value = true;
         errors.value = "";
-        
-        try{
-            await axios
-                .post(`/api/regions`, data)
+
+        try {
+            await axios.post(`/api/regions`, data)
                 .then((response) => {
                     Swal.fire({
                         title: "Success",
@@ -44,30 +42,38 @@ export default function useRegions() {
                     });
                     errors.value = {};
                     is_loading.value = false;
-                    is_success.value = true;                
+                    is_success.value = true;
                 });
         } catch (e) {
-            if(e.response.status == 422) {
+            if (e.response.status === 422) {
                 errors.value = e.response.data;
                 is_success.value = false;
                 is_loading.value = false;
 
-                  Swal.fire({
+                Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "There was a problem with the information you provided. Please check and try again.",
-                    });
+                });
+            } else if (e.response.status === 409) { // Handle conflict (duplicate)
+                Swal.fire({
+                    title: "Duplicate Data",
+                    icon: "error",
+                    text: e.response.data.message || "This region already exists.",
+                });
+                is_loading.value = false;
+                is_success.value = false;
             } else {
-                                        // Handle other types of errors
                 Swal.fire({
                     title: "Error",
                     icon: "error",
                     text: "An unexpected error occurred. Please try again later.",
-                    });
-                    is_loading.value = false;
-                }
+                });
+                is_loading.value = false;
+            }
         }
-    }
+    };
+
 
     const updateRegion = async (data) => {
         errors.value = "";

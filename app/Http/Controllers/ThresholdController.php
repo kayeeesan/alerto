@@ -39,6 +39,13 @@ class ThresholdController extends Controller
     public function store(ThresholdRequest $request)
     {
         try {
+            if (Threshold::where('sensorable_type', $request->sensorable_type)
+                ->where('sensorable_id', $request->sensorable_id)
+                ->exists()) {
+                return response()->json(['message' => 'Threshold already exists for this sensor.'], Response::HTTP_CONFLICT);
+            }
+
+
             $threshold = Threshold::create([
                 'sensorable_type' => $request->sensorable_type,
                 'sensorable_id' => $request->sensorable_id,

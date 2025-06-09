@@ -35,6 +35,14 @@ class RiverController extends Controller
     public function store(RiverRequest $request)
     {
         try {
+
+            $existingRiver = River::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                ->where('municipality_id', $request->input('municipality.id'))
+                ->first();
+            if ($existingRiver) {
+                return response()->json(['message' => 'River with this name already exists in the selected municipality.'], Response::HTTP_CONFLICT);
+            }
+
             $river = new River();
             $river->municipality_id = $request->input('municipality.id');
             $river->name = ucwords($request->name);

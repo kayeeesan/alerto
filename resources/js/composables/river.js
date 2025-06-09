@@ -20,7 +20,6 @@ export default function useRivers() {
         let query_str = { ...query.value, ...params };
         let url = type === "/rivers" ? "/api/rivers" : "/api/form/rivers";
         await axios
-            // .get('/api/rivers?page=' + query.value.page, query_str)
             .get(`${url}?page=${query.value.page}`, { params: query_str })
             .then((response) => {
                 rivers.value = response.data.data;
@@ -57,15 +56,22 @@ export default function useRivers() {
                     icon: "error",
                     text: "There was a problem with the information you provided. Please check and try again.",
                     });
-            } else {
-                                        // Handle other types of errors
-                Swal.fire({
-                    title: "Error",
-                    icon: "error",
-                    text: "An unexpected error occurred. Please try again later.",
+            } else if (e.response.status === 409) {
+                    Swal.fire({
+                        title: "Duplicate Data",
+                        icon: "error",
+                        text: e.response.data.message || "River with this name already exists in the selected Municipality.",
                      });
-                    is_loading.value = false;
-                }
+                     is_loading.value = false;
+                     is_success.value = false;
+                 } else {
+                    Swal.fire({
+                        title: "Error",
+                        icon: "error",
+                        text: "An unexpected error occurred. Please try again later.",
+                        });
+                        is_loading.value = false;
+                    }
         }
     }
 
