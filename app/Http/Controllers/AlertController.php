@@ -11,6 +11,8 @@ use App\Http\Resources\Alert as ResourcesAlert;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Events\AlertCreated;
+use App\Events\AlertUpdated;
 
 
 class AlertController extends Controller
@@ -83,6 +85,8 @@ class AlertController extends Controller
             $alert->user_id = $userId;
             $alert->status = 'responded';
             $alert->update();
+
+            event(new AlertUpdated($alert));
 
             return response(['message' => 'Response successfully added']);
         } catch (\Exception $e) {

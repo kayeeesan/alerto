@@ -2,6 +2,9 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import Swal from "sweetalert2";
 import { eventBus } from './eventBus';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
 
 export default function useAlerts() {
     const alert = ref(null);
@@ -14,12 +17,30 @@ export default function useAlerts() {
         search: null,
     });
 
-const handleNewAlert = () => {
-    console.log('New alert received, refreshing notifications...');
-    getAlerts();
-  };
+    const echo = new Echo({
+        broadcaster: 'pusher',
+        key: '57206333aea283adecc8',
+        cluster: 'ap1',
+        forceTLS: true,
+    });
+
+    echo.connector.pusher.connection.bind('connected', () => {
+        console.log('✅ Pusher for alert connected successfully');
+    });
+
+    const handleNewAlert = () => {
+        console.log('New alert received, refreshing notifications...');
+        getAlerts();
+    };
 
   onMounted(() => {
+
+    echo.channel('alerts-updated')
+    .listen('.AlertUpdated', (e) => {
+        console.log('✅ Received AlertUpdated:', e.alert); // ✅ Should now be populated
+        getAlerts(); // refresh the UI
+    });
+
     eventBus.$on('alert-received', handleNewAlert);
   });
 

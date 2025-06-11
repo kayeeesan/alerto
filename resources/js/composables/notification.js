@@ -22,10 +22,6 @@ export default function useNotifications() {
         forceTLS: true,
     });
 
-    // echo.connector.pusher.connection.bind('connected', () => {
-    //     console.log('✅ Pusher connected successfully');
-    // });
-
       echo.channel('public-alerts')
         .listen('.AlertCreated', (event) => {
             getNotifications();
