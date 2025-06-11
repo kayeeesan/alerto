@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Alert;
 use Carbon\Carbon;
+use App\Events\AlertUpdated;
 
 class expiredAlerts extends Command
 {
@@ -25,6 +26,8 @@ class expiredAlerts extends Command
                 'status' => 'expired',
                 'expired_at' => $now,
             ]);
+
+            event(new AlertUpdated($alert));
             $expiredCount++;
             $this->info("Expired alert ID: {$alert->id}");
         }
