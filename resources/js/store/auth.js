@@ -6,6 +6,7 @@ export default {
         authenticated:false,
         user:{},
         password_reset: false,
+        // password_reset: localStorage.getItem('password_reset') === 'true',
     },
     getters:{
         authenticated(state){
