@@ -33,7 +33,9 @@ const initialState = {
     province: null,
     municipality: null,
     river: null,
-    fb_lgu: null
+    fb_lgu: null,
+    password: "",
+    password_confirmation: ""
 };
 const form = reactive({ ...initialState });
 
@@ -299,6 +301,48 @@ const filteredRivers = computed(() => {
                                         </v-text-field>
                                     </v-col>
                                 </v-row>
+                                <v-row>
+                                    <v-col cols="12" sm="6">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-lock</v-icon>
+                                            <v-text-field
+                                                v-model="form.password"
+                                                label="Password*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :type="'password'" 
+                                                :error-messages="errors.password || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => v.length >= 6 || 'Must be at least 6 characters'
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </div>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-lock</v-icon>
+                                            <v-text-field
+                                                v-model="form.password_confirmation"
+                                                label="Confirm Password*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :type="'password'" 
+                                                :error-messages="errors.password_confirmation || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => v === form.password || 'Passwords do not match'
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                                        </div>
+                                    </v-col>
+                                </v-row>
+
                             </v-card>
                         </v-form>
                     </v-card-text>

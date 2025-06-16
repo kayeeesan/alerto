@@ -32,7 +32,8 @@ class Staff extends JsonResource
             'municipality' => $this->municipality,
             'river' => $this->river,
             'fb_lgu' => $this->fb_lgu,
-            'status' => $this->user?->status
+            'status' => $this->user?->status,
+            'password' => $this->user?->password,
         ];
     }
 

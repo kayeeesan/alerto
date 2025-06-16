@@ -41,7 +41,7 @@ class UserController extends Controller
         return ResourcesUser::collection($users->paginate(10));
     }
 
-    public function store(UserRequest $request)
+   public function store(UserRequest $request)
     {
         try {
 
@@ -80,16 +80,15 @@ class UserController extends Controller
         if ($existingUser) {
             return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        // Default password or allow user to set their own password
+       
         $default_password = "*1234#";
 
-        // Create a new user instance
         $user = new User();
         $user->username = $request->username;
         $user->first_name = ucwords($request->first_name);
         $user->middle_name = ucwords($request->middle_name);
         $user->last_name = ucwords($request->last_name);
-        $user->password = bcrypt($default_password);
+        $user->password = Hash::make($request->password);
         $user->save();
 
         

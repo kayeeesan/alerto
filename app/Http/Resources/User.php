@@ -21,7 +21,7 @@ class User extends JsonResource
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
             'full_name' => $this->full_name,
-            'password_reset' => $this->password_reset,
+            'password' => $this->password,
             'status' => $this->status,
             'roles' => $this->roles ? Role::collection($this->roles) : [],
             'river' => $this->river, // will use the accessor defined above

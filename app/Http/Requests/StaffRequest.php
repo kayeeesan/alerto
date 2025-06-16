@@ -18,21 +18,22 @@ class StaffRequest extends FormRequest
             'province.id' => 'required|exists:provinces,id',
             'municipality.id' => 'required|exists:municipalities,id',
             'river.id' => 'required|exists:rivers,id',
-            'fb_lgu' => 'required|string|max:255'
+            'fb_lgu' => 'required|string|max:255',
+            // password is nullable here
+            'password' => 'nullable|string|min:6|confirmed',
         ];
 
-        // For update requests, modify the username rule to ignore the current user
-        if ($this->isMethod('patch') || $this->isMethod('put')) {
-            $staffId = $this->route('staff'); // Get staff ID from route parameter
-            
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $staffId = $this->route('staff'); // Update, password is nullable
             if ($staffId) {
                 $staff = \App\Models\Staff::find($staffId);
                 if ($staff && $staff->user) {
-                    $rules['username'] = 'required|email|unique:users,username,'.$staff->user->id;
+                    $rules['username'] = 'required|email|unique:users,username,' . $staff->user->id;
                 }
             }
         }
 
         return $rules;
     }
+
 }
