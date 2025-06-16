@@ -8,6 +8,7 @@ import useStaffs from "../composables/staff.js";
 import useNotifications from "../composables/notification.js";
 import { RouterLink } from "vue-router";
 import Alert from "../components/dashboard/dashboard/alert.vue";
+import ResetPassword from "../components/users/ManualResetPassword.vue";
 
 const { staffs, getStaffs } = useStaffs();
 const {
@@ -20,6 +21,7 @@ const user = store.state.auth.user;
 const drawer = ref(true);
 const isMobile = ref(false);
 const show_form_modal = ref(false);
+const show_password_reset_modal = ref(false);
 const localTime = ref('');
 let interval = null;
 let resizeListener = null;
@@ -51,6 +53,10 @@ const filteredUnreadCount = computed(() => {
 
 const ShowModalForm = () => {
   show_form_modal.value = true;
+};
+
+const ShowPasswordResetModal = () => {
+  show_password_reset_modal.value = true;
 };
 
 const cleanUpExpiredItems = () => {
@@ -291,29 +297,58 @@ const getAlertRoute = (notification) => {
 
                 <v-divider class="mb-3"></v-divider>
 
-                <v-btn
-                  variant="flat"
-                  block
-                  class="mb-2 text-none"
-                  @click="ShowModalForm"
-                  color="#003092"
-                  style="color: white; letter-spacing: 0.5px;"
-                >
-                  <v-icon left>mdi-account</v-icon>
-                  View Profile
-                </v-btn>
+              <v-btn
+                variant="flat"
+                block
+                class="mb-2 text-none"
+                @click="ShowModalForm"
+                color="#003092"
+                style="
+                  color: white;
+                  letter-spacing: 0.5px;
+                  background: linear-gradient(135deg, #003092 0%, #0055ff 100%);
+                  box-shadow: 0 2px 8px rgba(0, 85, 255, 0.25);
+                "
+              >
+                <v-icon left>mdi-account-edit</v-icon>
+                View Profile
+              </v-btn>
 
-                <v-btn
-                  variant="outlined"
-                  block
-                  class="text-none"
-                  @click="logout"
-                  color="#d32f2f"
-                  style="letter-spacing: 0.5px;"
-                >
-                  <v-icon left>mdi-logout</v-icon>
-                  Sign out
-                </v-btn>
+              <v-btn
+                variant="flat"
+                block
+                class="mb-2 text-none"
+                @click="ShowPasswordResetModal"
+                color="#4a148c"
+                style="
+                  color: white;
+                  letter-spacing: 0.5px;
+                  background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+                  box-shadow: 0 2px 8px rgba(123, 31, 162, 0.25);
+                "
+              >
+                <v-icon left>mdi-lock-reset</v-icon>
+                Change Password
+              </v-btn>
+
+              <v-btn
+                variant="outlined"
+                block
+                class="text-none"
+                @click="logout"
+                color="#d32f2f"
+                style="
+                  letter-spacing: 0.5px;
+                  border: 1px solid #d32f2f;
+                  transition: all 0.3s ease;
+                "
+                hover-class="white--text"
+                hover-style="background-color: #d32f2f"
+              >
+                <v-icon left>mdi-logout-variant</v-icon>
+                Sign Out
+              </v-btn>
+
 
                 <v-divider class="my-3"></v-divider>
 
@@ -347,6 +382,12 @@ const getAlertRoute = (notification) => {
     
     <UserProfile 
       v-model="show_form_modal" 
+      :user="user"
+      :staff="staff"
+    />
+
+    <ResetPassword
+      v-model="show_password_reset_modal"
       :user="user"
       :staff="staff"
     />

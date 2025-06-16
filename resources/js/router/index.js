@@ -273,11 +273,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.middleware === "guest") {
         if (store.state.auth.authenticated) {
-            if (store.state.auth.password_reset) {
-                next({ name: "update-password" });
-            } else {
-                next({ name: "home" });
-            }
+            next({ name: "home" });
         } else {
             next();
         }
@@ -289,5 +285,6 @@ router.beforeEach((to, from, next) => {
         }
     }
 });
+
 
 export default router;
