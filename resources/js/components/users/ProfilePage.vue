@@ -120,8 +120,16 @@ const ShowModalForm = () => {
             <div class="detail-value">{{ form.mobile_number }}</div>
           </div>
 
+          <div class="detail-item" v-if="form.river && form.river.name">
+            <div class="detail-label">
+              <v-icon size="20" class="detail-icon">mdi-waves</v-icon>
+              river
+            </div>
+            <div class="detail-value">{{ form.river.name }}</div>
+          </div>
+
           <!-- Reset Password Button -->
-          <div class="action-buttons">
+          <!-- <div class="action-buttons">
             <v-btn
               variant="flat"
               color="primary"
@@ -132,7 +140,7 @@ const ShowModalForm = () => {
               Reset Password
             </v-btn>
             <resetPassword v-model="show_form_modal" :user="user"/>
-          </div>
+          </div> -->
         </div>
       </v-card-text>
 
