@@ -29,6 +29,7 @@ class UserRequest extends FormRequest
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'user_roles' => 'nullable|array',
+                'password' => 'nullable|string|min:6|confirmed',
             ];
         } else {
             return [

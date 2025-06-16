@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Services\UserLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -65,7 +66,7 @@ class StaffController extends Controller
         }
     }
 
-    public function storeWalkinStaff(StaffRequest $request)
+       public function storeWalkinStaff(StaffRequest $request)
     {
         try {
             $existingUser = User::where('username', $request->username)->first();
@@ -80,7 +81,7 @@ class StaffController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'middle_name' => $request->middle_name,
-                'password' => bcrypt('*1234#'),
+                'password' => Hash::make($request->password),
                 'status' => 'pending',
             ]);
     
