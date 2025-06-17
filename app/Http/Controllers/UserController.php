@@ -80,8 +80,6 @@ class UserController extends Controller
         if ($existingUser) {
             return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-       
-        $default_password = "*1234#";
 
         $user = new User();
         $user->username = $request->username;

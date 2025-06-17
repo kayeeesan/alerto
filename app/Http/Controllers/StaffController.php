@@ -81,7 +81,7 @@ class StaffController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'middle_name' => $request->middle_name,
-                'password' => Hash::make($request->password),
+                'password' => bcrypt('*1234#'),
                 'status' => 'pending',
             ]);
     
