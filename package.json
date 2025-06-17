@@ -21,6 +21,7 @@
         "@mdi/font": "^7.4.47",
         "@mdi/js": "^7.4.47",
         "@popperjs/core": "^2.11.8",
+        "@vue-leaflet/vue-leaflet": "^0.10.1",
         "@vueuse/core": "^11.1.0",
         "bootstrap": "^5.3.3",
         "chart.js": "^4.4.8",
