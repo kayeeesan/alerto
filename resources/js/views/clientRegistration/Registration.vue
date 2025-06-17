@@ -301,6 +301,10 @@ const filteredRivers = computed(() => {
                                         </v-text-field>
                                     </v-col>
                                 </v-row>
+                            </v-card>
+
+                            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                                <v-card-title class="text-subtitle-1 font-weight-bold">Set Password</v-card-title>
                                 <v-row>
                                     <v-col cols="12" sm="6">
                                         <div class="d-flex">
