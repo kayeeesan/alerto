@@ -24,7 +24,7 @@ const { sensors_under_alerto, getSensorsUnderAlerto } = useSensorsUnderAlerto();
 const { sensors_under_ph, getSensorsUnderPh } = useSensorsUnderPh();
 
 const center = ref([6.9214, 122.0790]);
-const zoom = ref(14);
+const zoom = ref(13);
 const url = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
