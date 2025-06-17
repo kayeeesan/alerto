@@ -1,19 +1,22 @@
 <script setup>
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import Map from '@/components/dashboard/visualizationMap/Map.vue';
+import "leaflet/dist/leaflet.css";
+
 
 </script>
 
 <template>
-  <div class="mt-24 mr-12 ml-5 animate__animated animate__fadeIn">
-    <!-- Title Section -->
-    <v-row>
-      <p class="text-h4 font-weight-bold text-blue-darken-4 ml-6">Visualization Map</p>
-    </v-row>
-
-    <!-- Main Content Section -->
-     <v-row>
-     </v-row>
-   
-    
+  <div class="map-container">
+      <Map/>
   </div>
+
 </template>
+
+<style scoped>
+.map-container {
+  margin-top: -60px; /* Counteracts the parent's margin */
+  margin-right: -50px; /* Counteracts the parent's margin */
+}
+</style>
