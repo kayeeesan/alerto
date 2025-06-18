@@ -80,8 +80,8 @@ class ProvinceSeeder extends Seeder
             ['name' => 'Southern Leyte', 'region_id' => 9],
 
             // Region IX
-            ['name' => 'Zamboanga City', 'region_id' => 10],
-            ['name' => 'Zamboanga del Norte', 'region_id' => 10],
+            // ['name' => 'Zamboanga City', 'region_id' => 10], // 49
+            ['name' => 'Zamboanga del Norte', 'region_id' => 10],//50 / 49
             ['name' => 'Zamboanga del Sur', 'region_id' => 10],
             ['name' => 'Zamboanga Sibugay', 'region_id' => 10],
 

@@ -111,6 +111,9 @@ const filteredRivers = computed(() => {
     if (!form.municipality || !form.municipality.id) return [];
     return rivers.value.filter(r => r.municipality.id === form.municipality.id);
 });
+
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 </script>
 
 <template>
@@ -314,7 +317,7 @@ const filteredRivers = computed(() => {
                                                 label="Password*"
                                                 variant="outlined"
                                                 density="comfortable"
-                                                :type="'password'" 
+                                                :type="showPassword ? 'text' : 'password'"  
                                                 :error-messages="errors.password || []"
                                                 :rules="[
                                                     (v) => !!v || 'This field is required',
@@ -322,7 +325,15 @@ const filteredRivers = computed(() => {
                                                 ]"
                                                 bg-color="white"
                                                 class="dark-input"
-                                            ></v-text-field>
+                                            >
+                                            <template v-slot:append-inner>
+                                                <v-icon
+                                                    :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                                                    @click="showPassword = !showPassword"
+                                                    style="cursor: pointer;"
+                                                ></v-icon>
+                                            </template>
+                                        </v-text-field>
                                         </div>
                                     </v-col>
 
@@ -334,7 +345,7 @@ const filteredRivers = computed(() => {
                                                 label="Confirm Password*"
                                                 variant="outlined"
                                                 density="comfortable"
-                                                :type="'password'" 
+                                                :type="showConfirmPassword ? 'text' : 'password'" 
                                                 :error-messages="errors.password_confirmation || []"
                                                 :rules="[
                                                     (v) => !!v || 'This field is required',
@@ -342,7 +353,15 @@ const filteredRivers = computed(() => {
                                                 ]"
                                                 bg-color="white"
                                                 class="dark-input"
-                                            ></v-text-field>
+                                            >
+                                             <template v-slot:append-inner>
+                                                <v-icon
+                                                    :icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                                                    @click="showConfirmPassword = !showConfirmPassword"
+                                                    style="cursor: pointer;"
+                                                ></v-icon>
+                                            </template>
+                                        </v-text-field>
                                         </div>
                                     </v-col>
                                 </v-row>
