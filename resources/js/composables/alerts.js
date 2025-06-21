@@ -29,7 +29,7 @@ export default function useAlerts() {
             key: import.meta.env.REVERB_APP_KEY  || '57206333aea283adecc8',
             wsHost: import.meta.env.REVERB_HOST || window.location.hostname,
             wsPort: Number(import.meta.env.REVERB_PORT) || 6001,
-            forceTLS: import.meta.env.REVERB_SCHEME === 'https',
+            forceTLS: import.meta.env.REVERB_SCHEME === 'http',
             enabledTransports: ['ws', 'wss'],
         });
 
