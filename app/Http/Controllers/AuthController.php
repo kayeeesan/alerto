@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+    
     public function login(Request $request) 
     {
         $credentials = $request->only('username', 'password');
@@ -33,105 +30,6 @@ class AuthController extends Controller
                     'message' => 'Account is disabled'
                 ], Response::HTTP_UNAUTHORIZED);
             }
-
-             $municipality = $user->staff->municipality ?? null;
-
-            if ($municipality) {
-                $dbName = strtolower(str_replace(' ', '_', $municipality->name)) . '_db';
-                $dbPath = database_path("municipalities/{$dbName}.sqlite");
-
-                // Ensure the directory exists
-                if (!File::exists(database_path('municipalities'))) {
-                    File::makeDirectory(database_path('municipalities'), 0755, true);
-                    Log::info("Created directory for municipality databases at: " . database_path('municipalities'));
-                }
-
-                // Create the database file if it doesn't exist
-                if (!File::exists($dbPath)) {
-                    File::put($dbPath, '');
-                    Log::info("Created new SQLite database: $dbPath");
-                } else {
-                    Log::info("SQLite database already exists: $dbPath");
-                }
-
-                $mainConnection = 'sqlite';
-                $tenantConnection = 'tenant';
-
-                // Ensure the main DB connection uses absolute path
-                config(['database.connections.sqlite.database' => database_path('database.sqlite')]);
-                Log::info("Main DB connection set to: " . config('database.connections.sqlite.database'));
-
-                // Configure tenant connection
-                config(['database.connections.tenant' => [
-                    'driver' => 'sqlite',
-                    'database' => $dbPath,
-                    'prefix' => '',
-                ]]);
-
-                // Switch to tenant
-                DB::setDefaultConnection($tenantConnection);
-                Log::info("Switched to tenant database: $dbName");
-
-                try {
-                    // Get all tables from main DB except system ones
-                    $tables = DB::connection($mainConnection)->select("
-                        SELECT name FROM sqlite_master 
-                        WHERE type='table' AND name NOT LIKE 'sqlite_%'
-                    ");
-
-                    Log::info("Found tables in main DB: ", array_map(fn($t) => $t->name, $tables));
-
-                    foreach ($tables as $tableObj) {
-                        $table = $tableObj->name;
-
-                        // Check if table already exists in tenant DB
-                        $exists = DB::connection($tenantConnection)->select("
-                            SELECT name FROM sqlite_master 
-                            WHERE type='table' AND name = ?
-                        ", [$table]);
-
-                        if (!empty($exists)) {
-                            Log::info("Table '$table' already exists in tenant DB. Skipping.");
-                            continue;
-                        }
-
-                        // Get CREATE TABLE SQL
-                        $createStmt = DB::connection($mainConnection)->select("
-                            SELECT sql FROM sqlite_master 
-                            WHERE type='table' AND name = ?
-                        ", [$table]);
-
-                        if (!empty($createStmt) && isset($createStmt[0]->sql)) {
-                            $createSql = $createStmt[0]->sql;
-
-                            // Create the table
-                            DB::connection($tenantConnection)->statement($createSql);
-                            Log::info("Created table '$table' in tenant DB.");
-
-                            // Copy all data
-                            $rows = DB::connection($mainConnection)->table($table)->get();
-                            foreach ($rows as $row) {
-                                DB::connection($tenantConnection)->table($table)->insert((array) $row);
-                            }
-
-                            Log::info("Copied data for table '$table'.");
-                        } else {
-                            Log::warning("No CREATE TABLE statement found for '$table'. Skipping.");
-                        }
-                    }
-
-                } catch (\Exception $e) {
-                    Log::error("Error during tenant DB setup: " . $e->getMessage());
-                    return response([
-                        'message' => 'Failed to initialize tenant database.',
-                        'error' => $e->getMessage()
-                    ], Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-            } else {
-                DB::setDefaultConnection(config('database.default'));
-                Log::info("No municipality assigned. Using default database.");
-            }
             
             return response([
                 'user' => new ResourcesUser($user),
@@ -143,6 +41,7 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
     }
+
 
     public function logout()
     {
