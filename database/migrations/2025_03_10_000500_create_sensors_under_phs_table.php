@@ -25,8 +25,11 @@ return new class extends Migration
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
             $table->decimal('long', 8, 2);
             $table->decimal('lat', 8, 2);
-            $table->enum('status', ['warning','alert', 'critical'])->nullable();
-            $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
+            // $table->enum('status', ['warning','alert', 'critical'])->nullable();
+            // $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
+            $table->string('status')->nullable();
+            $table->string('sensor_type');
+
             $table->softDeletes();
         });
     }

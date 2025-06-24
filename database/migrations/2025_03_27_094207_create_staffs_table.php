@@ -25,7 +25,6 @@ return new class extends Migration
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->string('fb_lgu');
-            // $table->enum('status', ['pending', 'approved', 'disabled']);
             
         });
     }
