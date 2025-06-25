@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
     
-     public function login(Request $request)
+    public function login(Request $request)
     {
         $credentials = $request->only('username', 'password');
         $credentials['username'] = strtolower($credentials['username']);
-        if(Auth::attempt($credentials)) {
+
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
             if ($user->status === 'pending') {
@@ -36,7 +37,11 @@ class AuthController extends Controller
                 ], Response::HTTP_UNAUTHORIZED);
             }
 
-             $municipality = $user->staff->municipality ?? null;
+            $municipality = $user->staff->municipality ?? null;
+
+            $dbPath = null;
+            $tenantConnection = 'tenant';
+            $mainConnection = 'sqlite';
 
             if ($municipality) {
                 $dbName = strtolower(str_replace(' ', '_', $municipality->name)) . '_db';
@@ -56,37 +61,28 @@ class AuthController extends Controller
                     Log::info("SQLite database already exists: $dbPath");
                 }
 
-                $mainConnection = 'sqlite';
-                $tenantConnection = 'tenant';
-
-                // Ensure the main DB connection uses absolute path
+                // Set main DB path explicitly
                 config(['database.connections.sqlite.database' => database_path('database.sqlite')]);
-                Log::info("Main DB connection set to: " . config('database.connections.sqlite.database'));
 
-                // Configure tenant connection
+                // Configure tenant DB
                 config(['database.connections.tenant' => [
                     'driver' => 'sqlite',
                     'database' => $dbPath,
                     'prefix' => '',
                 ]]);
 
-                // Switch to tenant
                 DB::setDefaultConnection($tenantConnection);
                 Log::info("Switched to tenant database: $dbName");
 
                 try {
-                    // Get all tables from main DB except system ones
                     $tables = DB::connection($mainConnection)->select("
                         SELECT name FROM sqlite_master
                         WHERE type='table' AND name NOT LIKE 'sqlite_%'
                     ");
 
-                    Log::info("Found tables in main DB: ", array_map(fn($t) => $t->name, $tables));
-
                     foreach ($tables as $tableObj) {
                         $table = $tableObj->name;
 
-                        // Check if table already exists in tenant DB
                         $exists = DB::connection($tenantConnection)->select("
                             SELECT name FROM sqlite_master
                             WHERE type='table' AND name = ?
@@ -97,7 +93,6 @@ class AuthController extends Controller
                             continue;
                         }
 
-                        // Get CREATE TABLE SQL
                         $createStmt = DB::connection($mainConnection)->select("
                             SELECT sql FROM sqlite_master
                             WHERE type='table' AND name = ?
@@ -105,12 +100,9 @@ class AuthController extends Controller
 
                         if (!empty($createStmt) && isset($createStmt[0]->sql)) {
                             $createSql = $createStmt[0]->sql;
-
-                            // Create the table
                             DB::connection($tenantConnection)->statement($createSql);
                             Log::info("Created table '$table' in tenant DB.");
 
-                            // Copy all data
                             $rows = DB::connection($mainConnection)->table($table)->get();
                             foreach ($rows as $row) {
                                 DB::connection($tenantConnection)->table($table)->insert((array) $row);
@@ -121,7 +113,6 @@ class AuthController extends Controller
                             Log::warning("No CREATE TABLE statement found for '$table'. Skipping.");
                         }
                     }
-
                 } catch (\Exception $e) {
                     Log::error("Error during tenant DB setup: " . $e->getMessage());
                     return response([
@@ -129,22 +120,54 @@ class AuthController extends Controller
                         'error' => $e->getMessage()
                     ], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
-
             } else {
                 DB::setDefaultConnection(config('database.default'));
                 Log::info("No municipality assigned. Using default database.");
             }
-           
+
+            // Generate token in main DB
+            DB::setDefaultConnection($mainConnection);
+            $token = $user->createToken('MyApp');
+            $plainToken = $token->plainTextToken;
+
+            // Sync token to tenant DB if needed
+            if ($municipality) {
+                try {
+                    $mainTokenData = DB::connection($mainConnection)->table('personal_access_tokens')
+                        ->where('id', $token->accessToken->id)
+                        ->first();
+
+                    if ($mainTokenData) {
+                        DB::connection($tenantConnection)->table('personal_access_tokens')->insert([
+                            'id' => $mainTokenData->id,
+                            'tokenable_type' => $mainTokenData->tokenable_type,
+                            'tokenable_id' => $mainTokenData->tokenable_id,
+                            'name' => $mainTokenData->name,
+                            'token' => $mainTokenData->token,
+                            'abilities' => $mainTokenData->abilities,
+                            'last_used_at' => $mainTokenData->last_used_at,
+                            'created_at' => $mainTokenData->created_at,
+                            'updated_at' => $mainTokenData->updated_at,
+                        ]);
+                        Log::info("Token copied to tenant DB for user ID {$user->id}");
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Failed to copy token to tenant DB: " . $e->getMessage());
+                }
+            }
+
             return response([
                 'user' => new ResourcesUser($user),
-                'access_token' => $user->createToken('MyApp')->plainTextToken
+                'access_token' => $plainToken,
+                'tenant_db_path' => $dbPath,
             ], Response::HTTP_OK);
-        }else{
+        } else {
             return response([
                 'message' => 'Incorrect credentials'
             ], Response::HTTP_UNAUTHORIZED);
         }
     }
+
 
 
     public function logout()
