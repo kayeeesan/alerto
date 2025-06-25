@@ -10,6 +10,7 @@ import "../css/app.css";
 import "../css/main.css"
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css';
+import './plugins/axios.js'; 
 
 import axios from "axios";
 axios.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
