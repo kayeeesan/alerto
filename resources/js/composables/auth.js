@@ -27,6 +27,10 @@ export default function useAuth() {
                     localStorage.setItem('expiry', expiry);
                     localStorage.setItem('token', response.data.access_token);
 
+                    if (response.data.tenant_db_path) {
+                        localStorage.setItem('tenant_db_path', response.data.tenant_db_path);
+                    }
+
                     store.commit('auth/SET_USER', user.value);
                     store.commit('auth/SET_AUTHENTICATED',true);
                     store.commit('auth/SET_PASSWORD_RESET',user.value.password_reset);
