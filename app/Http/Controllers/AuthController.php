@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
     
-      public function login(Request $request) 
+    public function login(Request $request) 
     {
         $credentials = $request->only('username', 'password');
         if(Auth::attempt($credentials)) {
@@ -27,6 +27,8 @@ class AuthController extends Controller
                     'message' => 'Account is pending'
                 ], Response::HTTP_UNAUTHORIZED);
             }
+
+            $token = $user->createToken('MyApp')->plainTextToken;
 
             if ($user->status === 'disabled') {
                 Auth::logout();
@@ -148,7 +150,7 @@ class AuthController extends Controller
             
             return response([
                 'user' => new ResourcesUser($user),
-                'access_token' => $user->createToken('MyApp')->plainTextToken,
+                'access_token' => $token,
                 'tenant_db_path' => $municipality ? $dbPath : null,
             ], Response::HTTP_OK);
         }else{
