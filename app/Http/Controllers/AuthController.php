@@ -148,7 +148,8 @@ class AuthController extends Controller
             
             return response([
                 'user' => new ResourcesUser($user),
-                'access_token' => $user->createToken('MyApp')->plainTextToken
+                'access_token' => $user->createToken('MyApp')->plainTextToken,
+                'tenant_db_path' => $municipality ? $dbPath : null,
             ], Response::HTTP_OK);
         }else{
             return response([
