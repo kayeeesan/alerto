@@ -43,7 +43,7 @@ class AuthController extends Controller
                 $dbName = strtolower(str_replace(' ', '_', $municipality->name)) . '_db';
 
                 try {
-                    $mainDb = config('database.connections.mysql.database'); // default DB name
+                    $mainDb = config('database.connections.mysql.database');
                     $mysqlConnection = DB::connection('mysql');
 
                     $dbExists = $mysqlConnection->select(
@@ -77,25 +77,32 @@ class AuthController extends Controller
                     DB::reconnect('tenant');
                     DB::setDefaultConnection('tenant');
 
-                    // Clone all tables from main DB
+                    // Sync all tables from main DB (even if already exists)
                     $tables = DB::connection('mysql')->select("SHOW TABLES");
 
                     foreach ($tables as $tableObj) {
                         $tableName = array_values((array) $tableObj)[0];
 
-                        // Skip Laravel's migrations table if needed
+                        // Skip migrations table
                         if ($tableName === 'migrations') {
                             continue;
                         }
 
-                        // Clone structure
-                        DB::statement("CREATE TABLE $dbName.`$tableName` LIKE $mainDb.`$tableName`");
+                        try {
+                            // Drop if exists
+                            DB::statement("DROP TABLE IF EXISTS `$dbName`.`$tableName`");
 
-                        // Clone data
-                        DB::statement("INSERT INTO $dbName.`$tableName` SELECT * FROM $mainDb.`$tableName`");
+                            // Recreate structure
+                            DB::statement("CREATE TABLE `$dbName`.`$tableName` LIKE `$mainDb`.`$tableName`");
+
+                            // Copy data
+                            DB::statement("INSERT INTO `$dbName`.`$tableName` SELECT * FROM `$mainDb`.`$tableName`");
+
+                            Log::info("Synced table: $tableName");
+                        } catch (\Exception $e) {
+                            Log::error("Error syncing table $tableName: " . $e->getMessage());
+                        }
                     }
-
-                    Log::info("Tenant DB fully cloned: $dbName");
 
                 } catch (\Exception $e) {
                     Log::error("Tenant DB setup failed: " . $e->getMessage());
@@ -121,6 +128,7 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
     }
+
 
 
     public function logout()
