@@ -60,7 +60,7 @@ class StaffController extends Controller
                 'fb_lgu' => $request->fb_lgu,
             ]);
     
-            return response()->json(['message' => "Successfully saved, use your username {$user->username} and default password *1234# to login."]);
+            return response()->json(['message' => "Successfully saved"]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
