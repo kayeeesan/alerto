@@ -191,13 +191,13 @@ onMounted(() => {
                         <v-text-field v-model="form.baseline" label="Baseline" variant="outlined" class="mt-4" @keyup.enter="save" />
                     </v-row>
                     <v-row>
-                        <v-text-field v-model="form.sixty_percent" label="60%" variant="outlined" bg-color="teal-lighten-4" @keyup.enter="save" />
+                        <v-text-field v-model="form.sixty_percent" label="60%" variant="outlined" bg-color="yellow-lighten-3" @keyup.enter="save" />
                     </v-row>
                     <v-row>
-                        <v-text-field v-model="form.eighty_percent" label="80%" variant="outlined" bg-color="orange-lighten-3" @keyup.enter="save" />
+                        <v-text-field v-model="form.eighty_percent" label="80%" variant="outlined" bg-color="orange-lighten-2" @keyup.enter="save" />
                     </v-row>
                     <v-row>
-                        <v-text-field v-model="form.one_hundred_percent" label="100%" variant="outlined" bg-color="deep-orange-lighten-4" @keyup.enter="save" />
+                        <v-text-field v-model="form.one_hundred_percent" label="100%" variant="outlined" bg-color="deep-orange-lighten-3" @keyup.enter="save" />
                     </v-row>
                     <v-row>
                         <v-text-field v-model="form.xs_date" label="XS Date" type="date" variant="outlined" @keyup.enter="save" />
