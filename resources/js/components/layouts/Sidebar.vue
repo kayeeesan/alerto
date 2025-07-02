@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import store from "@/store";
 
 const props = defineProps({
@@ -29,21 +29,28 @@ const items = [
   { title: "Contact Us", icon: "mdi-email-outline", route: "/home/contact-us" },
 ];
 
-const libraries = [
-  { title: "General Actions", icon: "mdi-cog-outline", route: "/home/responses" },
-  { title: "Threshold", icon: "mdi-arrow-split-horizontal", route: "/home/thresholds" },
-  { title: "Region", icon: "mdi-map-outline", route: "/home/regions" },
-  { title: "Province", icon: "mdi-city", route: "/home/provinces" },
-  { title: "Municipality", icon: "mdi-home-city", route: "/home/municipalities" },
-  { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
-  { title: "Sensors under ALerTO", icon: "mdi-signal", route: "/home/sensors-under-alerto" },
-  { title: "Sensors in PH", icon: "mdi-signal-variant", route: "/home/sensors-under-ph" },
-  // { title: "Mobile Prefix", icon: "mdi-cellphone", route: "" },
-  // { title: "User Restrictions", icon: "mdi-account-cog", route: "" },
-  { title: "Role", icon: "mdi-account-group", route: "/home/roles" },
-  { title: "Recipients Data", icon: "mdi-account-details", route: "/home/staffs" },
-  { title: "Accounts", icon: "mdi-account-box-multiple", route: "/home/users" },
-];
+const libraries = computed(() => {
+  if (hasRole('administrator')) {
+      return [
+        { title: "General Actions", icon: "mdi-cog-outline", route: "/home/responses" },
+        { title: "Threshold", icon: "mdi-arrow-split-horizontal", route: "/home/thresholds" },
+        { title: "Region", icon: "mdi-map-outline", route: "/home/regions" },
+        { title: "Province", icon: "mdi-city", route: "/home/provinces" },
+        { title: "Municipality", icon: "mdi-home-city", route: "/home/municipalities" },
+        { title: "Rivers", icon: "mdi-waves", route: "/home/rivers" },
+        { title: "Sensors under ALerTO", icon: "mdi-signal", route: "/home/sensors-under-alerto" },
+        { title: "Sensors in PH", icon: "mdi-signal-variant", route: "/home/sensors-under-ph" },
+        { title: "Role", icon: "mdi-account-group", route: "/home/roles" },
+        { title: "Recipients Data", icon: "mdi-account-details", route: "/home/staffs" },
+        { title: "Accounts", icon: "mdi-account-box-multiple", route: "/home/users" },
+      ];
+    } else {
+      return [
+        { title: "Sensors under ALerTO", icon: "mdi-signal", route: "/home/sensors-under-alerto" }
+      ];
+    }
+  });
+
 
 const alerts = [
   { title: "Pending", icon: "mdi-timer-sand", route: "/home/alerts-pending" },
@@ -127,7 +134,6 @@ watch(
       </v-list-item>
 
       <v-list-group
-        v-if="hasRole('administrator')"
         value="Libraries"
         class="sidebar-group"
       >
