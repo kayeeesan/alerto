@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('alerts:expire')->everyMinute();
 Schedule::command('devices:update-rain-amount')->everyMinute();
+Schedule::command('network:check')->everyMinute();
