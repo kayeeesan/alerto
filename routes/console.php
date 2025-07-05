@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('alerts:expire')->everyMinute();
-Schedule::command('devices:update-rain-amount')->everyMinute();
+Schedule::command('devices:update-rain')->everyMinute();
 Schedule::command('network:check')->everyMinute();

@@ -37,36 +37,47 @@ class SensorUnderPhController extends Controller
         return ResourcesSensorUnderPh::collection($sensors_under_ph);
     }
 
-    public function fetchDevices()
+     public function fetchDevices()
     {
         try {
             $response = Http::get('https://alertofews.com/api/index.php?ep=saka');
-    
+
+
             if ($response->successful()) {
                 $devices = collect($response->json())
                     ->filter(function ($data) {
-                        return isset($data['msg']['LrrLON']) && 
-                               isset($data['msg']['LrrLAT']) &&
-                               isset($data['metadata']['deviceName']) &&
-                               isset($data['msg']['DevEUI']) &&
-                               isset($data['msg']['EventAcc']);
+                        return isset($data['msg']['LrrLON']) &&
+                            isset($data['msg']['LrrLAT']) &&
+                            isset($data['metadata']['deviceName']) &&
+                            isset($data['msg']['DevEUI']);
                     })
                     ->map(function ($data) {
+                        $deviceType = $data['metadata']['deviceType'] ?? '';
+                        $deviceName = $data['metadata']['deviceName'] ?? '';
+                        $DevEUI = $data['msg']['DevEUI'];
+
+
                         return [
-                            'name' => $data['metadata']['deviceName'],
-                            'device_id' => $data['msg']['DevEUI'],
-                            'device_rain_amount' => $data['msg']['EventAcc'],
+                            'name' => $deviceName,
+                            'device_id' => $DevEUI,
+                            'device_type' => $deviceType,
+                            'device_rain_amount' => $data['msg']['EventAcc'] ?? null,
+                            'device_water_level' => $data['decoded_payload']['distance'] ?? null,
                             'long' => $data['msg']['LrrLON'],
                             'lat' => $data['msg']['LrrLAT'],
                         ];
                     })
-                    ->unique('device_id') // Remove duplicates
+                    ->unique('device_id') // still keeps only one per DevEUI
                     ->values();
-    
+
+
                 return response()->json($devices);
             }
+
+
             return response()->json(['message' => 'Failed to fetch devices.'], 500);
-    
+
+
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
