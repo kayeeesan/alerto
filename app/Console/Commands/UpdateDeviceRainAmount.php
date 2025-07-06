@@ -42,17 +42,19 @@ class UpdateDeviceRainAmount extends Command
 
             // Group by unique DevEUI and take latest per device
             $latestDeviceEvents = collect($responseData)
-                ->filter(function ($data) {
-                    return isset($data['msg']['DevEUI']);
-                })
-                ->groupBy(function ($item) {
-                    return (string) $item['msg']['DevEUI']; // normalize DevEUI to string
-                })
-                ->map(function ($deviceEvents) {
-                    return collect($deviceEvents)->sortByDesc(function ($event) {
-                        return $event['metadata']['ts'] ?? 0;
-                    })->first();
-                });
+            ->filter(function ($data) {
+                return isset($data['msg']['DevEUI']);
+            })
+            ->groupBy(function ($item) {
+                return (string) $item['msg']['DevEUI'];
+            })
+            ->map(function ($deviceEvents) {
+                return collect($deviceEvents)->sortByDesc(function ($event) {
+                    return $event['metadata']['ts'] 
+                        ?? (isset($event['msg']['Time']) ? Carbon::parse($event['msg']['Time'])->valueOf() : 0);
+                })->first();
+            });
+
 
             $this->info('Found ' . $latestDeviceEvents->count() . ' unique devices with recent data');
             Log::info('Device processing stats', [
@@ -120,7 +122,7 @@ class UpdateDeviceRainAmount extends Command
                         'recorded_at' => $eventTime
                     ]);
 
-                    if ($alerto = SensorUnderAlerto::where('device_id', $deviceId)->first()) { //2025-05-31T03:36:52.914+08:00
+                    if ($alerto = SensorUnderAlerto::where('device_id', $deviceId)->first()) {
                         $alerto->device_water_level = $waterLevel;
                         $alerto->save();
                         $this->info("Updated SensorUnderAlerto ID {$alerto->id} with water level: {$waterLevel}mm");
@@ -165,4 +167,3 @@ class UpdateDeviceRainAmount extends Command
         }
     }
 }
- 
