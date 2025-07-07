@@ -191,7 +191,6 @@ onMounted(async () => {
                             v-model="form.long"
                             label="Longitude"
                             variant="outlined"
-                            readonly
                         />
                     </v-row>
                     <v-row>
@@ -199,7 +198,6 @@ onMounted(async () => {
                             v-model="form.lat"
                             label="Latitude"
                             variant="outlined"
-                            readonly
                         />
                     </v-row>
                     <v-row>
