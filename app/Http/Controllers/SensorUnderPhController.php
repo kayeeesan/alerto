@@ -37,51 +37,39 @@ class SensorUnderPhController extends Controller
         return ResourcesSensorUnderPh::collection($sensors_under_ph);
     }
 
-     public function fetchDevices()
+    public function fetchDevices()
     {
         try {
-            $response = Http::get('https://alertofews.com/api/index.php?ep=saka');
-
+            $response = Http::get('https://alertofews.com/api/api-awls/get_arg_data.php');
 
             if ($response->successful()) {
-                $devices = collect($response->json())
-                    ->filter(function ($data) {
-                        return isset($data['msg']['LrrLON']) &&
-                            isset($data['msg']['LrrLAT']) &&
-                            isset($data['metadata']['deviceName']) &&
-                            isset($data['msg']['DevEUI']);
-                    })
-                    ->map(function ($data) {
-                        $deviceType = $data['metadata']['deviceType'] ?? '';
-                        $deviceName = $data['metadata']['deviceName'] ?? '';
-                        $DevEUI = $data['msg']['DevEUI'];
-
-
+                $sensorData = collect($response->json()['data'] ?? [])
+                    ->sortByDesc('created_at')
+                    ->unique('sensor_id')
+                    ->map(function ($item) {
                         return [
-                            'name' => $deviceName,
-                            'device_id' => $DevEUI,
-                            'device_type' => $deviceType,
-                            'device_rain_amount' => $data['msg']['EventAcc'] ?? null,
-                            'device_water_level' => $data['decoded_payload']['distance'] ?? null,
-                            'long' => $data['msg']['LrrLON'],
-                            'lat' => $data['msg']['LrrLAT'],
+                            'name' => 'ESN ' . $item['sensor_id'],
+                            'device_id' => $item['sensor_id'],
+                            'device_rain_amount' => $item['event_acc'] ?? null,  // map like old EventAcc
+                            'device_water_level' => $item['distance'] ?? null,   // use if available
+                            'created_at' => $item['created_at'] ?? null,
+                            'acc' => $item['acc'] ?? null,
+                            'event_acc' => $item['event_acc'] ?? null,
+                            'total_acc' => $item['total_acc'] ?? null,
                         ];
                     })
-                    ->unique('device_id') // still keeps only one per DevEUI
                     ->values();
 
-
-                return response()->json($devices);
+                return response()->json($sensorData);
             }
 
-
-            return response()->json(['message' => 'Failed to fetch devices.'], 500);
-
-
+            return response()->json(['message' => 'Failed to fetch sensor data.'], 500);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+
 
     public function store(SensorUnderPhRequest $request)
     {

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class UpdateDeviceRainAmount extends Command
 {
     protected $signature = 'devices:update-rain';
-    protected $description = 'Fetch device data from API and update rain amount and water level for sensors with latest values';
+    protected $description = 'Fetch device data from API and update rain amount for sensors with latest values';
 
     public function handle()
     {
@@ -22,8 +22,8 @@ class UpdateDeviceRainAmount extends Command
         try {
             $this->info('Fetching latest device data from API...');
             Log::info('Making API request to fetch device data');
-
-            $response = Http::get('https://alertofews.com/api/index.php?ep=saka');
+            
+            $response = Http::get('https://alertofews.com/api/api-awls/get_arg_data.php');
 
             if (!$response->successful()) {
                 $errorMessage = 'API request failed with status: ' . $response->status();
@@ -33,28 +33,31 @@ class UpdateDeviceRainAmount extends Command
             }
 
             $responseData = $response->json();
+            
+            if (!isset($responseData['data'])) {
+                $errorMessage = 'Invalid API response format - missing data key';
+                $this->error($errorMessage);
+                Log::error($errorMessage);
+                return 1;
+            }
 
             $this->info('Processing API response...');
             Log::info('Processing API response', [
-                'device_count' => count($responseData),
+                'device_count' => count($responseData['data']),
                 'response_status' => $response->status()
             ]);
 
-            // Group by unique DevEUI and take latest per device
-            $latestDeviceEvents = collect($responseData)
-            ->filter(function ($data) {
-                return isset($data['msg']['DevEUI']);
-            })
-            ->groupBy(function ($item) {
-                return (string) $item['msg']['DevEUI'];
-            })
-            ->map(function ($deviceEvents) {
-                return collect($deviceEvents)->sortByDesc(function ($event) {
-                    return $event['metadata']['ts'] 
-                        ?? (isset($event['msg']['Time']) ? Carbon::parse($event['msg']['Time'])->valueOf() : 0);
-                })->first();
-            });
-
+            // Group devices by sensor_id and keep only the latest event for each
+            $latestDeviceEvents = collect($responseData['data'])
+                ->filter(function ($data) {
+                    return isset($data['sensor_id']) && isset($data['event_acc']);
+                })
+                ->groupBy('sensor_id')
+                ->map(function ($deviceEvents) {
+                    return $deviceEvents->sortByDesc(function ($event) {
+                        return strtotime($event['created_at']);
+                    })->first();
+                });
 
             $this->info('Found ' . $latestDeviceEvents->count() . ' unique devices with recent data');
             Log::info('Device processing stats', [
@@ -62,87 +65,41 @@ class UpdateDeviceRainAmount extends Command
             ]);
 
             foreach ($latestDeviceEvents as $deviceEvent) {
-                $deviceId = (string) $deviceEvent['msg']['DevEUI'];
-                $deviceName = $deviceEvent['metadata']['deviceName'] ?? 'Unknown';
-
-                $timestamp = $deviceEvent['msg']['Time']
-                    ?? (isset($deviceEvent['metadata']['ts']) ? Carbon::createFromTimestampMs($deviceEvent['metadata']['ts'])->toDateTimeString() : null);
-
-                $eventTime = $timestamp ? Carbon::parse($timestamp)->format('Y-m-d H:i:s') : 'Unknown time';
-
-                $this->info("Processing device: {$deviceName} (ID: {$deviceId}) - Last update: {$eventTime}");
-                Log::info("Processing device", [
-                    'device_id' => $deviceId,
-                    'device_name' => $deviceName,
-                    'last_update_time' => $eventTime
+                $sensorId = $deviceEvent['sensor_id'];
+                $eventTime = $deviceEvent['created_at'] ?? 'Unknown time';
+                $rainAmount = $deviceEvent['event_acc'];
+                
+                $this->info("Processing sensor: {$sensorId} - Last update: {$eventTime}");
+                Log::info("Processing sensor", [
+                    'sensor_id' => $sensorId,
+                    'last_update_time' => $eventTime,
+                    'rain_amount' => $rainAmount
                 ]);
 
-                // Process rainfall
-                if (isset($deviceEvent['msg']['EventAcc'])) {
-                    $rainAmount = $deviceEvent['msg']['EventAcc'];
-
-                    $this->info("Device {$deviceName} recorded rainfall: {$rainAmount}mm at {$eventTime}");
-                    Log::info("Rainfall data", [
-                        'device_id' => $deviceId,
+                // Update in SensorUnderAlerto
+                $alerto = SensorUnderAlerto::where('device_id', $sensorId)->first();
+                if ($alerto) {
+                    $alerto->device_rain_amount = $rainAmount;
+                    $alerto->save();
+                    $this->info("Updated SensorUnderAlerto ID {$alerto->id} with latest rain amount: {$rainAmount}mm");
+                    Log::info("Updated SensorUnderAlerto", [
+                        'sensor_id' => $alerto->id,
                         'rain_amount' => $rainAmount,
-                        'recorded_at' => $eventTime
+                        'updated_at' => now()
                     ]);
-
-                    if ($alerto = SensorUnderAlerto::where('device_id', $deviceId)->first()) {
-                        $alerto->device_rain_amount = $rainAmount;
-                        $alerto->save();
-                        $this->info("Updated SensorUnderAlerto ID {$alerto->id} with rain amount: {$rainAmount}mm");
-                        Log::info("Updated SensorUnderAlerto", [
-                            'sensor_id' => $alerto->id,
-                            'rain_amount' => $rainAmount,
-                            'updated_at' => now()
-                        ]);
-                    }
-
-                    if ($ph = SensorUnderPh::where('device_id', $deviceId)->first()) {
-                        $ph->device_rain_amount = $rainAmount;
-                        $ph->save();
-                        $this->info("Updated SensorUnderPh ID {$ph->id} with rain amount: {$rainAmount}mm");
-                        Log::info("Updated SensorUnderPh", [
-                            'sensor_id' => $ph->id,
-                            'rain_amount' => $rainAmount,
-                            'updated_at' => now()
-                        ]);
-                    }
                 }
 
-                // Process water level
-                if (isset($deviceEvent['msg']['decoded_payload']['distance'])) {
-                    $waterLevel = $deviceEvent['msg']['decoded_payload']['distance'];
-
-                    $this->info("Device {$deviceName} recorded water level: {$waterLevel}mm at {$eventTime}");
-                    Log::info("Water level data", [
-                        'device_id' => $deviceId,
-                        'water_level' => $waterLevel,
-                        'recorded_at' => $eventTime
+                // Update in SensorUnderPh
+                $ph = SensorUnderPh::where('device_id', $sensorId)->first();
+                if ($ph) {
+                    $ph->device_rain_amount = $rainAmount;
+                    $ph->save();
+                    $this->info("Updated SensorUnderPh ID {$ph->id} with latest rain amount: {$rainAmount}mm");
+                    Log::info("Updated SensorUnderPh", [
+                        'sensor_id' => $ph->id,
+                        'rain_amount' => $rainAmount,
+                        'updated_at' => now()
                     ]);
-
-                    if ($alerto = SensorUnderAlerto::where('device_id', $deviceId)->first()) {
-                        $alerto->device_water_level = $waterLevel;
-                        $alerto->save();
-                        $this->info("Updated SensorUnderAlerto ID {$alerto->id} with water level: {$waterLevel}mm");
-                        Log::info("Updated SensorUnderAlerto", [
-                            'sensor_id' => $alerto->id,
-                            'water_level' => $waterLevel,
-                            'updated_at' => now()
-                        ]);
-                    }
-
-                    if ($ph = SensorUnderPh::where('device_id', $deviceId)->first()) {
-                        $ph->device_water_level = $waterLevel;
-                        $ph->save();
-                        $this->info("Updated SensorUnderPh ID {$ph->id} with water level: {$waterLevel}mm");
-                        Log::info("Updated SensorUnderPh", [
-                            'sensor_id' => $ph->id,
-                            'water_level' => $waterLevel,
-                            'updated_at' => now()
-                        ]);
-                    }
                 }
             }
 
