@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->unsignedBigInteger('device_id'); 
+            $table->string('device_id');
             $table->string('device_water_level')->nullable();
             $table->string('device_rain_amount')->nullable();
             $table->float('previous_water_level')->nullable();
@@ -23,8 +23,8 @@ return new class extends Migration
                  // Foreign keys
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
-            $table->decimal('long', 8, 2);
-            $table->decimal('lat', 8, 2);
+            $table->decimal('long', 8, 2)->nullable();
+            $table->decimal('lat', 8, 2)->nullable();
             // $table->enum('status', ['warning','alert', 'critical'])->nullable();
             // $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
             $table->string('status')->nullable();
