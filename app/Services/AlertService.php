@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Threshold;
 use App\Models\Sensor;
 use App\Events\AlertCreated; 
+use Illuminate\Support\Str;
 
 class AlertService
 {
@@ -157,7 +158,13 @@ class AlertService
         $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
 
         // Associate users to alert
-        $alert->users()->attach($usersByRiver->pluck('id'));
+        $pivotData = $usersByRiver->pluck('id')->mapWithKeys(function ($userId) {
+            return [
+                $userId => ['uuid' => (string) Str::uuid()],
+            ];
+        });
+
+$alert->users()->attach($pivotData);
 
         // Create notifications
         foreach ($usersToNotify as $user) {

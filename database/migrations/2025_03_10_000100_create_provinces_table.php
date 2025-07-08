@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->timestamps();
             $table->string('name')->unique();
             $table->foreignId('region_id')->contrained('regions')->onDelete('cascade');

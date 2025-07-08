@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('thresholds', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->timestamps();
             // $table->foreignId('sensor_id')->constrained('sensors_under_alertos')->onDelete('cascade');
             $table->morphs('sensorable');
