@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('alerts', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->foreignId('threshold_id')->constrained()->onDelete('cascade');
             $table->foreignId('response_id')->nullable()->constrained()->onDelete('set null');
             $table->string('details');

@@ -18,6 +18,8 @@ class RoleSeeder extends Seeder
             [ 'name' => 'Project Staff', 'slug' => 'project-staff' ],
         ];
 
-        Role::insert($roles);
+        foreach ($roles as $role) {
+            Role::create($role);
+        }
     }
 }

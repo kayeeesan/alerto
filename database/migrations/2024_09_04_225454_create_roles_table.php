@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid('uuid')->unique();
             $table->string('name');
             $table->string('slug')->unique();
             $table->timestamps();

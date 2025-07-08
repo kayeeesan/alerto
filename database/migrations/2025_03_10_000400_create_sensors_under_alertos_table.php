@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sensors_under_alertos', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->timestamps();
             $table->string('name');
             $table->string('device_id');

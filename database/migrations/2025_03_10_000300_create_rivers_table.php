@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('rivers', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->timestamps();
             $table->foreignId('municipality_id')->contrained('municipalities')->onDelete('cascade');
             $table->string('name')->unique();
