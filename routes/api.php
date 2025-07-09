@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function  () {
    
     Route::resource('/users', UserController::class);
     Route::resource('/roles', RoleController::class);
-    Route::post('/set-password', [AuthController::class, 'setPassword']);
+    // Route::post('/set-password', [AuthController::class, 'setPassword']);
     Route::resource('/sensors_under_alerto', SensorUnderAlertoController::class);
     Route::resource('/sensors_under_ph', SensorUnderPhController::class);
     Route::resource('/regions', RegionController::class);

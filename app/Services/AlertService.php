@@ -164,7 +164,7 @@ class AlertService
             ];
         });
 
-$alert->users()->attach($pivotData);
+        $alert->users()->attach($pivotData);
 
         // Create notifications
         foreach ($usersToNotify as $user) {
