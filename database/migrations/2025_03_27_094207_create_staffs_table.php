@@ -15,9 +15,6 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->timestamps();
-            // $table->string('username')->unique();
-            // $table->string('first_name');
-            // $table->string('last_name');
             $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->string('mobile_number');
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
