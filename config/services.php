@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'main_server' => [
+        'url' => env('MAIN_SERVER_URL', 'https://alertofews.com/#/api/sync/updates'),
+    ]
 
 ];
