@@ -20,9 +20,12 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterStaffController;
+use App\Http\Controllers\SyncController;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/register', [UserController::class, 'register']);
+Route::post('/sync/{model}', [SyncController::class, 'receive']);
+Route::get('/sync/{model}', [SyncController::class, 'fetch']);
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/contact-us', [ContactUsController::class, 'store']);
 Route::post('/send-test-email', [MailTestController::class, 'send']);
