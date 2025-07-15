@@ -10,36 +10,41 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-      public function login(Request $request) 
+    public function login(Request $request)
     {
-        $credentials = $request->only('username', 'password');
-        if(Auth::attempt($credentials)) {
-            $user = Auth::user();
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-            if ($user->status === 'pending') {
-                Auth::logout();
-                return response([
-                    'message' => 'Account is pending'
-                ], Response::HTTP_UNAUTHORIZED);
-            }
+        $user = \App\Models\User::whereRaw('LOWER(username) = ?', [strtolower($request->username)])->first();
 
-            if ($user->status === 'disabled') {
-                Auth::logout();
-                return response([
-                    'message' => 'Account is disabled'
-                ], Response::HTTP_UNAUTHORIZED);
-            }
-            
-            return response([
-                'user' => new ResourcesUser($user),
-                'access_token' => $user->createToken('MyApp')->plainTextToken
-            ], Response::HTTP_OK);
-        }else{
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'message' => 'Incorrect credentials'
             ], Response::HTTP_UNAUTHORIZED);
         }
+
+        if ($user->status === 'pending') {
+            return response([
+                'message' => 'Account is pending'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($user->status === 'disabled') {
+            return response([
+                'message' => 'Account is disabled'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        Auth::login($user); 
+
+        return response([
+            'user' => new ResourcesUser($user),
+            'access_token' => $user->createToken('MyApp')->plainTextToken
+        ], Response::HTTP_OK);
     }
+
 
     public function logout()
     {
