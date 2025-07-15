@@ -1,13 +1,18 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import SensorsUnderAlertoForm from "../../components/settings/SensorUnderAlerto/Form.vue";
 import useSensorsUnderAlerto from "../../composables/sensorsUnderAlerto";
+import Store from "@/store";
 
 const { sensors_under_alerto, pagination, query, is_loading, getSensorsUnderAlerto, destorySensorUnderAlerto } = useSensorsUnderAlerto();
 
 const sensor_under_alerto = ref({});
 const action_type = ref('');
 const show_form_modal = ref(false);
+
+const user = Store.state.auth.user;
+const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
+const userRiverId = computed(() => user?.river?.id);
 
 const headers = [
     { title: "Sensor", key: "name", width: "15%" },
@@ -37,13 +42,23 @@ const editItem = (value, action) => {
 };
 
 const deleteItem = async (value) => {
-    await destorySensorUnderAlerto(value.id); // Swal handled in composable
+    await destorySensorUnderAlerto(value.id); 
 };
 
 const reloadSensorsUnderAlerto = async () => {
     await getSensorsUnderAlerto();
     sensor_under_alerto.value = {};
 };
+
+const filterSensors = computed(() => {
+    if (isAdmin.value) {
+        return sensors_under_alerto.value;
+    }
+
+    else if (!isAdmin.value && userRiverId.value) {
+        return sensors_under_alerto.value.filter(sensor => sensor.river_id === userRiverId.value);
+    }
+})
 </script>
 
 <template>
@@ -92,7 +107,7 @@ const reloadSensorsUnderAlerto = async () => {
             <div class="horizontal-scroll">
                 <v-data-table 
                     :headers="headers" 
-                    :items="sensors_under_alerto"
+                    :items="filterSensors"
                     :search="query.search"
                     :loading="is_loading"
                     loading-text="Loading sensor data..."
