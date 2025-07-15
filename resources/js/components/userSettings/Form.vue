@@ -40,31 +40,29 @@ watch(
 const show_form_modal = ref(false);
 
 const close = () => {
-    // Reset form
     Object.assign(form, initialState);
     emit("input", false);
     errors.value = {};
 }
 
 const save = async () => {
-    if (form.id) { // Ensure the alert has an id before trying to update
+    if (form.id) { 
         await updateAlert({ ...form });
 
-        // If the update is successful
         if (is_success.value) {
-            emit("reloadAlerts"); // Emit to reload alerts
-            emit("input", false); // Close the modal
+            emit("reloadAlerts"); 
+            emit("input", false); 
         }
     }
 }
 
 onMounted(() => {
-    getResponses(); // Fetch responses when the component is mounted
+    getResponses(); 
 });
 </script>
 
 <template>
-    <v-dialog v-model="props.value" max-width="500px" scrollable persistent>
+    <v-dialog v-model="props.value" max-width="500px" height="350px" scrollable persistent>
         <v-card>
             <v-card-title>
                 <span class="text-h5">Alert Details</span>
