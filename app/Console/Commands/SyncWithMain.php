@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use App\Helpers\NetworkHelper;
 
 class SyncWithMain extends Command
 {
@@ -12,6 +13,11 @@ class SyncWithMain extends Command
 
     public function handle()
     {
+        if (!NetworkHelper::isOnline()) {
+            $this->error('No internet connection. Skipping sync.');
+            return 0;
+        }
+
         $models = config('sync.models');
         $mainUrl = env('MAIN_SYNC_URL'); 
 
