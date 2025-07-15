@@ -1,3 +1,24 @@
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const baseImageUrl = 'https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/1-him-colored.png';
+const imageSrc = ref('');
+let refreshInterval = null;
+
+function refreshImage() {
+  imageSrc.value = `${baseImageUrl}?t=${new Date().getTime()}`;
+}
+
+onMounted(() => {
+  refreshImage(); 
+  refreshInterval = setInterval(refreshImage, 600000); 
+});
+
+onBeforeUnmount(() => {
+  clearInterval(refreshInterval); 
+});
+</script>
+
 <template>
   <v-col class="threshold-container">
     <v-sheet class="threshold-sheet" rounded="lg">
@@ -11,7 +32,7 @@
       
       <div class="forecast-image-container">
         <v-img 
-          src="https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/1-him-colored.png" 
+          :src="imageSrc" 
           alt="24-Hour Weather Forecast" 
           class="forecast-image"
         ></v-img>
