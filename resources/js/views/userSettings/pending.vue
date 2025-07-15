@@ -8,6 +8,7 @@ const { pendingAlerts, respondedAlerts, pagination, query, is_loading, destroyAl
 
 const pendingAlert = ref([]);
 const show_form_modal = ref(false);
+
 const user = store.state.auth.user;
 const isAdmin = computed(() => user?.roles?.some(role => role.slug === 'administrator'));
 const userRiverId = computed(() => user?.river?.id);
