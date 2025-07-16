@@ -12,11 +12,15 @@ class UserLog extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'entity_type',
         'entity_id',
         'action',
-        'changes'
+        'changes',
+        'created_at',
+        'updated_at',
+        'synced_at',
     ];
 
     protected $casts = [

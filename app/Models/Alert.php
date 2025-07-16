@@ -12,12 +12,16 @@ class Alert extends Model
     use UsesUuid;
     
     protected $fillable = [
+        'uuid',
         'threshold_id',
         'response_id',
         'details',
         'status',
         'expired_at',
-        'user_id'
+        'user_id',
+        'created_at',
+        'updated_at',
+        'synced_at',
     ];
 
     public function threshold()

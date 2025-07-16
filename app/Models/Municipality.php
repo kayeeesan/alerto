@@ -13,8 +13,14 @@ class Municipality extends Model
     use SoftDeletes;
     use UsesUuid;
     protected $fillable = [
+        'uuid',
         'name',
-        'province_id'
+        'province_id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'synced_at',
+
     ];
 
     public function province()

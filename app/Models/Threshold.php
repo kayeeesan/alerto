@@ -12,13 +12,18 @@ class Threshold extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'sensorable_id',
         'sensorable_type',
         'baseline',
         'sixty_percent',
         'eighty_percent',
         'one_hundred_percent',
-        'xs_date'
+        'xs_date',
+        'created_at',
+        'updated_at',
+        'synced_at',
+        'deleted_at',
     ];
 
     public function sensorable()

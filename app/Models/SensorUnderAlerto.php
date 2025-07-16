@@ -16,6 +16,7 @@ class SensorUnderAlerto extends Model
     protected $table = 'sensors_under_alertos'; 
 
     protected $fillable = [
+        'uuid',
         'name',
         'device_id',
         'device_rain_amount',
@@ -27,7 +28,11 @@ class SensorUnderAlerto extends Model
         'long',
         'lat',
         'status',
-        'sensor_type'
+        'sensor_type',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'synced_at',
     ];
 
     public function river()

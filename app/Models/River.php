@@ -14,9 +14,14 @@ class River extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'name',
         'river_code',
-        'municipality_id'
+        'municipality_id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'synced_at', 
     ];
 
     public function municipality(){

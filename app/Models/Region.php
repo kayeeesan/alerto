@@ -12,6 +12,10 @@ class Region extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'name',
+        'created_at',
+        'updated_at',
+        'synced_at',
     ];
 }
