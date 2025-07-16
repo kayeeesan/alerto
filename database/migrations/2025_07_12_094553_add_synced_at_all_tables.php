@@ -43,6 +43,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        foreach ($tables as $table) {
+            Schema::table($table, function (Blueprint $table) {
+                $table->dropColumn('synced_at');
+            });
+        }
     }
 };

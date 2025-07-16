@@ -24,6 +24,6 @@ class UserLog extends Model
     ];
 
     protected $casts = [
-        'changes' => 'array', // Automatically converts JSON to array
+        'changes' => 'array', 
     ];
 }
