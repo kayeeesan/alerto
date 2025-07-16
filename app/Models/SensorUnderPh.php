@@ -10,7 +10,7 @@ use App\Traits\UsesUuid;
 class SensorUnderPh extends Model
 {
     use HasFactory; 
-    use SoftDeletes; // Enable SoftDeletes
+    use SoftDeletes; 
     use UsesUuid;
 
     protected $table = 'sensors_under_phs'; 

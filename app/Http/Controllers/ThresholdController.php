@@ -112,7 +112,7 @@ class ThresholdController extends Controller
                 return response()->json(['message' => 'Threshold not found.'], Response::HTTP_NOT_FOUND);
             }
 
-            $threshold->forceDelete(); 
+            $threshold->delete(); 
 
             $this->logService->logAction('Threshold', $id, 'delete');
 

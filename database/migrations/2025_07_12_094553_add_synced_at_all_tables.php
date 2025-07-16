@@ -28,7 +28,6 @@ return new class extends Migration
         'contact_messages', 
         'notifications', 
         'series', 
-        'user_roles',
     ];
 
     foreach ($tables as $table) {

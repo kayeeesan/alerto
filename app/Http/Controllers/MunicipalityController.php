@@ -86,7 +86,7 @@ class MunicipalityController extends Controller
                 return response()->json(['message' => 'Municipality not found.'], Response::HTTP_NOT_FOUND);
             }
 
-            $municipality->forceDelete(); 
+            $municipality->delete(); 
 
             $this->logService->logAction('Municipality', $id, 'delete');
 

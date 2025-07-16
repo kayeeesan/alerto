@@ -94,7 +94,7 @@ class RiverController extends Controller
                 return response()->json(['message' => 'River not found.'], Response::HTTP_NOT_FOUND);
             }
 
-            $river->forceDelete(); 
+            $river->delete(); 
 
             $this->logService->logAction('River', $id, 'delete');
 

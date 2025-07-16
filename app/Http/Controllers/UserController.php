@@ -199,11 +199,7 @@ class UserController extends Controller
             $user->delete();
     
             $this->logService->logAction('User', $id, 'delete');
-    
-            // $staff = Staff::where('username', $username)->first();
-            // if ($staff) {
-            //     $staff->delete();
-            // }
+
     
             return response(['message' => 'User has been successfully deleted!']);
         } catch (\Exception $e) {

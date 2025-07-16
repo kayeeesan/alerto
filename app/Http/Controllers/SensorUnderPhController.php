@@ -147,7 +147,7 @@ class SensorUnderPhController extends Controller
                 $sensor_under_ph->threshold->delete();
             }
 
-            $sensor_under_ph->forceDelete(); 
+            $sensor_under_ph->delete(); 
 
             $this->logService->logAction('Sensor Under Ph', $id, 'delete');
 
