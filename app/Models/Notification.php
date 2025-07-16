@@ -12,13 +12,17 @@ class Notification extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'river_id',
         'text',
         'type',
         'read_at',
         'seen_at',
-        'alert_id'
+        'alert_id',
+        'created_at',
+        'updated_at',
+        'synced_at',
     ];
 
     protected $dates = [

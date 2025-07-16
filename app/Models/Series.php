@@ -12,6 +12,15 @@ class Series extends Model
     use UsesUuid;
     
     protected $fillable = [ 
-        'starting_value'
+        'uuid',
+        'name',
+        'slug',
+        'prefix',
+        'current_date',
+        'starting_value',
+        'max_digit',
+        'created_at',
+        'updated_at',
+        'synced_at'
     ]; 
 }

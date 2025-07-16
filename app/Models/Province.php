@@ -14,8 +14,13 @@ class Province extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'name',
-        'region_id'
+        'region_id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'synced_at',
     ];
 
     public function region(){

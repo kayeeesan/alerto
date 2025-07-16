@@ -12,8 +12,12 @@ class Response extends Model
     use UsesUuid;
 
     protected $fillable = [
+        'uuid',
         'color',
         'action',
-        'code'
+        'code',
+        'created_at',
+        'updated_at',
+        'synced_at',
     ];
 }
