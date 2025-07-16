@@ -52,15 +52,32 @@ class SyncWithMain extends Command
             }
             if ($response->ok()) {
                 foreach ($response->json() as $data) {
-                    $existing = $modelClass::where('uuid', $data['uuid'])->first();
+                    $existing = $modelClass::withTrashed()->where('uuid', $data['uuid'])->first();
 
                     if (!$existing) {
                         $modelClass::create(array_merge($data, ['synced_at' => now()]));
-                    } elseif ($data['updated_at'] > $existing->updated_at) {
-                        $existing->update(array_merge($data, ['synced_at' => now()]));
+                    } else {
+                        $needsUpdate = $data['updated_at'] > $existing->updated_at;
+                        $deletedChanged = $data['deleted_at'] !== $existing->deleted_at;
+
+                        if ($needsUpdate || $deletedChanged) {
+                            $existing->update(array_merge($data, ['synced_at' => now()]));
+
+                            if (!is_null($data['deleted_at']) && !$existing->trashed()) {
+                                $existing->delete();
+                            }
+
+                            if (is_null($data['deleted_at']) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                $existing->restore();
+                            }
+                        }
                     }
                 }
-            }
+                } else {
+                    $this->error("❌ Failed to process response for model: $key");
+                    continue;
+
+                }
         }
 
         $this->info('✅ Sync finished.');

@@ -153,7 +153,7 @@ class SensorUnderAlertoController extends Controller
                 $sensor_under_alerto->threshold->delete();
             }
 
-            $sensor_under_alerto->forceDelete(); 
+            $sensor_under_alerto->delete(); 
 
             $this->logService->logAction('Sensor Under Alerto', $id, 'delete');
 

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('status', ['pending', 'approved', 'disabled'])->default('pending');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

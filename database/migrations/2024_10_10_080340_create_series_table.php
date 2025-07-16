@@ -21,6 +21,7 @@ return new class extends Migration
             $table->bigInteger("starting_value");
             $table->integer("max_digit");
             $table->timestamps(); 
+            $table->softDeletes();
         });
     }
 

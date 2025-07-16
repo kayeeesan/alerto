@@ -75,7 +75,7 @@ class ProvinceController extends Controller
 
     public function destroy($id)
     {
-        Province::findOrFail($id)->forceDelete();
+        Province::findOrFail($id)->delete();
         $this->logService->logAction('Province', $id, 'delete');
         return response(['message' => 'Province has been successfully deleted!']);
     }

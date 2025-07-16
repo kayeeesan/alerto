@@ -30,7 +30,6 @@ return new class extends Migration
             // $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
             $table->string('status')->nullable();
             $table->string('sensor_type');
-
             $table->softDeletes();
         });
     }

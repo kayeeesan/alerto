@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->foreignId('alert_id')->constrained('alerts')->onDelete('cascade');
+            $table->softDeletes();
         });
     }
 

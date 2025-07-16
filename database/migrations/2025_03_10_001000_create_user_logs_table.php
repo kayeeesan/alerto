@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('entity_id');
             $table->string('action');
             $table->json('changes');
+            $table->softDeletes();
         });
     }
 

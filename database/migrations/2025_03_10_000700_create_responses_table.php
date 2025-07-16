@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('color');
             $table->string('action');
             $table->string('code');
+            $table->softDeletes();
         });
     }
 

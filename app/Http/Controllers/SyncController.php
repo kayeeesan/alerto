@@ -38,6 +38,7 @@ class SyncController extends Controller
             return response()->json(['error' => 'Invalid model'], 400);
         }
 
-        return $modelClass::all();
+        return $modelClass::withTrashed()->get();
+
     }
 }
