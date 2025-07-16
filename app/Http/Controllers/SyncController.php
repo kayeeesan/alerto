@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class SyncController extends Controller
 {
+    //main receiving data from local server
     public function receive(Request $request, $model)
     {
         $modelClass = config('sync.models')[$model] ?? null;
@@ -15,14 +16,20 @@ class SyncController extends Controller
         }
 
         foreach ($request->all() as $data) {
-            $modelClass::updateOrCreate(
-                ['uuid' => $data['uuid']],
-                $data
-            );
+              try {
+                $modelClass::updateOrCreate(
+                    ['uuid' => $data['uuid']],
+                    $data
+                );
+            } catch (\Exception $e) {
+                \Log::error("Failed syncing $model: " . $e->getMessage());
+                continue;
+            }
         }
         return response()->json(['status' => 'ok']);
     }
 
+    //local server fetching data from main server
     public function fetch(Request $request, $model)
     {
         $modelClass = config('sync.models')[$model] ?? null;
