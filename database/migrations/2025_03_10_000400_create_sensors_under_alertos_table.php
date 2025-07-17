@@ -21,13 +21,10 @@ return new class extends Migration
             $table->string('device_rain_amount')->nullable();
             $table->float('previous_water_level')->nullable();
             $table->float('previous_rain_amount')->nullable();
-               // Foreign keys
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
             $table->decimal('long', 8, 2)->nullable();
             $table->decimal('lat', 8, 2)->nullable();
-            // $table->enum('status', ['warning','alert', 'critical'])->nullable();
-            // $table->enum('sensor_type', ['ARG', 'WLMS', 'TANDEM']);
             $table->string('status')->nullable();
             $table->string('sensor_type');
             $table->softDeletes();

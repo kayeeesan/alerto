@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->timestamps();
-            // $table->foreignId('sensor_id')->constrained('sensors_under_alertos')->onDelete('cascade');
             $table->morphs('sensorable');
             $table->decimal('baseline', 8,2)->nullable();
             $table->decimal('sixty_percent', 8,2)->nullable();

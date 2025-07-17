@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -25,7 +26,12 @@ class UserRequest extends FormRequest
     {
         if ($this->method() == "POST") {
             return [
-                'username' => 'required|string|max:255|unique:users,username',
+                'username' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('users')->whereNull('deleted_at'),
+                ],
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'user_roles' => 'nullable|array',
@@ -34,7 +40,14 @@ class UserRequest extends FormRequest
         } else {
             return [
                 'id' => 'required|exists:users,id|max:255',
-                'username' => 'required|string|max:255|unique:users,username,'.$this->id,
+                'username' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('users')
+                        ->ignore($this->id)
+                        ->whereNull('deleted_at'),
+                ],
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'user_roles' => 'nullable|array',

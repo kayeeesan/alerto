@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->timestamps();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->unique(['user_id', 'deleted_at']);
             $table->string('mobile_number');
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->foreignId('region_id')->constrained('regions')->onDelete('cascade');

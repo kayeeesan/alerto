@@ -3,13 +3,18 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StaffRequest extends FormRequest
 {
     public function rules(): array
     {
         $rules = [
-            'username' => 'required|email|unique:users,username',
+            'username' => [
+                'required',
+                'email',
+                Rule::unique('users', 'username')->whereNull('deleted_at'),
+            ],
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'mobile_number' => 'required|string|max:20',
@@ -19,12 +24,11 @@ class StaffRequest extends FormRequest
             'municipality.id' => 'required|exists:municipalities,id',
             'river.id' => 'required|exists:rivers,id',
             'fb_lgu' => 'required|string|max:255',
-            // password is nullable here
             'password' => 'nullable|string|min:6|confirmed',
         ];
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $staffId = $this->route('staff'); // Update, password is nullable
+            $staffId = $this->route('staff'); 
             if ($staffId) {
                 $staff = \App\Models\Staff::find($staffId);
                 if ($staff && $staff->user) {

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->uuid('uuid')->unique();
-            $table->string('username')->unique();
+            $table->string('username')->index();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_name')->nullable();

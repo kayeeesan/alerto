@@ -14,37 +14,6 @@ export default function useRoles() {
         page: 1,
     });
 
-    // const getRoles = async (params = {}) => {
-    //     is_loading.value = true;
-
-    //     let query_str = { ...query.value, ...params };
-    //     let url = type == "/roles" ? "/roles" : "/form/roles"
-    //     // let url = params.type && params.type === "/roles" ? "/roles" : "/form/roles";
-
-    //     await axios
-    //         // .get('/api/roles?page=' + query.value.page, query_str)
-    //         .get(`${url}?page=${query.value.page}` , {params: query_str})
-    //         .then((response) => {
-    //             roles.value = response.data.data;
-    //             pagination.value = response.data.meta;
-    //             is_loading.value = false;
-    //         });
-    // };
-
-    // const getRoles = async (params = {}, type = "") => {
-    //     is_loading.value = true;
-
-    //     let query_str = { ...query.value, ...params};
-    //     let url = type == "/roles" ? "/roles" : "/form/roles";
-
-    //     await axios
-    //         .get(`${url}?page=${query.value.page}`, { params: query_str})
-    //         .then((response) => {
-    //             roles.value = response.data.data;
-    //             pagination.value = response.data.meta;
-    //             is_loading.value = false;
-    //         });
-    // };
 
     const getRoles = async (params = {}, type = "") => {
         is_loading.value = true;
