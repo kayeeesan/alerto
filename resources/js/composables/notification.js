@@ -15,22 +15,22 @@ export default function useNotifications() {
   });
 
 
-    // const echo = new Echo({
-    //     broadcaster: 'pusher',
-    //     key: '57206333aea283adecc8',
-    //     cluster: 'ap1',
-    //     forceTLS: true,
-    // });
-
-
     const echo = new Echo({
-        broadcaster: 'reverb',
-        key: import.meta.env.REVERB_APP_KEY  || '57206333aea283adecc8',
-        wsHost: import.meta.env.REVERB_HOST || window.location.hostname,
-        wsPort: Number(import.meta.env.REVERB_PORT) || 6001,
-        forceTLS: import.meta.env.REVERB_SCHEME === 'http',
-        enabledTransports: ['ws', 'wss'],
+        broadcaster: 'pusher',
+        key: '57206333aea283adecc8',
+        cluster: 'ap1',
+        forceTLS: true,
     });
+
+
+    // const echo = new Echo({
+    //     broadcaster: 'reverb',
+    //     key: import.meta.env.REVERB_APP_KEY  || '57206333aea283adecc8',
+    //     wsHost: import.meta.env.REVERB_HOST || window.location.hostname,
+    //     wsPort: Number(import.meta.env.REVERB_PORT) || 6001,
+    //     forceTLS: import.meta.env.REVERB_SCHEME === 'http',
+    //     enabledTransports: ['ws', 'wss'],
+    // });
 
       echo.channel('public-alerts')
         .listen('.AlertCreated', (event) => {
