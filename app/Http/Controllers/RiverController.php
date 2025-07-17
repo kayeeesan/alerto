@@ -38,6 +38,7 @@ class RiverController extends Controller
 
             $existingRiver = River::whereRaw('LOWER(name) = ?', [strtolower($request->name)])
                 ->where('municipality_id', $request->input('municipality.id'))
+                ->whereNull('deleted_at')
                 ->first();
             if ($existingRiver) {
                 return response()->json(['message' => 'River with this name already exists in the selected municipality.'], Response::HTTP_CONFLICT);
@@ -78,12 +79,6 @@ class RiverController extends Controller
         }
     }
 
-    // public function destroy($id)
-    // {
-    //     River::findOrFail($id)->forceDelete();
-    //     $this->logService->logAction('River', $id, 'delete');
-    //     return response(['message' => 'River has been successfully deleted!']);
-    // }
 
     public function destroy($id)
     {

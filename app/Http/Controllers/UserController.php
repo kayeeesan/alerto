@@ -45,7 +45,7 @@ class UserController extends Controller
     {
         try {
 
-            $existingUser = User::where('username', $request->username)->first();
+            $existingUser = User::where('username', $request->username)->whereNull('deleted_at')->first();
             if ($existingUser) {
                 return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
@@ -76,7 +76,7 @@ class UserController extends Controller
 {
     try {
 
-        $existingUser = User::where('username', $request->username)->first();
+        $existingUser = User::where('username', $request->username)->whereNull('deleted_at')->first();
         if ($existingUser) {
             return response()->json(['message' => 'Username already exists. Please choose another one.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }

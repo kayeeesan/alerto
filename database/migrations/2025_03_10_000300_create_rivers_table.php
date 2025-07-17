@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->timestamps();
-            $table->foreignId('municipality_id')->contrained('municipalities')->onDelete('cascade');
-            $table->string('name')->unique();
+            $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
+            $table->string('name');
+            $table->index('name');
             $table->string('river_code')->nullable();
             $table->softDeletes();
         });
