@@ -13,7 +13,7 @@ class SensorUnderAlerto extends Model
     use SoftDeletes; // Enable SoftDeletes
     use UsesUuid;
 
-    protected $table = 'sensors_under_alertos'; 
+    protected $table = 'sensors_under_alerto'; 
 
     protected $fillable = [
         'uuid',

@@ -22,7 +22,6 @@ class ThresholdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'sensor.id' => 'required|exists:sensors_under_alertos,id',
             'sensorable_id' => 'required|integer',
             'sensorable_type' => 'required|string|in:App\Models\SensorUnderPh,App\Models\SensorUnderAlerto',
             'baseline' => 'nullable|numeric|min:0',

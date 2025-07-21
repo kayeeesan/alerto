@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensors_under_phs', function (Blueprint $table) {
+        Schema::create('sensors_under_ph', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->timestamps();
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensors_under_phs');
+        Schema::dropIfExists('sensors_under_ph');
     }
 };

@@ -13,7 +13,7 @@ class SensorUnderPh extends Model
     use SoftDeletes; 
     use UsesUuid;
 
-    protected $table = 'sensors_under_phs'; 
+    protected $table = 'sensors_under_ph'; 
 
     protected $fillable = [
         'uuid',
