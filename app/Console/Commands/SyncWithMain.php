@@ -34,7 +34,7 @@ class SyncWithMain extends Command
             })->get();
 
             if ($toPush->isNotEmpty()) {
-                $response = Http::post("{$mainUrl}/{$key}", $toPush->toArray());
+                $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $toPush->toArray());
 
                 if ($response->failed()) {
                     $this->error("❌ Failed to push data for model: $key");
@@ -50,7 +50,7 @@ class SyncWithMain extends Command
             // Pull main → local
             $this->info("✅ Pulling from main → local: $key");
 
-            $response = Http::get("{$mainUrl}/{$key}");
+            $response = Http::timeout(60)->get("{$mainUrl}/{$key}");
 
             if ($response->failed()) {
                 $this->error("❌ Failed to pull data for model: $key");
