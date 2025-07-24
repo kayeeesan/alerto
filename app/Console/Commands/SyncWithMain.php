@@ -33,6 +33,14 @@ class SyncWithMain extends Command
                   ->orWhereColumn('updated_at', '>', 'synced_at');
             })->get();
 
+            $data = $toPush->map(function ($record) use ($key) {
+                if ($key === 'users') {
+                    return $record->makeVisible(['password'])->toArray();
+                }
+                return $record->toArray();
+            })->toArray();
+
+            //Send to main
             if ($toPush->isNotEmpty()) {
                 $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $toPush->toArray());
 
