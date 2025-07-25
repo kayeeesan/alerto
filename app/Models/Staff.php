@@ -15,6 +15,7 @@ class Staff extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'mobile_number',
         'role_id',
@@ -22,7 +23,11 @@ class Staff extends Model
         'province_id',
         'municipality_id',
         'river_id',
-        'fb_lgu'
+        'fb_lgu',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'synced_at', 
     ];
 
     public function user()
