@@ -195,6 +195,11 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             $username = $user->username;
+
+             $staff = Staff::where('user_id', $user->id)->first();
+            if ($staff) {
+                $staff->delete();
+            }
     
             $user->delete();
     
