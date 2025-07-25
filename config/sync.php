@@ -4,6 +4,7 @@ return [
     'models' => [
         'users' => \App\Models\User::class,
         'roles' => \App\Models\Role::class,
+        'user_roles' => \App\Models\UserRole::class,
         'regions' => \App\Models\Region::class,
         'provinces' => \App\Models\Province::class,
         'municipalities' => \App\Models\Municipality::class,

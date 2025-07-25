@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\NetworkHelper;
+use App\Models\User;
+use App\Models\Role;
 
 class SyncWithMain extends Command
 {
@@ -42,7 +44,8 @@ class SyncWithMain extends Command
 
             //Send to main
             if ($toPush->isNotEmpty()) {
-                $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $toPush->toArray());
+                // $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $toPush->toArray());
+                $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $data);
 
                 if ($response->failed()) {
                     $this->error("❌ Failed to push data for model: $key");
@@ -75,6 +78,27 @@ class SyncWithMain extends Command
             }
 
             foreach ($dataArray as $data) {
+
+                 if ($key === 'user_roles') {
+                    $user = User::where('uuid', $data['user_uuid'])->first();
+                    $role = Role::where('uuid', $data['role_uuid'])->first();
+
+                    if (!$user || !$role) {
+                        Log::warning("[Sync] Skipping user_roles pull. User or role not found.");
+                        continue;
+                    }
+
+                    $modelClass::updateOrCreate([
+                        'user_id' => $user->id,
+                        'role_id' => $role->id,
+                    ], [
+                        'created_at' => $data['created_at'],
+                        'updated_at' => $data['updated_at'],
+                    ]);
+
+                    continue;
+                }
+
                 $existing = $modelClass::withTrashed()->where('uuid', $data['uuid'])->first();
 
                 if (!$existing) {
