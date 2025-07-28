@@ -20,6 +20,7 @@ class Role extends Model
         'created_at',
         'updated_at',
         'synced_at',
+        'deleted_at',
     ];
 
     public function users() {

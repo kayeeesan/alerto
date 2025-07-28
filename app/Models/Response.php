@@ -21,5 +21,6 @@ class Response extends Model
         'created_at',
         'updated_at',
         'synced_at',
+        'deleted_at',
     ];
 }
