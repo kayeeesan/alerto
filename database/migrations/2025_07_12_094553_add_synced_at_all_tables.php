@@ -14,6 +14,7 @@ return new class extends Migration
         $tables = [
         'users', 
         'roles', 
+        'user_roles',
         'regions', 
         'provinces', 
         'municipalities',

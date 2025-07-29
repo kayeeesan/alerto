@@ -19,6 +19,7 @@ class UserRole extends Model
         'role_id',
         'created_at',
         'updated_at',
+        'synced_at'
     ];
 
     public function user()
