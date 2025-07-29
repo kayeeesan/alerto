@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class SyncController extends Controller
 {
@@ -17,18 +19,6 @@ class SyncController extends Controller
             return response()->json(['error' => 'Invalid model'], 400);
         }
 
-        // foreach ($request->all() as $data) {
-        //       try {
-        //         $modelClass::updateOrCreate(
-        //             ['uuid' => $data['uuid']],
-        //             $data
-        //         );
-        //     } catch (\Exception $e) {
-        //         \Log::error("Failed syncing $model: " . $e->getMessage());
-        //         continue;
-        //     }
-        // }
-        // return response()->json(['status' => 'ok']);
 
         foreach ($request->all() as $data) {
             try {
@@ -73,10 +63,17 @@ class SyncController extends Controller
             return response()->json(['error' => 'Invalid model'], 400);
         }
 
-        return $modelClass::withTrashed()->get();
+        // return $modelClass::withTrashed()->get();
+         if (in_array(SoftDeletes::class, class_uses_recursive($modelClass))) {
+            $data = $modelClass::withTrashed()->get();
+        } else {
+            $data = $modelClass::get();
+        }
 
         if ($model === 'users') {
             $data->makeVisible(['password']);
         }
+
+        return $data;
     }
 }
