@@ -63,12 +63,22 @@ class SyncController extends Controller
             return response()->json(['error' => 'Invalid model'], 400);
         }
 
-        // return $modelClass::withTrashed()->get();
-         if (in_array(SoftDeletes::class, class_uses_recursive($modelClass))) {
+        if ($model === 'user_roles') {
+            $data = $modelClass::with(['user', 'role'])->get()->map(function ($item) {
+                return [
+                    'user_uuid' => $item->user->uuid ?? null,
+                    'role_uuid' => $item->role->uuid ?? null,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                    'synced_at' => $item->synced_at ?? null,
+                ];
+            });
+        } else if (in_array(SoftDeletes::class, class_uses_recursive($modelClass))) {
             $data = $modelClass::withTrashed()->get();
         } else {
             $data = $modelClass::get();
         }
+
 
         if ($model === 'users') {
             $data->makeVisible(['password']);
