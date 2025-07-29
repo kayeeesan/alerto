@@ -75,5 +75,8 @@ class SyncController extends Controller
 
         return $modelClass::withTrashed()->get();
 
+        if ($model === 'users') {
+            $data->makeVisible(['password']);
+        }
     }
 }
