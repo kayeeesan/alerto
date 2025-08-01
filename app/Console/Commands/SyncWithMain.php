@@ -39,6 +39,19 @@ class SyncWithMain extends Command
                 if ($key === 'users') {
                     return $record->makeVisible(['password'])->toArray();
                 }
+
+                if ($key === 'user_roles') {
+                    $user = $record->user;
+                    $role = $record->role;
+
+                    return [
+                        'user_uuid' => $user?->uuid,
+                        'role_uuid' => $role?->uuid,
+                        'created_at' => $record->created_at,
+                        'updated_at' => $record->updated_at
+                    ];
+                }
+
                 return $record->toArray();
             })->toArray();
 
