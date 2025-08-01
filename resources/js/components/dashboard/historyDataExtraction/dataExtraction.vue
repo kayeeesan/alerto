@@ -1,25 +1,134 @@
+<script setup>
+import { ref, onMounted, watch } from "vue";
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+import { Line } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+} from "chart.js";
+
+ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
+
+// Composables
+const {
+  sensors_under_alerto,
+  query,
+  is_loading: alertoLoading,
+  getSensorsUnderAlerto
+} = useSensorsUnderAlerto();
+
+// UI State
+const options = ref([]);
+const selectedOption = ref(null);
+const fromDate = ref(null);
+const toDate = ref(null);
+const chartDataRef = ref({ labels: [], datasets: [] });
+
+// Chart options
+const chartOptions = {
+  responsive: true,
+  scales: {
+    x: {
+      title: { display: true, text: "Date/Time" }
+    },
+    yRain: {
+      type: "linear",
+      position: "left",
+      title: { display: true, text: "Rain (mm)" }
+    },
+    yWater: {
+      type: "linear",
+      position: "right",
+      title: { display: true, text: "Water Level (m)" },
+      grid: { drawOnChartArea: false }
+    }
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: "bottom"
+    },
+    tooltip: {
+      mode: "index",
+      intersect: false
+    }
+  }
+};
+
+// Load sensors on mount
+onMounted(async () => {
+  await getSensorsUnderAlerto();
+  populateSensorOptions();
+});
+
+watch(sensors_under_alerto, populateSensorOptions);
+
+function populateSensorOptions() {
+  options.value = sensors_under_alerto.value.map(sensor => ({
+    label: sensor.name,
+    value: sensor.uuid
+  }));
+}
+
+// Simulated chart population based on selected sensor
+function populateChart() {
+  const selectedSensor = sensors_under_alerto.value.find(
+    s => s.uuid === selectedOption.value?.value
+  );
+
+  if (!selectedSensor) return;
+
+  // Simulate 3 datapoints
+  const labels = ["2025-07-01 12:00", "2025-07-01 13:00", "2025-07-01 14:00"];
+  const rainData = [0.02, 0.04, parseFloat(selectedSensor.device_rain_amount || 0)];
+  const waterData = [0.03, 0.06, parseFloat(selectedSensor.device_water_level || 0)];
+
+  chartDataRef.value = {
+    labels,
+    datasets: [
+      {
+        label: "Rain (mm)",
+        data: rainData,
+        borderColor: "#FF9800",
+        backgroundColor: "rgba(255, 152, 0, 0.3)",
+        yAxisID: "yRain",
+        tension: 0.3
+      },
+      {
+        label: "Water Level (m)",
+        data: waterData,
+        borderColor: "#2196F3",
+        backgroundColor: "rgba(33, 150, 243, 0.3)",
+        yAxisID: "yWater",
+        tension: 0.3
+      }
+    ]
+  };
+}
+</script>
+
 <template>
   <v-col cols="12" class="p-0">
     <v-sheet class="pa-6 rounded-lg" style="border: 1px solid #E0E0E0;">
-      <!-- Header accent bar with gradient -->
       <div class="header-accent"></div>
-      
-      <!-- Search and filter row -->
+
       <v-row class="filter-row mb-6">
         <v-col cols="12" md="4">
-          <v-text-field
-            v-model="search"
-            label="Search records"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            hide-details
-            single-line
-            density="comfortable"
-            class="search-field"
-            bg-color="#f5f7fa"
-          ></v-text-field>
+          <vue-multiselect
+            v-model="selectedOption"
+            :options="options"
+            placeholder="Select a sensor"
+            label="label"
+            track-by="value"
+          />
         </v-col>
-        
+
         <v-col cols="12" md="2">
           <v-text-field
             v-model="fromDate"
@@ -30,9 +139,9 @@
             variant="outlined"
             class="date-field"
             bg-color="#f5f7fa"
-          ></v-text-field>
+          />
         </v-col>
-        
+
         <v-col cols="12" md="2">
           <v-text-field
             v-model="toDate"
@@ -43,15 +152,16 @@
             variant="outlined"
             class="date-field"
             bg-color="#f5f7fa"
-          ></v-text-field>
+          />
         </v-col>
-        
+
         <v-col cols="12" md="2" class="d-flex">
           <v-btn
             color="primary"
             class="search-btn"
             size="large"
             elevation="0"
+            @click="populateChart"
           >
             <v-icon left>mdi-magnify</v-icon>
             <span>Search</span>
@@ -70,64 +180,15 @@
           </v-btn>
         </v-col>
       </v-row>
-  
-      <!-- Data table container -->
+
       <v-card class="data-table-container" elevation="0">
-        <v-data-table
-          :headers="headers"
-          :items="items"
-          :search="search"
-          class="elevation-1"
-          :header-props="{ style: 'background-color: #f8f9fa' }"
-        >
-          <!-- Custom header styling -->
-          <template v-slot:header="{ props }">
-            <thead class="v-data-table-header">
-              <tr>
-                <th v-for="header in props.headers" :key="header.title">
-                  <span class="header-text">{{ header.title }}</span>
-                </th>
-              </tr>
-            </thead>
-          </template>
-          
-          <!-- Custom row styling -->
-          <template v-slot:item="{ item }">
-            <tr class="data-table-row">
-              <td v-for="header in headers" :key="header.value">
-                <span class="cell-content">{{ item[header.value] }}</span>
-              </td>
-            </tr>
-          </template>
-        </v-data-table>
+        <Line :data="chartDataRef" :options="chartOptions" />
       </v-card>
     </v-sheet>
   </v-col>
 </template>
 
-<script setup>
-import { ref } from "vue";
-
-const search = ref("");
-const fromDate = ref(null);
-const toDate = ref(null);
-
-// Sample headers and data - replace with your actual data
-const headers = [
-  { title: 'ID', value: 'id', align: 'start' },
-  { title: 'NAME', value: 'name' },
-  { title: 'DATE', value: 'date' },
-  { title: 'STATUS', value: 'status' },
-  { title: 'VALUE', value: 'value' },
-];
-
-const items = [
-
-];
-</script>
-
 <style scoped>
-/* Header accent */
 .header-accent {
   position: absolute;
   left: 0;
@@ -139,7 +200,6 @@ const items = [
   background: linear-gradient(90deg, #3f51b5, #2196f3);
 }
 
-/* Filter row styling */
 .filter-row {
   background: #ffffff;
   padding: 16px;
@@ -147,19 +207,10 @@ const items = [
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.search-field, .date-field {
+.date-field {
   border-radius: 8px;
 }
 
-.search-field :deep(.v-field__outline) {
-  color: #e0e0e0;
-}
-
-.search-field :deep(.v-field__outline:hover) {
-  color: #bdbdbd;
-}
-
-/* Button styling */
 .search-btn {
   background: linear-gradient(135deg, #3f51b5, #2196f3);
   color: white;
@@ -195,65 +246,9 @@ const items = [
   border-color: #bdbdbd;
 }
 
-/* Data table container */
 .data-table-container {
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
-}
-
-/* Table header styling */
-.v-data-table-header {
-  background-color: #f8f9fa !important;
-}
-
-.header-text {
-  font-weight: 700;
-  color: #37474f;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-}
-
-/* Table row styling */
-.data-table-row {
-  transition: background-color 0.2s ease;
-}
-
-.data-table-row:hover {
-  background-color: #f5f7fa !important;
-}
-
-.cell-content {
-  font-weight: 500;
-  color: #455a64;
-}
-
-/* Status badges - example styling */
-:deep(.status-active) {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-:deep(.status-inactive) {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-:deep(.status-pending) {
-  background-color: #fff8e1;
-  color: #ff8f00;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
 }
 </style>
