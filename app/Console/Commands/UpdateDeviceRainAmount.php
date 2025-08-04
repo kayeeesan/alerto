@@ -8,6 +8,7 @@ use App\Models\SensorUnderAlerto;
 use App\Models\SensorUnderPh;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\SensorsHistory;
 
 class UpdateDeviceRainAmount extends Command
 {
@@ -81,6 +82,13 @@ class UpdateDeviceRainAmount extends Command
                 if ($alerto) {
                     $alerto->device_rain_amount = $rainAmount;
                     $alerto->save();
+                    SensorsHistory::create([
+                        'uuid' => \Illuminate\Support\Str::uuid(),
+                        'sensor_uuid' => $alerto->uuid,
+                        'device_rain_amount' => $rainAmount,
+                        'device_water_level' => $alerto->device_water_level,
+                        'recorded_at' => now(),
+                    ]);
                     $this->info("Updated SensorUnderAlerto ID {$alerto->id} with latest rain amount: {$rainAmount}mm");
                     Log::info("Updated SensorUnderAlerto", [
                         'sensor_id' => $alerto->id,
