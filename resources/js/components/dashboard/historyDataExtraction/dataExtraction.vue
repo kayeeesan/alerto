@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
 import { Line } from "vue-chartjs";
+import useSensorHistories from "../../../composables/SensorHistory";
 import {
   Chart as ChartJS,
   Title,
@@ -16,13 +16,7 @@ import {
 ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
 // Composables
-const {
-  sensors_under_alerto,
-  query,
-  is_loading: alertoLoading,
-  getSensorsUnderAlerto
-} = useSensorsUnderAlerto();
-
+const { sensor_histories, getSensorHistories, is_loading } = useSensorHistories();
 // UI State
 const options = ref([]);
 const selectedOption = ref(null);
@@ -61,33 +55,52 @@ const chartOptions = {
   }
 };
 
-// Load sensors on mount
-onMounted(async () => {
-  await getSensorsUnderAlerto();
-  populateSensorOptions();
+onMounted(async() => {
+  await getSensorHistories();
 });
 
-watch(sensors_under_alerto, populateSensorOptions);
+watch(sensor_histories, (newVal) => {
+  const uniqueMap = new Map();
 
-function populateSensorOptions() {
-  options.value = sensors_under_alerto.value.map(sensor => ({
-    label: sensor.name,
-    value: sensor.uuid
-  }));
-}
+  newVal.forEach(item => {
+    if (!uniqueMap.has(item.sensor_uuid)) {
+      uniqueMap.set(item.sensor_uuid, {
+        label: item.sensor_name,
+        value: item.sensor_uuid
+      });
+    }
+  });
 
-// Simulated chart population based on selected sensor
-function populateChart() {
-  const selectedSensor = sensors_under_alerto.value.find(
-    s => s.uuid === selectedOption.value?.value
+  // Optional: Sort alphabetically by label
+  options.value = Array.from(uniqueMap.values()).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
+});
+
+const populateChart = () => {
+  if (!selectedOption.value || !fromDate.value || !toDate.value) {
+    chartDataRef.value = { labels: [], datasets: [] };
+    return;
+  }
+
+  const filtered = sensor_histories.value.filter(item => {
+    const recordedAt = new Date(item.recorded_at);
+    return (
+      item.sensor_uuid === selectedOption.value.value &&
+      recordedAt >= new Date(fromDate.value) &&
+      recordedAt <= new Date(toDate.value + 'T23:59:59') // include full day
+    );
+  });
+
+  // Sort by recorded_at
+  filtered.sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
+
+  const labels = filtered.map(item =>
+    new Date(item.recorded_at).toLocaleString()
   );
 
-  if (!selectedSensor) return;
-
-  // Simulate 3 datapoints
-  const labels = ["2025-07-01 12:00", "2025-07-01 13:00", "2025-07-01 14:00"];
-  const rainData = [0.02, 0.04, parseFloat(selectedSensor.device_rain_amount || 0)];
-  const waterData = [0.03, 0.06, parseFloat(selectedSensor.device_water_level || 0)];
+  const rainData = filtered.map(item => item.device_rain_amount ?? 0);
+  const waterData = filtered.map(item => item.device_water_level ?? 0);
 
   chartDataRef.value = {
     labels,
@@ -95,22 +108,22 @@ function populateChart() {
       {
         label: "Rain (mm)",
         data: rainData,
-        borderColor: "#FF9800",
-        backgroundColor: "rgba(255, 152, 0, 0.3)",
         yAxisID: "yRain",
-        tension: 0.3
+        borderWidth: 2,
+        fill: false
       },
       {
         label: "Water Level (m)",
         data: waterData,
-        borderColor: "#2196F3",
-        backgroundColor: "rgba(33, 150, 243, 0.3)",
         yAxisID: "yWater",
-        tension: 0.3
+        borderWidth: 2,
+        fill: false
       }
     ]
   };
-}
+};
+
+
 </script>
 
 <template>

@@ -34,7 +34,6 @@ export default function useSensorsUnderAlerto() {
             });
     };
     
-
     const storeSensorUnderAlerto = async (data) => {
         is_loading.value = true;
         errors.value = "";
