@@ -39,7 +39,7 @@ Route::get('/form/regions', [RegionController::class, 'index']);
 Route::get('/form/provinces', [ProvinceController::class, 'index']);
 Route::get('/form/municipalities', [MunicipalityController::class, 'index']);
 Route::get('/form/rivers', [RiverController::class, 'index']);
-Route::get('form/sensor-histories', [SensorHistoryController::class, 'index']);
+Route::get('/form/sensor-histories', [SensorHistoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    
@@ -84,4 +84,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     });
      Route::get('/fetch-devices', [SensorUnderAlertoController::class, 'fetchDevices']);
      Route::get('/fetch-devices', [SensorUnderPhController::class, 'fetchDevices']);
+     Route::get('/sensor-histories', [SensorHistoryController::class, 'index']);
 });
