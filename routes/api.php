@@ -21,6 +21,7 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterStaffController;
 use App\Http\Controllers\SyncController;
+use App\Http\Controllers\SensorHistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/sync/{model}', [SyncController::class, 'receive']);
@@ -38,6 +39,7 @@ Route::get('/form/regions', [RegionController::class, 'index']);
 Route::get('/form/provinces', [ProvinceController::class, 'index']);
 Route::get('/form/municipalities', [MunicipalityController::class, 'index']);
 Route::get('/form/rivers', [RiverController::class, 'index']);
+Route::get('form/sensor-histories', [SensorHistoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    

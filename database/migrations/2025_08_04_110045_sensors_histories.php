@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('device_water_level', 8, 2)->nullable();
             $table->decimal('device_rain_amount', 8, 2)->nullable();
             // Timestamp from when the reading was taken
-            $table->timestamp('recorded_at')->nullable();
+            $table->timestamp('recorded_at')->nullable()->index();
         });
     }
 
