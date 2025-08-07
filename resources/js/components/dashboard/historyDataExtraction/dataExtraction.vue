@@ -35,13 +35,25 @@ const chartOptions = {
     yRain: {
       type: "linear",
       position: "left",
-      title: { display: true, text: "Rain (mm)" }
+      title: { display: true, text: "Rain (mm)" },
+      min: 0,
+      ticks: {
+        callback: function(value) {
+          return value < 0 ? 0 : value;
+        }
+      }
     },
     yWater: {
       type: "linear",
       position: "right",
       title: { display: true, text: "Water Level (m)" },
-      grid: { drawOnChartArea: false }
+      grid: { drawOnChartArea: false },
+      min: 0,
+      ticks: {
+        callback: function(value) {
+          return value < 0 ? 0 : value;
+        }
+      }
     }
   },
   plugins: {
