@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { Line } from "vue-chartjs";
+import * as XLSX from 'xlsx';
 import useSensorHistories from "../../../composables/SensorHistory";
 import {
   Chart as ChartJS,
@@ -123,6 +124,52 @@ const populateChart = () => {
   };
 };
 
+const exportToExcel = () => {
+  if (!selectedOption.value || !fromDate.value || !toDate.value) {
+    alert('Please select a sensor and date range first');
+    return;
+  }
+
+  const filtered = sensor_histories.value.filter(item => {
+    const recordedAt = new Date(item.recorded_at);
+    return (
+      item.sensor_uuid === selectedOption.value.value &&
+      recordedAt >= new Date(fromDate.value) &&
+      recordedAt <= new Date(toDate.value + 'T23:59:59')
+    );
+  });
+
+  if (filtered.length === 0) {
+    alert('No data availbale for export');
+    return;
+  }
+
+  filtered.sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
+
+    const excelData = filtered.map(item => ({
+      'Sensor Name': item.sensor_name,
+      'Recorded At': new Date(item.recorded_at).toLocaleString(),
+      'Rain (mm)': item.device_rain_amount ?? 0,
+      'Water Level (m)': item.device_water_level ?? 0,
+      'Battery Level': item.device_battery_level ?? 'N/A',
+      'Signal Strength': item.device_signal_strength ?? 'N/A'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(
+      workbook, 
+      worksheet, 
+      `${selectedOption.value.label} Data`
+    );
+
+    // Generate file name
+    const fileName = `SensorData_${selectedOption.value.label}_${fromDate.value}_to_${toDate.value}.xlsx`;
+
+    // Export the file
+    XLSX.writeFile(workbook, fileName);
+}
 
 </script>
 
@@ -187,6 +234,7 @@ const populateChart = () => {
             variant="outlined"
             class="export-btn"
             size="large"
+            @click="exportToExcel"
           >
             <v-icon left>mdi-download</v-icon>
             <span>Export</span>
