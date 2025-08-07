@@ -19,5 +19,6 @@ return [
         'contact_messages' => \App\Models\ContactMessage::class,
         'notifications' => \App\Models\Notification::class,
         'series' => \App\Models\Series::class,
+        'sensors_histories' => \App\Models\SensorsHistory::class,
     ],
 ];

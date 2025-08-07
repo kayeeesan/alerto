@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Alert;
 use App\Models\Notification;
 use App\Models\Threshold;
-use App\Models\Sensor;
 use App\Events\AlertCreated; 
 use Illuminate\Support\Str;
 
