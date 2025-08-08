@@ -132,7 +132,7 @@ const filterSensors = computed(() => {
                     </template>
 
                     <template v-slot:item.actions="{ item }">
-                        <div class="d-flex justify-end">
+                        <div class="d-flex justify-end" v-if="isAdmin">
                             <v-btn
                                 variant="text"
                                 color="primary"
