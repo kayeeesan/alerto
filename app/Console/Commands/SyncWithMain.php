@@ -23,30 +23,28 @@ class SyncWithMain extends Command
         }
 
         $models = config('sync.models');
-        $mainUrl = 'https://alertofews.com/api/sync'; 
+        $mainUrl = 'https://alertofews.com/api/sync';
 
         foreach ($models as $key => $modelClass) {
             Log::info("[Sync] Starting model: $key");
-            $this->info("⏫ Syncing local → main: $key");
 
-            // Push local → main
+            /** --------------------------------
+             *  PUSH: Local → Main
+             * --------------------------------*/
             $toPush = $modelClass::where(function ($q) {
                 $q->whereNull('synced_at')
                   ->orWhereColumn('updated_at', '>', 'synced_at');
             })->get();
 
-            $data = $toPush->map(function ($record) use ($key) {
+            $payload = $toPush->map(function ($record) use ($key) {
                 if ($key === 'users') {
                     return $record->makeVisible(['password'])->toArray();
                 }
 
                 if ($key === 'user_roles') {
-                    $user = $record->user;
-                    $role = $record->role;
-
                     return [
-                        'user_uuid' => $user?->uuid,
-                        'role_uuid' => $role?->uuid,
+                        'user_uuid' => $record->user?->uuid,
+                        'role_uuid' => $record->role?->uuid,
                         'created_at' => $record->created_at,
                         'updated_at' => $record->updated_at
                     ];
@@ -55,63 +53,71 @@ class SyncWithMain extends Command
                 return $record->toArray();
             })->toArray();
 
-            //Send to main
-            if ($toPush->isNotEmpty()) {
-                // $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $toPush->toArray());
-                $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $data);
+            if (!empty($payload)) {
+                $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $payload);
 
                 if ($response->failed()) {
-                    $this->error("❌ Failed to push data for model: $key");
-                    Log::error("[Sync] Push failed for model: $key. Status: {$response->status()}, Body: {$response->body()}");
+                    $this->error("❌ Failed to push $key");
+                    Log::error("[Sync] Push failed for $key. Status: {$response->status()}");
                     continue;
                 }
 
-                foreach ($toPush as $record) {
-                    $record->update(['synced_at' => now()]);
-                }
+                $toPush->each->update(['synced_at' => now()]);
             }
 
-            // Pull main → local
-            $this->info("✅ Pulling from main → local: $key");
-
+            /** --------------------------------
+             *  PULL: Main → Local
+             * --------------------------------*/
             $response = Http::timeout(60)->get("{$mainUrl}/{$key}");
 
             if ($response->failed()) {
-                $this->error("❌ Failed to pull data for model: $key");
-                Log::error("[Sync] Pull failed for model: $key. Status: {$response->status()}, Body: {$response->body()}");
+                $this->error("❌ Failed to pull $key");
+                Log::error("[Sync] Pull failed for $key. Status: {$response->status()}");
                 continue;
             }
 
             $dataArray = $response->json();
-
             if (!is_array($dataArray)) {
-                $this->error("❌ Invalid response for model: $key — not an array.");
-                Log::error("[Sync] Invalid JSON response for model: $key. Raw: " . $response->body());
+                $this->error("❌ Invalid response for $key");
+                Log::error("[Sync] Invalid JSON for $key: " . $response->body());
                 continue;
             }
 
-            foreach ($dataArray as $data) {
+            /** Special case for user_roles */
+            if ($key === 'user_roles') {
+                $mainPairs = [];
 
-                 if ($key === 'user_roles') {
+                foreach ($dataArray as $data) {
                     $user = User::where('uuid', $data['user_uuid'])->first();
                     $role = Role::where('uuid', $data['role_uuid'])->first();
 
                     if (!$user || !$role) {
-                        Log::warning("[Sync] Skipping user_roles pull. User or role not found.");
+                        Log::warning("[Sync] Skipping user_role: missing user/role");
                         continue;
                     }
 
-                    $modelClass::updateOrCreate([
-                        'user_id' => $user->id,
-                        'role_id' => $role->id,
-                    ], [
-                        'created_at' => $data['created_at'],
-                        'updated_at' => $data['updated_at'],
-                    ]);
+                    $mainPairs[] = [$user->id, $role->id];
 
-                    continue;
+                    $modelClass::updateOrCreate(
+                        ['user_id' => $user->id, 'role_id' => $role->id],
+                        ['created_at' => $data['created_at'], 'updated_at' => $data['updated_at']]
+                    );
                 }
 
+                // Delete local roles not present in main
+                $modelClass::whereNot(function ($q) use ($mainPairs) {
+                    foreach ($mainPairs as [$uid, $rid]) {
+                        $q->orWhere(function ($sub) use ($uid, $rid) {
+                            $sub->where('user_id', $uid)->where('role_id', $rid);
+                        });
+                    }
+                })->delete();
+
+                continue; // skip generic model sync
+            }
+
+            /** Generic model sync (for everything except user_roles) */
+            foreach ($dataArray as $data) {
                 $existing = $modelClass::withTrashed()->where('uuid', $data['uuid'])->first();
 
                 if (!$existing) {
@@ -134,7 +140,6 @@ class SyncWithMain extends Command
                 }
             }
 
-            $this->info("✅ Model synced successfully: $key");
             Log::info("[Sync] Model OK: $key");
         }
 
