@@ -60,8 +60,21 @@ class AlertService
                     'rain'
                 );
                 // Update previous value
+                \Log::info("Alert created for sensor {$sensor->id} (rain)", [
+                    'rain' => $currentRain,
+                    'type' => $rainStatus['type'],
+                ]);
                 $sensor->previous_rain_amount = $currentRain;
             }
+        }
+
+        if (empty($statuses)) {
+            \Log::info("No alerts created for sensor {$sensor->id}", [
+                'current_water' => $currentWater,
+                'previous_water' => $previousWater,
+                'current_rain' => $currentRain,
+                'previous_rain' => $previousRain
+            ]);
         }
 
         // Update sensor status if any alerts were created
