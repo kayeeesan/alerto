@@ -26,7 +26,7 @@ class UpdateDeviceRainAmount extends Command
             $this->info('Fetching latest device data from API...');
             Log::info('Making API request to fetch device data');
             
-            $response = Http::get('https://alertofews.com/api/api-awls/get_arg_data.php');
+            $response = Http::retry(3, 500)->timeout(10)->get('https://alertofews.com/api/api-awls/get_arg_data.php');
 
             if (!$response->successful()) {
                 $errorMessage = 'API request failed with status: ' . $response->status();
@@ -69,85 +69,113 @@ class UpdateDeviceRainAmount extends Command
 
             $alertService = app(AlertService::class);
 
+            $alertoSensors = SensorUnderAlerto::whereIn('device_id', $latestDeviceEvents->keys())
+                ->get()
+                ->keyBy('device_id');
+
+            $phSensors = SensorUnderPh::whereIn('device_id', $latestDeviceEvents->keys())
+                ->get()
+                ->keyBy('device_id');
+
             foreach ($latestDeviceEvents as $deviceEvent) {
-                $sensorId = $deviceEvent['sensor_id'];
-                $eventTime = $deviceEvent['created_at'] ?? 'Unknown time';
-                $rainAmount = $deviceEvent['event_acc'];
-                
-                $this->info("Processing sensor: {$sensorId} - Last update: {$eventTime}");
-                Log::info("Processing sensor", [
-                    'sensor_id' => $sensorId,
-                    'last_update_time' => $eventTime,
-                    'rain_amount' => $rainAmount
-                ]);
-
-                // Update in SensorUnderAlerto
-                $alerto = SensorUnderAlerto::where('device_id', $sensorId)->first();
-                if ($alerto) {
-                    $alerto->device_rain_amount = $rainAmount;
-                    $alerto->save();
-                    SensorsHistory::create([
-                        'uuid' => \Illuminate\Support\Str::uuid(),
-                        'sensor_uuid' => $alerto->uuid,
-                        'device_rain_amount' => $rainAmount,
-                        'device_water_level' => $alerto->device_water_level,
-                        'recorded_at' => now(),
-                    ]);
-
-                    Log::info("Calling AlertService for SensorUnderAlerto", [
-                        'sensor_id' => $alerto->id,
-                        'threshold' => $alerto->threshold,
+                try {
+                    $sensorId = $deviceEvent['sensor_id'];
+                    $eventTime = $deviceEvent['created_at'] ?? 'Unknown time';
+                    $rainAmount = $deviceEvent['event_acc'];
+                    
+                    $this->info("Processing sensor: {$sensorId} - Last update: {$eventTime}");
+                    Log::info("Processing sensor", [
+                        'sensor_id' => $sensorId,
+                        'last_update_time' => $eventTime,
                         'rain_amount' => $rainAmount
                     ]);
-                    if ($alerto && $alerto->threshold) {
-                        $alertService->createAlertIfNeeded($alerto->threshold);
+
+                    $recordedAt = !empty($deviceEvent['created_at'])
+                        ? Carbon::parse($deviceEvent['created_at'])
+                        : now();
+
+                    // Update in SensorUnderAlerto
+                    // $alerto = SensorUnderAlerto::where('device_id', $sensorId)->first();
+                    $alerto = $alertoSensors->get($sensorId);
+                    if ($alerto) {
+                        $alerto->device_rain_amount = $rainAmount;
+                        $alerto->save();
+
+                        SensorsHistory::create([
+                            'uuid' => \Illuminate\Support\Str::uuid(),
+                            'sensor_uuid' => $alerto->uuid,
+                            'device_rain_amount' => $rainAmount,
+                            'device_water_level' => $alerto->device_water_level,
+                            'recorded_at' => $recordedAt,
+                        ]);
+
+                        Log::info("Calling AlertService for SensorUnderAlerto", [
+                            'sensor_id' => $alerto->id,
+                            'threshold' => $alerto->threshold,
+                            'rain_amount' => $rainAmount
+                        ]);
+
+                        if ($alerto && $alerto->threshold) {
+                            $alertService->createAlertIfNeeded($alerto->threshold);
+                        }
+                        
+                        Log::info("Finished calling AlertService for SensorUnderAlerto", [
+                            'sensor_id' => $alerto->id
+                        ]);
+
+                        $this->info("Updated SensorUnderAlerto ID {$alerto->id} with latest rain amount: {$rainAmount}mm");
+                        Log::info("Updated SensorUnderAlerto", [
+                            'sensor_id' => $alerto->id,
+                            'rain_amount' => $rainAmount,
+                            'updated_at' => now()
+                        ]);
                     }
-                    Log::info("Finished calling AlertService for SensorUnderAlerto", [
-                        'sensor_id' => $alerto->id
-                    ]);
 
-                    $this->info("Updated SensorUnderAlerto ID {$alerto->id} with latest rain amount: {$rainAmount}mm");
-                    Log::info("Updated SensorUnderAlerto", [
-                        'sensor_id' => $alerto->id,
-                        'rain_amount' => $rainAmount,
-                        'updated_at' => now()
-                    ]);
-                }
+                    // Update in SensorUnderPh
+                    // $ph = SensorUnderPh::where('device_id', $sensorId)->first();
+                    $ph = $phSensors->get($sensorId);
+                    if ($ph) {
+                        $ph->device_rain_amount = $rainAmount;
+                        $ph->save();
 
-                // Update in SensorUnderPh
-                $ph = SensorUnderPh::where('device_id', $sensorId)->first();
-                if ($ph) {
-                    $ph->device_rain_amount = $rainAmount;
-                    $ph->save();
+                        SensorsHistory::create([
+                            'uuid' => Str::uuid(),
+                            'sensor_uuid' => $ph->uuid,
+                            'device_rain_amount' => $rainAmount,
+                            'device_water_level' => $ph->device_water_level,
+                            'recorded_at' => $recordedAt,
+                        ]);
 
-                    SensorsHistory::create([
-                        'uuid' => Str::uuid(),
-                        'sensor_uuid' => $ph->uuid,
-                        'device_rain_amount' => $rainAmount,
-                        'device_water_level' => $ph->device_water_level,
-                        'recorded_at' => now(),
-                    ]);
+                        Log::info("Calling AlertService for SensorUnderPh", [
+                            'sensor_id' => $ph->id,
+                            'threshold' => $ph->threshold,
+                            'rain_amount' => $rainAmount
+                        ]);
+                        if ($ph && $ph->threshold) {
+                            $alertService->createAlertIfNeeded($ph->threshold);
+                        }
+                        Log::info("Finished calling AlertService for SensorUnderPh", [
+                            'sensor_id' => $ph->id
+                        ]);
 
-                    Log::info("Calling AlertService for SensorUnderPh", [
-                        'sensor_id' => $ph->id,
-                        'threshold' => $ph->threshold,
-                        'rain_amount' => $rainAmount
-                    ]);
-                    if ($ph && $ph->threshold) {
-                        $alertService->createAlertIfNeeded($ph->threshold);
+                        $this->info("Updated SensorUnderPh ID {$ph->id} with latest rain amount: {$rainAmount}mm");
+                        Log::info("Updated SensorUnderPh", [
+                            'sensor_id' => $ph->id,
+                            'rain_amount' => $rainAmount,
+                            'updated_at' => now()
+                        ]);
                     }
-                    Log::info("Finished calling AlertService for SensorUnderPh", [
-                        'sensor_id' => $ph->id
-                    ]);
 
-                    $this->info("Updated SensorUnderPh ID {$ph->id} with latest rain amount: {$rainAmount}mm");
-                    Log::info("Updated SensorUnderPh", [
-                        'sensor_id' => $ph->id,
-                        'rain_amount' => $rainAmount,
-                        'updated_at' => now()
-                    ]);
+                    } catch (\Exception $e) {
+                        Log::error("Error processing sensor {$deviceEvent['sensor_id']}", [
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+
+                        $this->error("Failed to process sensor {$deviceEvent['sensor_id']}. Skipping...");
+                        continue; // move to the next sensor
+                    }
                 }
-            }
 
             $successMessage = 'Device data update completed successfully. Processed ' . $latestDeviceEvents->count() . ' devices.';
             $this->info($successMessage);
