@@ -79,11 +79,13 @@ class AlertService
 
         // Update sensor status if any alerts were created
         $this->updateSensorStatus($sensor, $statuses);
+
+        $sensor->save();
         
         // Save any changes to previous values or status
-        if (!empty($statuses)) {
-            $sensor->save();
-        }
+        // if (!empty($statuses)) {
+        //     $sensor->save();
+        // }
     }
 
     private function checkWaterLevelStatus($waterLevel, $threshold, $river)
@@ -133,6 +135,7 @@ class AlertService
     private function updateSensorStatus($sensor, $statuses)
     {
         if (empty($statuses)) {
+            $sensor->status = 'normal';
             return;
         }
 
