@@ -6,10 +6,22 @@ use App\Models\Alert;
 use App\Models\Notification;
 use App\Models\Threshold;
 use App\Events\AlertCreated; 
+use App\Models\User;
 use Illuminate\Support\Str;
 
 class AlertService
 {
+
+    private $adminUsers;
+
+    public function __construct()
+    {
+        $this->adminUsers = User::whereHas('roles', function ($query) {
+            $query->where('slug', 'administrator');
+        })->get();
+        
+    }
+
     public function createAlertIfNeeded(Threshold $threshold)
     {
         $sensor = $threshold->sensorable;
@@ -157,17 +169,17 @@ class AlertService
         ]);
 
         // Get users assigned to this river
-        $usersByRiver = \App\Models\User::whereHas('staff', function ($query) use ($riverId) {
+        $usersByRiver = User::whereHas('staff', function ($query) use ($riverId) {
             $query->where('river_id', $riverId);
         })->get();
 
         // Get admin users
-        $adminUsers = \App\Models\User::whereHas('roles', function ($query) {
-            $query->where('slug', 'administrator');
-        })->get();
+        // $adminUsers = User::whereHas('roles', function ($query) {
+        //     $query->where('slug', 'administrator');
+        // })->get();
 
         // Merge and remove duplicates
-        $usersToNotify = $usersByRiver->merge($adminUsers)->unique('id');
+        $usersToNotify = $usersByRiver->merge($this->adminUsers)->unique('id');
 
         // Associate users to alert
         $pivotData = $usersByRiver->pluck('id')->mapWithKeys(function ($userId) {
