@@ -167,6 +167,7 @@ class AlertService
             'threshold_id' => $threshold->id,
             'details' => $details,
             'status' => 'pending',
+            'type' => $type,
             'expired_at' => now()->addMinutes(30),
             'alert_type' => $alertType,
         ]);
