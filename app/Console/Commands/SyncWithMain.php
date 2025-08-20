@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use App\Helpers\NetworkHelper;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class SyncWithMain extends Command
 {
@@ -118,23 +120,47 @@ class SyncWithMain extends Command
 
             /** Generic model sync (for everything except user_roles) */
             foreach ($dataArray as $data) {
-                $existing = $modelClass::withTrashed()->where('uuid', $data['uuid'])->first();
+                $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                $query = $modelClass::query();
+                if ($usesSoftDeletes) {
+                    $query = $query->withTrashed();
+                }
+                $existing = $query->where('uuid', $data['uuid'])->first();
 
                 if (!$existing) {
-                    $modelClass::create(array_merge($data, ['synced_at' => now()]));
+                    $createData = array_merge($data, ['synced_at' => now()]);
+                    if (!$usesSoftDeletes) {
+                        unset($createData['deleted_at']);
+                    }
+                    $modelClass::create($createData);
                 } else {
-                    $needsUpdate = $data['updated_at'] > $existing->updated_at;
-                    $deletedChanged = $data['deleted_at'] !== $existing->deleted_at;
+                    $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
+                    $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
+
+                    $deletedChanged = false;
+                    if ($usesSoftDeletes) {
+                        $remoteDeletedAt = $data['deleted_at'] ?? null;
+                        $remoteDeletedAt = $remoteDeletedAt ? Carbon::parse($remoteDeletedAt) : null;
+                        $existingDeletedAt = $existing->deleted_at;
+                        $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
+                    }
 
                     if ($needsUpdate || $deletedChanged) {
-                        $existing->update(array_merge($data, ['synced_at' => now()]));
-
-                        if (!is_null($data['deleted_at']) && !$existing->trashed()) {
-                            $existing->delete();
+                        $updateData = array_merge($data, ['synced_at' => now()]);
+                        if (!$usesSoftDeletes) {
+                            unset($updateData['deleted_at']);
                         }
+                        $existing->update($updateData);
 
-                        if (is_null($data['deleted_at']) && method_exists($existing, 'restore') && $existing->trashed()) {
-                            $existing->restore();
+                        if ($usesSoftDeletes) {
+                            if (!is_null($data['deleted_at']) && !$existing->trashed()) {
+                                $existing->delete();
+                            }
+
+                            if (is_null($data['deleted_at']) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                $existing->restore();
+                            }
                         }
                     }
                 }
