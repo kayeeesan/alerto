@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'responded', 'expired'])->default('pending');
             $table->timestamp('expired_at')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); 
+            $table->enum('type', ['warning', 'alert', 'critical'])->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

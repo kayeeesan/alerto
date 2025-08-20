@@ -25,10 +25,16 @@ const headers = [
 ];
 
 const getColor = (alert) => {
-    if (alert.details.includes("critical")) return 'red';
-    if (alert.details.includes("alert")) return 'orange';
-    if (alert.details.includes("monitor")) return 'yellow';
-    return 'grey';
+    switch (alert.type) {
+        case "critical":
+            return "red";
+        case "alert":
+            return "orange";
+        case "warning":
+            return "yellow";
+        default:
+            return "grey";
+    }
 };
 
 const statusColor = (status) => {

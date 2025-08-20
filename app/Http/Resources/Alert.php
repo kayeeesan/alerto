@@ -21,6 +21,7 @@ class Alert extends JsonResource
             'details' => $this->details,
             'status' => $this->status,
             'user' => $this->user,
+            'type' => $this->type,
             'expired_at' => $this->expired_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
