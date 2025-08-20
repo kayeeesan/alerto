@@ -200,7 +200,7 @@ class AlertService
                 'user_id' => $user->id,
                 'river_id' => $riverId,
                 'text' => $details,
-                // 'type' => $type,
+                'type' => $type,
                 'alert_type' => $alertType,
                 'alert_id' => $alert->id,
             ]);
