@@ -27,7 +27,7 @@ export default function useUsers() {
     echo.channel('public-users')
         .listen('.UserCreated', (event) => {
             getUsers();
-            console.log('Event received on public-users', event);
+            // console.log('Event received on public-users', event);
             eventBus.$emit('user-created', event);
         })
 
