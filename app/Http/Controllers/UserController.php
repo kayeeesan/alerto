@@ -11,6 +11,7 @@ use App\Services\UserLogService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
+use App\Events\UserCreated;
 
 class UserController extends Controller
 {
@@ -61,6 +62,8 @@ class UserController extends Controller
             $user->password = bcrypt($default_password);
             $user->status = 'pending';
             $user->save();
+
+            event(new UserCreated($user));
 
             $this->logService->logAction('User', $user->id, 'create', $user->toArray());
             

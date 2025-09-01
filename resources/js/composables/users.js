@@ -1,6 +1,9 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import Swal from "sweetalert2";
+import Pusher from 'pusher-js';
+import Echo from 'laravel-echo';
+import { eventBus } from './eventBus';
 
 export default function useUsers() {
     const user = ref(null);
@@ -13,6 +16,20 @@ export default function useUsers() {
         search: null,
         page: 1,
     });
+
+    const echo = new Echo({
+        broadcaster: 'pusher',
+        key: '57206333aea283adecc8',
+        cluster: 'ap1',
+        forceTLS: true,
+    });
+
+    echo.channel('public-users')
+        .listen('.UserCreated', (event) => {
+            getUsers();
+            console.log('Event received on public-users', event);
+            eventBus.$emit('user-created', event);
+        })
 
     const getUsers = async (params = {}) => {
         is_loading.value = true;

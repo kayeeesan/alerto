@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Helpers\NetworkHelper;
 use App\Models\User;
 use App\Models\Role;
+use App\Events\UserCreated;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
@@ -133,7 +134,11 @@ class SyncWithMain extends Command
                     if (!$usesSoftDeletes) {
                         unset($createData['deleted_at']);
                     }
-                    $modelClass::create($createData);
+                    $newRecord = $modelClass::create($createData);
+
+                    if ($key === 'users') {
+                        event(new UserCreated($newRecord));
+                    }
                 } else {
                     $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
                     $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
@@ -152,6 +157,10 @@ class SyncWithMain extends Command
                             unset($updateData['deleted_at']);
                         }
                         $existing->update($updateData);
+
+                        if ($key === 'users') {
+                            event(new UserCreated($existing));
+                        }
 
                         if ($usesSoftDeletes) {
                             if (!is_null($data['deleted_at']) && !$existing->trashed()) {
