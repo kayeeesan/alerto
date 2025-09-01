@@ -47,7 +47,7 @@ export default function useNotifications() {
       echo.channel('public-alerts')
         .listen('.AlertCreated', (event) => {
             getNotifications();
-            console.log('Event received on public-alerts', event);
+            // console.log('Event received on public-alerts', event);
             eventBus.$emit('alert-received', event);
     });
 

@@ -49,7 +49,7 @@ export default function useAlerts() {
     });
 
     const handleNewAlert = () => {
-        console.log('New alert received, refreshing notifications...');
+        // console.log('New alert received, refreshing notifications...');
         getAlerts();
     };
 
@@ -57,7 +57,7 @@ export default function useAlerts() {
 
     echo.channel('alerts-updated')
     .listen('.AlertUpdated', (e) => {
-        console.log('✅ Received AlertUpdated:', e.alert); // ✅ Should now be populated
+        // console.log('✅ Received AlertUpdated:', e.alert); // ✅ Should now be populated
         getAlerts(); // refresh the UI
     });
 
