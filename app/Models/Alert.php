@@ -21,7 +21,7 @@ class Alert extends Model
         'status',
         'expired_at',
         'user_id',
-        // 'type',
+        'type',
         'created_at',
         'updated_at',
         'synced_at',
