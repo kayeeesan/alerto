@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Events\UserCreated;
+use App\Events\AlertUpdated;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
@@ -50,6 +51,10 @@ class SyncController extends Controller
 
                 if ($model === 'users') {
                     event(new UserCreated($record));
+                }
+
+                if ($model === 'alerts') {
+                    event(new AlertUpdated($record));
                 }
 
             } catch (\Exception $e) {

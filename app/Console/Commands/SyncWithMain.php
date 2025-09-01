@@ -9,6 +9,7 @@ use App\Helpers\NetworkHelper;
 use App\Models\User;
 use App\Models\Role;
 use App\Events\UserCreated;
+use App\Events\AlertUpdated;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
@@ -139,6 +140,10 @@ class SyncWithMain extends Command
                     if ($key === 'users') {
                         event(new UserCreated($newRecord));
                     }
+
+                    if ($key === 'alerts') {
+                        event(new AlertUpdated($newRecord));
+                    }
                 } else {
                     $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
                     $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
@@ -160,6 +165,10 @@ class SyncWithMain extends Command
 
                         if ($key === 'users') {
                             event(new UserCreated($existing));
+                        }
+
+                        if ($key === 'alerts') {
+                            event(new AlertUpdated($existing));
                         }
 
                         if ($usesSoftDeletes) {
