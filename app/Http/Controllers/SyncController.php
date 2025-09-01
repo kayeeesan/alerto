@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use App\Events\UserCreated;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
@@ -43,7 +44,13 @@ class SyncController extends Controller
                 }
 
                 // Normal model with UUID
-                $modelClass::updateOrCreate(['uuid' => $data['uuid']], $data);
+                // $modelClass::updateOrCreate(['uuid' => $data['uuid']], $data);
+
+                $record = $modelClass::updateOrCreate(['uuid' => $data['uuid']], $data);
+
+                if ($model === 'users') {
+                    event(new UserCreated($record));
+                }
 
             } catch (\Exception $e) {
                 \Log::error("Failed syncing $model: " . $e->getMessage());
