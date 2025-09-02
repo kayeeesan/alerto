@@ -1,6 +1,9 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import Swal from "sweetalert2";
+import Pusher from 'pusher-js';
+import Echo from 'laravel-echo';
+import { eventBus } from './eventBus';
 
 export default function useSensorsUnderPh() {
     const sensor_under_ph = ref(null);
@@ -13,6 +16,19 @@ export default function useSensorsUnderPh() {
         search: null,
         page: 1,
     });
+
+     const echo = new Echo({
+        broadcaster: 'pusher',
+        key: '57206333aea283adecc8',
+        cluster: 'ap1',
+        forceTLS: true,
+    });
+
+    echo.channel('public-sensors')
+        .listen('.SensorUpdated', (event) => {
+            getSensorsUnderPh();
+            eventBus.$emit('sensor-updated', event);
+        })
 
     const getSensorsUnderPh = async (params = {}, type = "") => {
         is_loading.value = true;

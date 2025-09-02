@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\SensorsHistory;
 use App\Services\AlertService;
+use App\Events\SensorUpdated;
 use Illuminate\Support\Str;
 
 class UpdateDeviceRainAmount extends Command
@@ -94,6 +95,8 @@ class UpdateDeviceRainAmount extends Command
                         ? Carbon::parse($deviceEvent['created_at'])
                         : now();
 
+                    $alerto = $alertoSensors->get($sensorId);
+                    $ph = $phSensors->get($sensorId);
                     // Update in SensorUnderAlerto
                     // $alerto = SensorUnderAlerto::where('device_id', $sensorId)->first();
                     $alerto = $alertoSensors->get($sensorId);
@@ -108,6 +111,8 @@ class UpdateDeviceRainAmount extends Command
                             'device_water_level' => $alerto->device_water_level,
                             'recorded_at' => $recordedAt,
                         ]);
+
+                        event(new SensorUpdated($alerto, $ph ?? new SensorUnderPh()));
 
                         Log::info("Calling AlertService for SensorUnderAlerto", [
                             'sensor_id' => $alerto->id,
@@ -145,6 +150,8 @@ class UpdateDeviceRainAmount extends Command
                             'device_water_level' => $ph->device_water_level,
                             'recorded_at' => $recordedAt,
                         ]);
+
+                        event(new SensorUpdated($alerto ?? new SensorUnderAlerto(), $ph));
 
                         Log::info("Calling AlertService for SensorUnderPh", [
                             'sensor_id' => $ph->id,
