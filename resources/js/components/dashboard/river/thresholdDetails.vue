@@ -19,7 +19,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card info-card">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/rain.png" alt="Rain" width="65">
+                <img src="../../../../img/riverstatus-icon/rain.svg" alt="Rain" width="65">
               </div>
               <div class="card-content">
                 <div class="parameter-name">RAIN</div>
@@ -31,7 +31,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card monitor">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/warning-rain.png" alt="Monitor" width="65">
+                <img src="../../../../img/riverstatus-icon/warning-rain.svg" alt="Monitor" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">7.5-15</div>
@@ -44,7 +44,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card alert">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/alert-rain.png" alt="Alert" width="65">
+                <img src="../../../../img/riverstatus-icon/alert-rain.svg" alt="Alert" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">16-30</div>
@@ -57,7 +57,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card evacuation">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/critical-rain.png" alt="Evacuation" width="65">
+                <img src="../../../../img/riverstatus-icon/critical-rain.svg" alt="Evacuation" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">30+</div>
@@ -79,7 +79,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card info-card">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/water.png" alt="Water" width="65">
+                <img src="../../../../img/riverstatus-icon/water.svg" alt="Water" width="65">
               </div>
               <div class="card-content">
                 <div class="parameter-name">WATER</div>
@@ -91,7 +91,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card monitor">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/warning-water.png" alt="Monitor" width="65">
+                <img src="../../../../img/riverstatus-icon/warning-water.svg" alt="Monitor" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">60% BANKFULL</div>
@@ -103,7 +103,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card alert">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/alert-water.png" alt="Alert" width="65">
+                <img src="../../../../img/riverstatus-icon/alert-water.svg" alt="Alert" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">80% BANKFULL</div>
@@ -115,7 +115,7 @@
           <v-col cols="12" sm="6" md="3">
             <v-card class="threshold-card evacuation">
               <div class="card-icon">
-                <img src="../../../../img/riverstatus-icon/critical-water.png" alt="Evacuation" width="65">
+                <img src="../../../../img/riverstatus-icon/critical-water.svg" alt="Evacuation" width="65">
               </div>
               <div class="card-content">
                 <div class="value-range">100% BANKFULL</div>
