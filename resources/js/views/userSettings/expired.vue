@@ -143,6 +143,7 @@ onMounted(async() => {
 
             <template #item.actions="{ item }">
                  <v-btn
+                    v-if="isAdmin"
                     variant="text"
                     color="error"
                     icon="mdi-delete"
