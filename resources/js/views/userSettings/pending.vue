@@ -178,6 +178,7 @@ onMounted(async() => {
                     :title="tab === 'pending' ? 'Respond' : 'Update'"
                 ></v-btn>
                 <v-btn
+                    v-if="isAdmin"
                     variant="text"
                     color="error"
                     icon="mdi-delete"
