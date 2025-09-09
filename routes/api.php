@@ -69,11 +69,6 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::patch('/alerts/{id}', [AlertController::class, 'update']);
 
     Route::resource('/staffs', StaffController::class);
-    
-    // Route::get('/staffs', [StaffController::class, 'index']); // List all
-    // Route::post('/staffs/walkin', [StaffController::class, 'storeWalkinStaff']); 
-    // Route::patch('/staffs/update/{id}', [StaffController::class, 'update']); // Update
-    // Route::delete('/staffs/{id}', [StaffController::class, 'destroy']); // Delete
 
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
     Route::patch('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);
