@@ -29,6 +29,20 @@ export default function useMunicipalities() {
             })
     }
 
+    const getMultiselectMunicipalities = async (params = {}, type = "") => {
+        is_loading.value = true;
+
+        try {
+            let query_str = { ...query.value, ...params };
+            let url = type === "/multiselect/municipalities" ? "/api/multiselect/municipalities" : "/api/form/multiselect/municipalities";
+
+            const response = await axios.get(url, { params: query_str});
+            municipalities.value = response.data.data;
+        } finally {
+            is_loading.value = false;
+        }
+    }
+
     const storeMunicipality = async (data) => {
         is_loading.value = true;
         errors.value = "";
@@ -152,5 +166,6 @@ export default function useMunicipalities() {
         updateMunicipality,
         destoryMunicipality,
         getMunicipalities,
+        getMultiselectMunicipalities
     }
 }

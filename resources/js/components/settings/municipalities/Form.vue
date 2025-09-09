@@ -4,7 +4,7 @@ import useMunicipalities from "../../../composables/municipality";
 import useProvinces from "../../../composables/province";
 
 const { errors, is_loading, is_success, storeMunicipality, updateMunicipality } = useMunicipalities();
-const {provinces, getProvinces} = useProvinces();
+const {provinces, getMultiselectProvinces} = useProvinces();
 
 const emit = defineEmits(["input", "reloadMunicipalities"]);
 const props = defineProps({
@@ -71,7 +71,7 @@ const save = async () => {
 }
 
 onMounted(() => {
-    getProvinces();
+    getMultiselectProvinces();
 });
 </script>
 <template>

@@ -40,6 +40,9 @@ Route::get('/form/provinces', [ProvinceController::class, 'index']);
 Route::get('/form/municipalities', [MunicipalityController::class, 'index']);
 Route::get('/form/rivers', [RiverController::class, 'index']);
 Route::get('/form/sensor-histories', [SensorHistoryController::class, 'index']);
+Route::get('/form/multiselect/regions', [RegionController::class, 'all']);
+Route::get('/form/multiselect/provinces', [ProvinceController::class, 'all']);
+Route::get('/form/multiselect/municipalities', [MunicipalityController::class, 'all']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    
@@ -49,9 +52,12 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::resource('/sensors_under_alerto', SensorUnderAlertoController::class);
     Route::resource('/sensors_under_ph', SensorUnderPhController::class);
     Route::resource('/regions', RegionController::class);
+    Route::get('/multiselect/regions', [RegionController::class, 'all']);
     Route::resource('/provinces', ProvinceController::class);
+    Route::get('/multiselect/provinces', [ProvinceController::class, 'all']);
     Route::resource('/rivers', RiverController::class);
     Route::resource('/municipalities', MunicipalityController::class);
+    Route::get('/multiselect/municipalities', [MunicipalityController::class, 'all']);
     Route::resource('/thresholds', ThresholdController::class);
     Route::get('/user-logs', [UserLogController::class, 'index']);
     Route::resource('/responses', ResponseController::class);

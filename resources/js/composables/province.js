@@ -29,6 +29,20 @@ export default function useProvinces() {
             })
     }
 
+    const getMultiselectProvinces = async (params = {}, type = "") => {
+        is_loading.value = true;
+
+        try {
+            let query_str = { ...query.value, ...params };
+            let url = type === "/multiselect/provinces" ? "/api/multiselect/provinces" : "/api/form/multiselect/provinces";
+
+            const response = await axios.get(url, { params: query_str});
+            provinces.value = response.data.data;
+        } finally {
+            is_loading.value = false;
+        }        
+    }
+
     const storeProvince = async (data) => {
         is_loading.value = true;
         errors.value = "";
@@ -144,5 +158,6 @@ export default function useProvinces() {
         updateProvince,
         destoryProvince,
         getProvinces,
+        getMultiselectProvinces
     }
 }

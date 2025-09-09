@@ -9,9 +9,9 @@ import useRoles from "../../../composables/roles";
 
 const { errors, is_loading, is_success, storeStaff, updateStaff } = useStaffs();
 const { roles, getRoles } = useRoles();
-const { regions, getRegions } = useRegions();
-const { provinces, getProvinces } = useProvinces();
-const { municipalities, getMunicipalities } = useMunicipalities();
+const { regions, getMultiselectRegions } = useRegions();
+const { provinces, getMultiselectProvinces } = useProvinces();
+const { municipalities, getMultiselectMunicipalities } = useMunicipalities();
 const { rivers, getRivers } = useRivers();
 
 const emit = defineEmits(["input", "reloadStaffs"]);
@@ -105,9 +105,9 @@ const save = async () => {
 
 onMounted(() => {
     getRoles();
-    getRegions();
-    getProvinces();
-    getMunicipalities();
+    getMultiselectRegions();
+    getMultiselectProvinces();
+    getMultiselectMunicipalities();
     getRivers();
 });
 

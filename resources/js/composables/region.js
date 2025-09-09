@@ -28,6 +28,20 @@ export default function useRegions() {
             });
     };
 
+    const getMultiselectRegions = async (params = {}, type = "") => {
+        is_loading.value = true;
+
+        try {
+            let query_str = { ...query.value, ...params };
+            let url = type === "/multiselect/regions" ? "/api/multiselect/regions" : "/api/form/multiselect/regions";
+
+            const response = await axios.get(url, { params: query_str});
+            regions.value = response.data.data;
+        } finally {
+            is_loading.value = false;
+        }
+    }
+
    const storeRegion = async (data) => {
         is_loading.value = true;
         errors.value = "";
@@ -143,5 +157,6 @@ export default function useRegions() {
         updateRegion,
         destoryRegion,
         getRegions,
+        getMultiselectRegions
     }
 }

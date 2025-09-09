@@ -7,6 +7,7 @@ import useProvinces from "../../composables/province";
 import useMunicipalities from "../../composables/municipality";
 import useRivers from "../../composables/river";
 import useRoles from "../../composables/roles";
+import { get } from "@vueuse/core";
 
 const props = defineProps({
     staff: Object
@@ -17,9 +18,9 @@ const router = useRouter();
 
 const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
 const { roles, getRoles } = useRoles();
-const { regions, getRegions } = useRegions();
-const { provinces, getProvinces } = useProvinces();
-const { municipalities, getMunicipalities } = useMunicipalities();
+const { regions, getMultiselectRegions } = useRegions();
+const { provinces, getMultiselectProvinces } = useProvinces();
+const { municipalities, getMultiselectMunicipalities } = useMunicipalities();
 const { rivers, getRivers } = useRivers();
 
 const initialState = {
@@ -91,10 +92,10 @@ watch(
 
 onMounted(() => {
     getRoles();
-    getRegions();
-    getProvinces();
-    getMunicipalities();
+    getMultiselectProvinces();
+    getMultiselectMunicipalities();
     getRivers();
+    getMultiselectRegions();
 });
 
 const filteredProvinces = computed(() => {

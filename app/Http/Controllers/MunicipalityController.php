@@ -28,8 +28,13 @@ class MunicipalityController extends Controller
             $municipalities = Municipality::where('name', 'like', '%' . $request->search . '%');
         } 
 
-        $municipalities = isset($request->search) && $request->search ? $municipalities->paginate(1574) : Municipality::paginate(1574);
-        return ResourcesMunicipality::collection(Municipality::paginate(1574));
+        $municipalities = isset($request->search) && $request->search ? $municipalities->paginate(10) : Municipality::paginate(10);
+        return ResourcesMunicipality::collection(Municipality::paginate(10));
+    }
+
+    public function all()
+    {
+        return ResourcesMunicipality::collection(Municipality::orderBy('name')->get());
     }
 
     public function store(MunicipalityRequest $request)

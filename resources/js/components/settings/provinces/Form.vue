@@ -4,7 +4,7 @@ import useProvinces from "../../../composables/province";
 import useRegions from "../../../composables/region";
 
 const { errors, is_loading, is_success, storeProvince, updateProvince } = useProvinces();
-const {regions, getRegions} = useRegions();
+const {regions, getMultiselectRegions} = useRegions();
 
 const emit = defineEmits(["input", "reloadProvinces"]);
 const props = defineProps({
@@ -66,7 +66,7 @@ const save = async () => {
 }
 
 onMounted(() => {
-    getRegions();
+    getMultiselectRegions();
 });
 </script>
 <template>

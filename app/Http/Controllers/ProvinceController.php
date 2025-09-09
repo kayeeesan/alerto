@@ -28,8 +28,13 @@ class ProvinceController extends Controller
             $provinces = Province::where('name', 'like', '%' . $request->search . '%');
         }
 
-        $provinces = isset($request->search) && $request->search ? $provinces->paginate(999) : Province::paginate(999);
+        $provinces = isset($request->search) && $request->search ? $provinces->paginate(10) : Province::paginate(10);
         return ResourcesProvince::collection($provinces);
+    }
+
+    public function all()
+    {
+        return ResourcesProvince::collection(Province::orderBy('name')->get());
     }
 
     public function store(ProvinceRequest $request)
