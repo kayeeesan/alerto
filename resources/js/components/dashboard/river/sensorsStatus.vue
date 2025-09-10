@@ -143,11 +143,32 @@ const formatDateTime = (isoString) => {
               {{ item.rain_amount || '0' }}
             </template>
 
-            <template v-slot:bottom>
+            <!-- <template v-slot:bottom>
               <div class="table-footer">
                 <span>Showing {{ filteredSensors.length }} sensors</span>
               </div>
+            </template> -->
+
+            <template v-slot:bottom>
+              <div class="d-flex flex-column flex-md-row justify-space-between align-center pa-4">
+                <div class="text-caption text-medium-emphasis mb-2 mb-md-0">
+                  <span v-if="filteredSensors.length">
+                    Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }} entries
+                  </span>
+                  <span v-else>
+                    No entries found
+                  </span>
+                </div>
+                <v-pagination
+                  v-if="filteredSensors.length"
+                  v-model="query.page"
+                  :length="pagination.last_page"
+                  :total-visible="5"
+                  density="comfortable"
+                />
+              </div>
             </template>
+
           </v-data-table>
         </v-card>
       </div>
