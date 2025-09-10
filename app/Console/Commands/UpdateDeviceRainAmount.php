@@ -54,7 +54,7 @@ class UpdateDeviceRainAmount extends Command
             // Group devices by sensor_id and keep only the latest event for each
             $latestDeviceEvents = collect($responseData['data'])
                 ->filter(function ($data) {
-                    return isset($data['sensor_id']) && isset($data['event_acc']);
+                    return isset($data['sensor_id']) && isset($data['rain_int']);
                 })
                 ->groupBy('sensor_id')
                 ->map(function ($deviceEvents) {
@@ -82,7 +82,7 @@ class UpdateDeviceRainAmount extends Command
                 try {
                     $sensorId = $deviceEvent['sensor_id'];
                     $eventTime = $deviceEvent['created_at'] ?? 'Unknown time';
-                    $rainAmount = $deviceEvent['event_acc'];
+                    $rainAmount = $deviceEvent['rain_int'];
                     
                     $this->info("Processing sensor: {$sensorId} - Last update: {$eventTime}");
                     Log::info("Processing sensor", [

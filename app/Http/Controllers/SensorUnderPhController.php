@@ -50,7 +50,7 @@ class SensorUnderPhController extends Controller
                         return [
                             'name' => 'ESN ' . $item['sensor_id'],
                             'device_id' => $item['sensor_id'],
-                            'device_rain_amount' => $item['event_acc'] ?? null,  // map like old EventAcc
+                            'device_rain_amount' => $item['rain_int'] ?? null,  // map like old EventAcc
                             'device_water_level' => $item['distance'] ?? null,   // use if available
                             'created_at' => $item['created_at'] ?? null,
                             'acc' => $item['acc'] ?? null,
