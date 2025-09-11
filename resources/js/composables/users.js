@@ -17,11 +17,21 @@ export default function useUsers() {
         page: 1,
     });
 
+    // const echo = new Echo({
+    //     broadcaster: 'pusher',
+    //     key: '57206333aea283adecc8',
+    //     cluster: 'ap1',
+    //     forceTLS: true,
+    // });
+
     const echo = new Echo({
-        broadcaster: 'pusher',
+        broadcaster: 'reverb',
         key: '57206333aea283adecc8',
-        cluster: 'ap1',
-        forceTLS: true,
+        wsHost: '127.0.0.1',
+        wsPort: 6001,
+        wssPort: 6001,
+        forceTLS: false,
+        enabledTransports: ['ws']
     });
 
     echo.channel('public-users')

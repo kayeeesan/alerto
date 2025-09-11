@@ -15,12 +15,12 @@ export default function useNotifications() {
   });
 
 
-    const echo = new Echo({
-        broadcaster: 'pusher',
-        key: '57206333aea283adecc8',
-        cluster: 'ap1',
-        forceTLS: true,
-    });
+    // const echo = new Echo({
+    //     broadcaster: 'pusher',
+    //     key: '57206333aea283adecc8',
+    //     cluster: 'ap1',
+    //     forceTLS: true,
+    // });
 
 
     // const echo = new Echo({
@@ -33,15 +33,15 @@ export default function useNotifications() {
     //     enabledTransports: import.meta.env.VITE_REVERB_SCHEME === 'https' ? ['wss'] : ['ws'],
     // });
 
-    //   const echo = new Echo({
-    //     broadcaster: 'reverb',
-    //     key: '57206333aea283adecc8',
-    //     wsHost: '127.0.0.1',
-    //     wsPort: 6001,
-    //     wssPort: 6001,
-    //     forceTLS: false,
-    //     enabledTransports: ['ws']
-    // });
+      const echo = new Echo({
+        broadcaster: 'reverb',
+        key: '57206333aea283adecc8',
+        wsHost: '127.0.0.1',
+        wsPort: 6001,
+        wssPort: 6001,
+        forceTLS: false,
+        enabledTransports: ['ws']
+    });
 
 
       echo.channel('public-alerts')
