@@ -25,8 +25,8 @@ const handleSend = async () => {
 <template>
     <v-app>
         <v-layout class="bg-indigo-darken-1" style="position: relative; overflow: hidden;">
-            <!-- Circular background elements matching login page -->
-            <div class="circle-bg" style="
+            <!-- Background Elements -->
+            <div class="bg-circle" style="
                 position: absolute;
                 top: -100px;
                 right: -100px;
@@ -35,7 +35,7 @@ const handleSend = async () => {
                 border-radius: 50%;
                 background: rgba(255, 255, 255, 0.1);
             "></div>
-            <div class="circle-bg" style="
+            <div class="bg-circle" style="
                 position: absolute;
                 bottom: -150px;
                 left: -150px;
@@ -44,18 +44,10 @@ const handleSend = async () => {
                 border-radius: 50%;
                 background: rgba(255, 255, 255, 0.08);
             "></div>
-            <div class="circle-bg" style="
-                position: absolute;
-                top: 50%;
-                left: 30%;
-                width: 300px;
-                height: 300px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.05);
-            "></div>
             
-            <v-container fluid class="fill-height d-flex align-center justify-center" style="position: relative; z-index: 1;">
-                <v-card class="pa-8" elevation="8" width="448" rounded="lg">
+            <v-container fluid class="fill-height d-flex align-center justify-center">
+                <v-card class="pa-8" elevation="8" width="500px" rounded="lg" style="position: relative; z-index: 1;">
+                    <!-- Header Section -->
                     <div class="text-center mb-6">
                         <router-link :to="'/'">
                             <v-img
@@ -63,52 +55,71 @@ const handleSend = async () => {
                                 max-width="100"
                                 src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
                             ></v-img>
-                            </router-link>
-                        <v-card-title class="text-h4 font-weight-bold text-primary">Reset Password</v-card-title>
+                        </router-link>
+                        <v-card-title class="text-h5 text-md-h4 font-weight-bold text-primary">
+                            Reset Password
+                        </v-card-title>
                         <v-card-subtitle class="text-caption">Enter your email to receive a reset link</v-card-subtitle>
                     </div>
-                    
+
                     <v-card-text>
                         <v-form @submit.prevent="handleSend">
-                            <v-text-field
-                                v-model="email"
-                                variant="outlined"
-                                label="Email Address"
-                                type="email"
-                                required
-                                prepend-inner-icon="mdi-email-outline"
-                                color="primary"
-                                :disabled="isLoading"
-                                class="mb-4"
-                            />
-                            
-                            <v-row>
-                                <v-col>
-                                    <v-btn
-                                        color="red darken-2"
-                                        size="large"
-                                        variant="flat"
-                                        block
-                                        :to="'/login'"
-                                    >
-                                        Cancel
-                                    </v-btn>
-                                </v-col>
-                                <v-col>
-                                    <v-btn
-                                        color="primary"
-                                        size="large"
-                                        variant="flat"
-                                        block
-                                        @click="handleSend"
-                                        :loading="isLoading"
-                                    >
-                                        Send Link
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <!-- Email Input Section -->
+                            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                                <v-card-title class="text-subtitle-1 font-weight-bold">Account Recovery</v-card-title>
+                                
+                                <v-row>
+                                    <v-col cols="12">
+                                        <div class="d-flex">
+                                            <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-email</v-icon>
+                                            <v-text-field
+                                                v-model="email"
+                                                variant="outlined"
+                                                label="Email Address*"
+                                                type="email"
+                                                required
+                                                density="comfortable"
+                                                :disabled="isLoading"
+                                                bg-color="white"
+                                                class="dark-input"
+                                                :rules="[
+                                                    (v) => !!v || 'Email is required',
+                                                    (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
+                                                ]"
+                                            />
+                                        </div>
+                                    </v-col>
+                                </v-row>
+                            </v-card>
                         </v-form>
                     </v-card-text>
+
+                    <!-- Action Buttons -->
+                    <v-card-actions class="justify-end pt-4">
+                        <v-row>
+                            <v-col class="d-flex justify-end">
+                                <v-btn 
+                                    color="red-darken-2" 
+                                    variant="flat" 
+                                    :to="'/login'"
+                                    size="large"
+                                    class="mr-2"
+                                >
+                                    <v-icon>mdi-arrow-left</v-icon>
+                                </v-btn>
+                          
+                                <v-btn 
+                                    color="blue-darken-4" 
+                                    variant="flat" 
+                                    :loading="isLoading" 
+                                    @click="handleSend"
+                                    size="large"
+                                >
+                                    <v-icon>mdi-email-arrow-right</v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-card-actions>
                 </v-card>
             </v-container>
         </v-layout>
@@ -116,19 +127,16 @@ const handleSend = async () => {
 </template>
 
 <style scoped>
-/* Matching animation for the circles */
-.circle-bg {
+.bg-circle {
     animation: float 15s infinite ease-in-out;
+    filter: blur(1px);
 }
 
-.circle-bg:nth-child(1) {
+.bg-circle:nth-child(1) {
     animation-delay: 0s;
 }
-.circle-bg:nth-child(2) {
+.bg-circle:nth-child(2) {
     animation-delay: 3s;
-}
-.circle-bg:nth-child(3) {
-    animation-delay: 6s;
 }
 
 @keyframes float {
@@ -138,5 +146,14 @@ const handleSend = async () => {
     50% {
         transform: translateY(-20px) rotate(5deg);
     }
+}
+
+.v-card {
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.v-card-title {
+    color: #646dcf;
 }
 </style>
