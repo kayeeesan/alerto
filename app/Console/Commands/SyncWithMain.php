@@ -57,6 +57,8 @@ class SyncWithMain extends Command
                 return $record->toArray();
             })->toArray();
 
+            $pushedCount = 0;
+
             if (!empty($payload)) {
                 $response = Http::timeout(60)->post("{$mainUrl}/{$key}", $payload);
 
@@ -67,6 +69,11 @@ class SyncWithMain extends Command
                 }
 
                 $toPush->each->update(['synced_at' => now()]);
+                $pushedCount = count($payload);
+                $this->info("⬆️ Pushed {$pushedCount} record(s) for $key");
+                Log::info("[Sync] Pushed {$pushedCount} record(s) for $key");
+            } else{
+                $this->line("⬆️ No records to push for $key");
             }
 
             /** --------------------------------
@@ -87,6 +94,14 @@ class SyncWithMain extends Command
                 continue;
             }
 
+            $pulledCount = count($dataArray);
+            $this->info("⬇️ Pulled {$pulledCount} record(s) for $key");
+            Log::info("[Sync] Pulled {$pulledCount} record(s) for $key");
+
+            if ($pulledCount === 0) {
+                Log::warning("[Sync] No data returned for $key. Response: " . $response->body());
+            }
+            
             /** Special case for user_roles */
             if ($key === 'user_roles') {
                 $mainPairs = [];
