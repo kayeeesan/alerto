@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Log;
 use App\Helpers\NetworkHelper;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Region;
+use App\Models\Province;
+use App\Models\Municipality;
+use App\Models\River;
 use App\Events\UserCreated;
 use App\Events\AlertUpdated;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +55,23 @@ class SyncWithMain extends Command
                         'role_uuid' => $record->role?->uuid,
                         'created_at' => $record->created_at,
                         'updated_at' => $record->updated_at
+                    ];
+                }
+
+                if ($key === 'staffs') {
+                    return [
+                        'uuid' => $record->uuid,
+                        'mobile_number' => $record->mobile_number,
+                        'fb_lgu' => $record->fb_lgu,
+                        'user_uuid' => $record->user?->uuid,
+                        'role_uuid' => $record->role?->uuid,
+                        'region_uuid' => $record->region?->uuid,
+                        'province_uuid' => $record->province?->uuid,
+                        'municipality_uuid' => $record->municipality?->uuid,
+                        'river_uuid' => $record->river?->uuid,
+                        'created_at' => $record->created_at,
+                        'updated_at' => $record->updated_at,
+                        'deleted_at' => $record->deleted_at,
                     ];
                 }
 
@@ -133,6 +154,72 @@ class SyncWithMain extends Command
                 })->delete();
 
                 continue; // skip generic model sync
+            }
+
+            /** Special case for staffs */
+            if ($key === 'staffs') {
+                foreach ($dataArray as $data) {
+                    $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                    $query = $modelClass::query();
+                    if ($usesSoftDeletes) {
+                        $query = $query->withTrashed();
+                    }
+                    $existing = $query->where('uuid', $data['uuid'])->first();
+
+                    $user = isset($data['user_uuid']) ? User::where('uuid', $data['user_uuid'])->first() : null;
+                    $role = isset($data['role_uuid']) ? Role::where('uuid', $data['role_uuid'])->first() : null;
+                    $region = isset($data['region_uuid']) ? Region::where('uuid', $data['region_uuid'])->first() : null;
+                    $province = isset($data['province_uuid']) ? Province::where('uuid', $data['province_uuid'])->first() : null;
+                    $municipality = isset($data['municipality_uuid']) ? Municipality::where('uuid', $data['municipality_uuid'])->first() : null;
+                    $river = isset($data['river_uuid']) ? River::where('uuid', $data['river_uuid'])->first() : null;
+
+                    if (!$user || !$role || !$region || !$province || !$municipality || !$river) {
+                        Log::warning("[Sync] Skipping staff {$data['uuid']}: missing relations");
+                        continue;
+                    }
+
+                    $attributes = [
+                        'user_id' => $user->id,
+                        'mobile_number' => $data['mobile_number'] ?? '',
+                        'role_id' => $role->id,
+                        'region_id' => $region->id,
+                        'province_id' => $province->id,
+                        'municipality_id' => $municipality->id,
+                        'river_id' => $river->id,
+                        'fb_lgu' => $data['fb_lgu'] ?? '',
+                    ];
+
+                    if (!$existing) {
+                        $createData = array_merge(['uuid' => $data['uuid']], $attributes, ['synced_at' => now()]);
+                        $modelClass::create($createData);
+                    } else {
+                        $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
+                        $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
+
+                        if ($needsUpdate) {
+                            $existing->update(array_merge($attributes, ['synced_at' => now()]));
+                        }
+
+                        if ($usesSoftDeletes) {
+                            $remoteDeletedAt = $data['deleted_at'] ?? null;
+                            $remoteDeletedAt = $remoteDeletedAt ? Carbon::parse($remoteDeletedAt) : null;
+                            $existingDeletedAt = $existing->deleted_at;
+                            $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
+
+                            if ($deletedChanged) {
+                                if (!is_null($remoteDeletedAt) && !$existing->trashed()) {
+                                    $existing->delete();
+                                } elseif (is_null($remoteDeletedAt) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                    $existing->restore();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Log::info("[Sync] Model OK: $key");
+                continue;
             }
 
             /** Generic model sync (for everything except user_roles) */
