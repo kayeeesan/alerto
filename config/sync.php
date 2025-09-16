@@ -16,7 +16,7 @@ return [
         'alerts' => \App\Models\Alert::class,
         'user_logs' => \App\Models\UserLog::class,
         'staffs' => \App\Models\Staff::class,
-        'contact_messages' => \App\Models\ContactMessage::class,
+        // 'contact_messages' => \App\Models\ContactMessage::class,
         'notifications' => \App\Models\Notification::class,
         'series' => \App\Models\Series::class,
         'sensors_histories' => \App\Models\SensorsHistory::class,
