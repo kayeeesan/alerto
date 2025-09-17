@@ -25,8 +25,7 @@ return new class extends Migration
         'thresholds', 
         'alerts', 
         'user_logs',
-        'staffs', 
-        'contact_messages', 
+        'staffs',  
         'notifications', 
         'series',
         'sensors_histories'
