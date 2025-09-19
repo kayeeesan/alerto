@@ -218,7 +218,7 @@ watch(
           <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" alt="DILG" />
         </div>
       </div>
-      <div class="copyright">© 2023 ALERTO System</div>
+      <div class="copyright">© 2025 ALERTO System</div>
     </div>
   </v-navigation-drawer>
 </template>
