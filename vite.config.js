@@ -37,7 +37,7 @@ export default defineConfig({
     server: {
         proxy: {
           '/api': {
-            target: 'https://alertofews.com',
+            target: 'https://alerto.adzu.edu.ph',
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/api/, '')
           }
