@@ -31,7 +31,7 @@ class SyncWithMain extends Command
         }
 
         $models = config('sync.models');
-        $mainUrl = 'https://alertofews.com/api/sync';
+        $mainUrl = 'https://alerto.adzu.edu.ph/api/sync';
 
         foreach ($models as $key => $modelClass) {
             Log::info("[Sync] Starting model: $key");
