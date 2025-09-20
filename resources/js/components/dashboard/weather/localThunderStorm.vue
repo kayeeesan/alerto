@@ -1,3 +1,19 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const advisory = ref("Loading...");
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get("/api/thunderstorm-advisory");
+    advisory.value = data.message;
+  } catch (err) {
+    advisory.value = "Failed to fetch advisory.";
+  }
+});
+</script>
+
 <template>
   <v-col class="threshold-container mb-4">
     <v-sheet class="threshold-sheet" rounded="lg">
@@ -9,12 +25,15 @@
       <v-divider class="divider"></v-divider>
       
       <div class="warning-content">
-        <v-icon size="64" color="grey-darken-1" class="warning-icon">mdi-message-bulleted-off</v-icon>
-        <p class="warning-text">No Event</p>
+        <v-icon size="64" color="grey-darken-1" class="warning-icon">
+          mdi-weather-lightning-rainy
+        </v-icon>
+        <p class="warning-text">{{ advisory }}</p>
       </div>
     </v-sheet>
   </v-col>
 </template>
+
 
 <style scoped>
 /* Same styles as localRainFall.vue */
