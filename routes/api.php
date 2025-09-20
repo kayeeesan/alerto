@@ -22,6 +22,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterStaffController;
 use App\Http\Controllers\SyncController;
 use App\Http\Controllers\SensorHistoryController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/sync/{model}', [SyncController::class, 'receive']);
@@ -43,6 +44,8 @@ Route::get('/form/sensor-histories', [SensorHistoryController::class, 'index']);
 Route::get('/form/multiselect/regions', [RegionController::class, 'all']);
 Route::get('/form/multiselect/provinces', [ProvinceController::class, 'all']);
 Route::get('/form/multiselect/municipalities', [MunicipalityController::class, 'all']);
+Route::get('/thunderstorm-advisory', [WeatherController::class, 'getThunderstormAdvisory']);
+Route::get('/rain-advisory', [WeatherController::class, 'getRainAdvisory']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    
