@@ -45,7 +45,7 @@ Route::get('/form/multiselect/regions', [RegionController::class, 'all']);
 Route::get('/form/multiselect/provinces', [ProvinceController::class, 'all']);
 Route::get('/form/multiselect/municipalities', [MunicipalityController::class, 'all']);
 Route::get('/thunderstorm-advisory', [WeatherController::class, 'getThunderstormAdvisory']);
-Route::get('/rain-advisory', [WeatherController::class, 'getRainAdvisory']);
+Route::get('/rain-advisory', [WeatherController::class, 'getRainfallAdvisory']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    

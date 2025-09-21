@@ -4,36 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Symfony\Component\DomCrawler\Crawler;
 
 class WeatherController extends Controller
 {
+    private Client $client;
+
+    public function __construct()
+    {
+        $this->client = new Client([
+            'timeout' => 30,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            ]
+        ]);
+    }
+
     public function getThunderstormAdvisory()
     {
+        return $this->fetchAdvisory(
+            "https://www.pagasa.dost.gov.ph/regional-forecast/minprsd",
+            "#thunderstorms > div"
+        );
+    }
+
+    public function getRainfallAdvisory()
+    {
+        return $this->fetchAdvisory(
+            "https://www.pagasa.dost.gov.ph/regional-forecast/minprsd",
+            "#rainfalls > div",
+            "No rainfall advisory found."
+        );
+    }
+
+    /**
+     * Generic fetcher for advisory sections
+     */
+    private function fetchAdvisory(string $url, string $selector)
+    {
         try {
-            $client = new \GuzzleHttp\Client([
-                'timeout' => 30,
-                'headers' => [
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                ]
-            ]);
-            
-            $url = "https://www.pagasa.dost.gov.ph/regional-forecast/minprsd"; 
-            $response = $client->get($url);
+            $response = $this->client->get($url);
             $html = (string) $response->getBody();
 
-            $advisory = $this->extractThunderstormAdvisory($html);
+            $crawler = new Crawler($html);
+            $node = $crawler->filter($selector);
 
-            if ($advisory) {
+            if ($node->count() > 0) {
                 return response()->json([
                     "status" => "success",
-                    "message" => trim(strip_tags($advisory))
-                ]);
-            } else {
-                return response()->json([
-                    "status" => "success",
-                    "message" => "As of today, there is no Thunderstorm Advisory Issued."
+                    "message" => trim(strip_tags($node->text()))
                 ]);
             }
+
+            return response()->json([
+                "status" => "success",
+                "message" => "No advisory found in the given section."
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -42,31 +68,4 @@ class WeatherController extends Controller
             ], 500);
         }
     }
-
-    private function extractThunderstormAdvisory($html)
-    {
-        // Pattern 1: Look for "Thunderstorm Watch" with timestamp
-        if (preg_match('/Thunderstorm Watch.*?Issued at:.*?\d{1,2}:\d{2} (AM|PM),.*?\d{1,2} \w+ \d{4}.*?Thunderstorm.*?MORE LIKELY.*?within.*?hours/si', $html, $matches)) {
-            return $matches[0];
-        }
-
-        // Pattern 2: Look for thunderstorm advisory in div content
-        if (preg_match('/<div[^>]*class="[^"]*field-item[^"]*"[^>]*>.*?Thunderstorm.*?(?:Watch|Advisory).*?Issued.*?\d.*?<\/div>/si', $html, $matches)) {
-            return strip_tags($matches[0]);
-        }
-
-        // Pattern 3: Look for any thunderstorm mention with timing
-        if (preg_match('/Thunderstorm.*?(?:likely|possible|expected).*?(?:within|for).*?\d+.*?hours/si', $html, $matches)) {
-            return $matches[0];
-        }
-
-        // Pattern 4: Look for the specific content structure
-        // if (preg_match('/Issued at:.*?\d{1,2}:\d{2} (AM|PM),.*?\d{1,2} \w+ \d{4}.*?Thunderstorm.*?MORE LIKELY.*?Greater Metro Manila Area/si', $html, $matches)) {
-        //     return $matches[0];
-        // }
-
-        return null;
-    }
-
-    
 }
