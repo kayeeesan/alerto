@@ -2,7 +2,8 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const advisory = ref("Loading...");
+const advisory = ref("");
+const loading = ref(true);
 
 onMounted(async () => {
   try {
@@ -10,6 +11,8 @@ onMounted(async () => {
     advisory.value = data.message;
   } catch (err) {
     advisory.value = "Failed to fetch advisory.";
+  } finally {
+    loading.value = false;
   }
 });
 </script>
@@ -17,6 +20,7 @@ onMounted(async () => {
 <template>
   <v-col class="threshold-container mb-4">
     <v-sheet class="threshold-sheet" rounded="lg">
+      <!-- Header -->
       <div class="header-container">
         <div class="alert-indicator"></div>
         <h1 class="section-title">LOCAL THUNDERSTORM WARNING</h1>
@@ -24,19 +28,32 @@ onMounted(async () => {
       
       <v-divider class="divider"></v-divider>
       
-      <div class="warning-content">
-        <v-icon size="64" color="grey-darken-1" class="warning-icon">
-          mdi-weather-lightning-rainy
-        </v-icon>
-        <p class="warning-text">{{ advisory }}</p>
+      <!-- Loading -->
+      <div class="warning-content" v-if="loading">
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        <p class="warning-text">Fetching advisory...</p>
+      </div>
+
+      <!-- Advisory -->
+      <div class="warning-scroll" v-else>
+        <template v-if="advisory">
+          <v-icon size="48" color="grey-darken-1" class="warning-icon">
+            mdi-weather-lightning-rainy
+          </v-icon>
+          <p class="warning-text">{{ advisory }}</p>
+        </template>
+        <template v-else>
+          <v-icon size="64" color="grey-darken-1" class="warning-icon">
+            mdi-message-bulleted-off
+          </v-icon>
+          <p class="warning-text">No Event</p>
+        </template>
       </div>
     </v-sheet>
   </v-col>
 </template>
 
-
 <style scoped>
-/* Same styles as localRainFall.vue */
 .threshold-container {
   padding: 0 !important;
 }
@@ -46,6 +63,9 @@ onMounted(async () => {
   border: 1px solid #E0E0E0;
   background: #FFFFFF;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  height: 320px; /* matches Rainfall card */
+  display: flex;
+  flex-direction: column;
 }
 
 .header-container {
@@ -79,21 +99,33 @@ onMounted(async () => {
 }
 
 .warning-content {
-  padding: 32px 24px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+}
+
+.warning-scroll {
+  flex: 1;
+  overflow-y: auto;    /* only vertical scroll */
+  overflow-x: hidden;  /* hide horizontal scroll */
+  padding: 16px 20px;  /* add space around text */
+  text-align: start;
 }
 
 .warning-icon {
-  margin-bottom: 16px;
+  margin: 0 auto 12px;
+  display: block;
 }
 
 .warning-text {
   font-size: 1rem;
-  color: #666;
+  color: #444;
   font-weight: 500;
   margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
 }
 </style>
