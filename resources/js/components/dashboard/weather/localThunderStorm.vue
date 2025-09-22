@@ -1,19 +1,29 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
 
 const advisory = ref("");
 const loading = ref(true);
+let refreshInterval = null;
 
-onMounted(async () => {
+async function refreshThunderstorm() {
+  loading.value = true;
   try {
-    const { data } = await axios.get("/api/thunderstorm-advisory");
-    advisory.value = data.message;
-  } catch (err) {
-    advisory.value = "Failed to fetch advisory.";
+    const res = await axios.get("/api/thunderstorm-advisory");
+    advisory.value = res.data.message;
+  } catch (e) {
+    advisory.value = "Unable to load thunderstorm advisory.";
   } finally {
     loading.value = false;
   }
+}
+
+onMounted(async () => {
+  refreshThunderstorm(); // initial fetch
+  refreshInterval = setInterval(refreshThunderstorm, 600000); // every 10 min
+});
+onBeforeUnmount(() => {
+  clearInterval(refreshInterval);
 });
 </script>
 
