@@ -7,7 +7,7 @@ import axios from "axios";
 
 const { errors, is_loading, is_success, storeSensorUnderAlerto, updateSensorUnderAlerto } = useSensorsUnderAlerto();
 const { rivers, getRivers } = useRivers();
-const { municipalities, getMunicipalities } = useMunicipalities();
+const { municipalities, getMultiselectMunicipalities } = useMunicipalities();
 
 const devices = ref([]);
 const selectedDevice = ref(null);
@@ -121,7 +121,7 @@ const onDeviceSelected = (device) => {
 onMounted(async () => {
     await Promise.all([
         getRivers(),
-        getMunicipalities(),
+        getMultiselectMunicipalities(),
         fetchDevices()
     ]);
 });

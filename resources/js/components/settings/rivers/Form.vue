@@ -4,7 +4,7 @@ import useRivers from "../../../composables/river";
 import useMunicialities from "../../../composables/municipality";
 
 const { errors, is_loading, is_success, storeRiver, updateRiver } = useRivers();
-const {municipalities, getMunicipalities} = useMunicialities();
+const {municipalities, getMultiselectMunicipalities} = useMunicialities();
 
 const emit = defineEmits(["input", "reloadRivers"]);
 const props = defineProps({
@@ -82,7 +82,7 @@ const save = async () => {
 }
 
 onMounted(() => {
-    getMunicipalities();
+    getMultiselectMunicipalities();
 })
 </script>
 <template>
