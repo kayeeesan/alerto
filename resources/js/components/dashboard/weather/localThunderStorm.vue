@@ -37,9 +37,9 @@ onMounted(async () => {
       <!-- Advisory -->
       <div class="warning-scroll" v-else>
         <template v-if="advisory">
-          <v-icon size="48" color="grey-darken-1" class="warning-icon">
+          <!-- <v-icon size="48" color="grey-darken-1" class="warning-icon">
             mdi-weather-lightning-rainy
-          </v-icon>
+          </v-icon> -->
           <p class="warning-text">{{ advisory }}</p>
         </template>
         <template v-else>
