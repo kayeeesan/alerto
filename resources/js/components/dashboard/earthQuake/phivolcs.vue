@@ -1,20 +1,31 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
 import axios from "axios";
 
 const quakes = ref([]);
 const loading = ref(true);
+let refreshInterval = null;
 
-onMounted(async () => {
+async function refreshEarthquake()
+{
+  loading.value = true;
   try {
-    const { data } = await axios.get("/api/earthquakes");
-    quakes.value = data.data;
+    const res = await axios.get("/api/earthquakes");
+    quakes.value = res.data.data;
   } catch (e) {
     console.error(e);
     quakes.value = [];
   } finally {
     loading.value = false;
   }
+}
+
+onMounted(async () => {
+  refreshEarthquake();
+  refreshInterval = setInterval(refreshEarthquake, 600000); // every 10 min
+});
+onBeforeMount(() => {
+  clearInterval(refreshInterval);
 });
 </script>
 

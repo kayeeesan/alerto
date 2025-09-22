@@ -1,12 +1,14 @@
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
 
 const advisory = ref("");
 const loading = ref(true);
+let refreshInterval = null;
 
-onMounted(async () => {
+async function refreshRain() {
+  loading.value = true;
   try {
     const res = await axios.get("/api/rain-advisory");
     advisory.value = res.data.message;
@@ -15,6 +17,15 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+}
+
+onMounted(() => {
+  refreshRain(); // initial fetch
+  refreshInterval = setInterval(refreshRain, 600000); // every 10 min
+});
+
+onBeforeUnmount(() => {
+  clearInterval(refreshInterval);
 });
 </script>
 <template>
