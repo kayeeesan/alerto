@@ -1,3 +1,22 @@
+
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const advisory = ref("");
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    const res = await axios.get("/api/rain-advisory");
+    advisory.value = res.data.message;
+  } catch (e) {
+    advisory.value = "Unable to load rainfall advisory.";
+  } finally {
+    loading.value = false;
+  }
+});
+</script>
 <template>
   <v-col class="threshold-container mb-4">
     <v-sheet class="threshold-sheet" rounded="lg">
@@ -31,24 +50,6 @@
   </v-col>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-
-const advisory = ref("");
-const loading = ref(true);
-
-onMounted(async () => {
-  try {
-    const res = await axios.get("/api/rain-advisory");
-    advisory.value = res.data.message;
-  } catch (e) {
-    advisory.value = "Unable to load rainfall advisory.";
-  } finally {
-    loading.value = false;
-  }
-});
-</script>
 
 <style scoped>
 .threshold-container {
