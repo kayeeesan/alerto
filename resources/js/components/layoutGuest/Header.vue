@@ -17,16 +17,32 @@ const isDialogActive = ref(false);
     <v-spacer></v-spacer>
     
     <div class="auth-buttons">
-      <v-btn
+      <!-- <v-btn
         to="/login"
         class="text-none login-btn"
         color="white"
         rounded="lg"
         variant="outlined"
-        size="small"
+        size="large"
       >
         <span class="btn-text">Log in</span>
-      </v-btn>
+      </v-btn> -->
+
+       <v-dialog v-model="isDialogActive" max-width="900">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            text="Log in"
+            class="text-none login-btn"
+            color="white"
+            rounded="lg"
+            variant="outlined"
+            size="large"
+          ></v-btn>
+        </template>
+
+        <Login @closeDialog="isDialogActive = false" />
+      </v-dialog>
       
       <v-btn
         to="/registration"
@@ -34,7 +50,7 @@ const isDialogActive = ref(false);
         color="white"
         rounded="lg"
         variant="flat"
-        size="small"
+        size="large"
       >
         <span class="btn-text">Registration</span>
       </v-btn>
