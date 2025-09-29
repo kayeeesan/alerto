@@ -387,6 +387,7 @@ const showConfirmPassword = ref(false);
 .avatar {
   width: 110px;
   height: 110px;
+  aspect-ratio: 1 / 1; /* ensure perfect square so 50% radius is a true circle */
   margin: -90px auto 20px;
   border-radius: 50%;
   background: #fff;
@@ -395,12 +396,41 @@ const showConfirmPassword = ref(false);
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex: 0 0 auto; /* prevent flexbox from stretching */
+  align-self: center; /* guard against cross-axis stretching */
 }
 .avatar img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain; /* preserve aspect ratio without cropping */
+  object-position: center;
+  display: block; /* remove inline-gap artifacts */
 }
 
+/* Make only the card content scroll while keeping the logo/title steady */
+.registration-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* constrain dialog height to viewport */
+  overflow: visible; /* allow avatar to overflow and remain visible */
+}
 
+.registration-card .v-card-text {
+  flex: 1 1 auto; /* take remaining space between header and footer */
+  overflow-y: auto; /* enable vertical scroll for the cards area */
+  min-height: 0;   /* important for flex children to allow shrinking */
+  padding-right: 6px; /* space for scrollbar */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent; /* Firefox */
+}
+
+/* Optional: nicer scrollbar for WebKit browsers */
+.registration-card .v-card-text::-webkit-scrollbar {
+  width: 8px;
+}
+.registration-card .v-card-text::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+}
 
 </style>
