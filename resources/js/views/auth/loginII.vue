@@ -1,336 +1,226 @@
 <script setup>
 import { ref, reactive } from "vue";
 import useAuth from "../../composables/auth";
+import ResetPassword from "../../components/users/ResetPasswordDialog.vue";
+import RegistrationDialog from "../clientRegistration/RegistrationDialog.vue";
 
 const { error, is_loading, login } = useAuth();
 
-const emit = defineEmits(["input"]);
-
-const container = ref(null);
-
-const toggleActive = () => {
-  container.value.classList.toggle('active');
-};
-
 const form = reactive({
-    username: '',
-    password: ''
-});
-
-const newPasswordForm = reactive({
-    password: "",
-    password_confirmation: "",
+  username: "",
+  password: ""
 });
 
 const visible = ref(false);
+const resetDialog = ref(false); 
+const registrationDialog = ref(false);
 
 const handleSubmit = async () => {
-    await login({ ...form });
-}
-const handleSetPassword = async () => {
-    await setPassword({ ...newPasswordForm });
+  await login({ ...form });
 };
 </script>
 
 <template>
-    <div ref="container" class="container">
-        <div class="form-box login">
-        <form @submit.prevent="handleSubmit()">
-            <div class="d-flex justify-center mb-1">
-                <v-img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" width="150" height="120"></v-img>
-            </div>
-            <h1>Login</h1>
-            <div class="input-box">
-                <v-text-field
-                    v-model="form.username"
-                    placeholder="Enter your username"
-                    prepend-inner-icon="mdi-account-outline"
-                    variant="outlined"
-                ></v-text-field>
-                <!-- <input type="text" placeholder="Username" /> -->
-            </div>
-            <div class="input-box">
-                <!-- <input type="password" placeholder="Password" /> -->
-                <v-text-field
-                    v-model="form.password"
-                    :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                    :type="visible ? 'text' : 'password'"
-                    placeholder="Enter your password"
-                    prepend-inner-icon="mdi-lock-outline"
-                    variant="outlined"
-                    @click:append-inner="visible = !visible"
-                    @keyup.enter="handleSubmit()"
-            ></v-text-field>
-            </div>
-            <div class="forgot-link">
-                <a href="#">Forgot password?</a>
-            </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        </div>
-        <!-- <div class="form-box register">
-        <form >
-            <h1>New Password</h1>
+  <div class="login-container">
+    <div v-if="!resetDialog" class="login-card">
+      <div class="avatar">
+        <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
+      </div>
 
-            <v-row class="ml-1">
-            <v-col style="padding: 0 !important;">
-                <div class="input-box mr-2">
-                    <input type="text" placeholder="New Password"  required />
-                </div>
-            </v-col>
-            </v-row>
-            <v-row class="ml-1">
-            <v-col style="padding: 0 !important;">
-                <div class="input-box mr-2">
-                    <input type="text" placeholder="Repeat Password"  required />
-                </div>
-            </v-col>
-            </v-row>
-        
-            <button type="submit" class="btn mt-10">Submit</button>
-        </form>
-        
-        </div> -->
-        <div class="form-box register">
-            <form @submit.prevent="handleSubmit()">
-                <h1>New Password</h1>
-                <v-row class="ml-1">
-                    <v-text-field
-                        v-model="form.password"
-                        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                        :type="visible ? 'text' : 'password'"
-                        placeholder="Enter your new password"
-                        prepend-inner-icon="mdi-lock-outline"
-                        variant="outlined"
-                        @click:append-inner="visible = !visible"
-                    ></v-text-field>
-                </v-row>
+      <h2 class="title">Welcome Back</h2>
+      <p class="subtitle">Please login to continue</p>
 
-                <v-row class="ml-1">
-                    <v-text-field
-                        v-model="form.password_confirmation"
-                        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                        :type="visible ? 'text' : 'password'"
-                        placeholder="Re-enter your new password"
-                        prepend-inner-icon="mdi-lock-outline"
-                        variant="outlined"
-                        @click:append-inner="visible = !visible"
-                        @keyup.enter="handleSubmit()"
-                    ></v-text-field>
-                </v-row>
-
-                <button type="submit" class="btn mt-10" :loading="is_loading">Submit</button>
-            </form>
+      <form @submit.prevent="handleSubmit" class="form">
+        <div class="input-box">
+          <i class="mdi mdi-email-outline input-icon"></i>
+          <input
+            v-model="form.username"
+            type="text"
+            placeholder="Email"
+            required
+          />
         </div>
 
+        <div class="input-box">
+          <i class="mdi mdi-lock-outline input-icon"></i>
+          <input
+            v-model="form.password"
+            :type="visible ? 'text' : 'password'"
+            placeholder="Password"
+            required
+          />
+          <span class="toggle-password" @click="visible = !visible">
+            <i :class="visible ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></i>
+          </span>
+        </div>
 
-        <div class="toggle-box">
-        <div class="toggle-panel toggle-left">
-            <h1>No Account?</h1>
-            <!-- <button class="btn" @click="toggleActive" to="/registration">Register</button> -->
-             <v-btn  class="btn" to="/registration">Register</v-btn>
+        <div class="options">
+          <label><input type="checkbox" /> Remember me</label>
+           <a href="javascript:void(0)" @click="resetDialog = true">Forgot Password?</a>
         </div>
-        <div class="toggle-panel toggle-right">
-            <h3>Already have an account?</h3>
-            <button class="btn" @click="toggleActive">Login</button>
-        </div>
-        </div>
+
+        <button type="submit" class="btn" :disabled="is_loading">
+          {{ is_loading ? "Logging in..." : "LOGIN" }}
+        </button>
+      </form>
+
+      <div class="register-link">
+        <p>Don't have an account yet? <a href="javascript:void(0)" @click="registrationDialog = true">Sign up now</a></p>
+      </div>
     </div>
 
-
+    <!-- Reset Password Dialog -->
+    <v-dialog v-model="resetDialog" max-width="600px" persistent>
+      <ResetPassword @close="resetDialog = false" />
+    </v-dialog>
+    <v-dialog v-model="registrationDialog" max-width="1000px" persistent>
+        <RegistrationDialog @close="registrationDialog = false" />
+    </v-dialog>
+  </div>
 </template>
+
 <style scoped>
-
-body{
-margin: 0;
-padding: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-background: linear-gradient(90deg, #e2e2e2, #cd96ff) ;
-}
-.container
-{
-position: relative;
-width: 850px;
-height: 550px;
-background: #fff;
-border-radius: 30px;
-box-shadow: 0 0 30px rgba(0, 0, 0, .2);
-overflow: hidden;
-}
-.input-box input{
-    padding: 13px;
-    border-radius: 11px;
-    width: 100%;
-    margin-top: 20px;
-    background: rgb(224, 224, 224);
-  }
-.form-box{
-    position: absolute;
-    right: 0;
-    width: 50%;
-    height: 100%;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    color: #333;
-    text-align: center;
-    z-index: 1;
-    transition: .6s ease-in-out 1.2s visibility 0s 1s ;
-    padding: 20px;
+.login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #011a6e, #5487ca);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-.container.active .form-box {
-    right: 50%;
-}
-.form-box.register
-{
-    visibility: hidden;
-}
-
-.container.active .form-box.register{
-    visibility: visible;
-}
-form{
-    width: 100%;
+.login-card {
+  width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: fadeInUp 0.6s ease;
 }
 
-.toggle-box
-{
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.avatar {
+  width: 110px;
+  height: 110px;
+  margin: -90px auto 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
-.toggle-box::before{
-    content: '';
-    position: absolute;
-    width: 300%;
-    height: 100%;
-    background: #011A6E;
-    z-index: 2;
-    left: -250%;
-    border-radius: 150px;
-    transition: 1.8s ease-in-out;
-}
-
-.toggle-panel{
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    /* background: seagreen; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    z-index: 2;
-    transition: .6s ease-in-out;
+.avatar img {
+  width: 100%;
+  height: auto;
 }
 
-.toggle-panel.toggle-left{
-    left: 0;
-    transition-delay: .6s;
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #011a6e;
+  margin-bottom: 5px;
 }
 
-.container.active .toggle-panel.toggle-left{
-    left: -50%;
-    transition-delay: .6s ;
+.subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 25px;
 }
 
-.container.active .toggle-box::before{
-    left: 50%;
+.form {
+  display: flex;
+  flex-direction: column;
 }
 
-.container.active .toggle-panel.toggle-right{
-    right: 0;
-    transition-delay: 1.2s ;
+.input-box {
+  position: relative;
+  margin: 15px 0;
+}
+.input-box input {
+  width: 100%;
+  padding: 12px 45px 12px 40px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  outline: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+.input-box input:focus {
+  border-color: #011a6e;
+  box-shadow: 0 0 8px rgba(1, 26, 110, 0.2);
 }
 
-.toggle-panel.toggle-right{
-    right: -50%;
-    transition-delay: .6s;
+.input-icon {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 18px;
+  color: #888;
 }
 
-.toggle-panel p{
-    margin-bottom:  20px;
-
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
 }
 
-.toggle-panel .btn{
-    width: 160px;
-    height: 46px;
-    background: transparent;
-    border: 2px solid #fff;
-    box-shadow: none;
+.options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin: 10px 0 20px;
+  color: #555;
 }
-.btn{
-    cursor: pointer;
-    width: 160px;
-    height: 46px;
-    background: #011A6E;
-    box-shadow: none;
-    color: white;
-    border-radius: 99px;
-    margin-top: 10px;
-    
+.options a {
+  text-decoration: none;
+  color: #011a6e;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #011a6e, #2a5da8);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 .btn:hover {
-  background-color: rgb(84, 135, 202); /* Change hover color to light blue */
-  color: #011A6E; /* Optional: Change text color to dark blue */
+  background: linear-gradient(135deg, #2a5da8, #5487ca);
+  color: #fff;
 }
 
-@media screen and (max-width: 650px){
-.container{
-    height: calc(100vh - 40px);
+.register-link {
+  margin-top: 25px;
+  font-size: 13px;
 }
-.form-box{
-    width: 100%;
-    height: 70%;
-    bottom: 0;
-}
-
-.container.active .form-box{
-    right: 0;
-    bottom: 30%;
+.register-link a {
+  color: #011a6e;
+  text-decoration: none;
+  font-weight: 600;
 }
 
-.toggle-box::before{
-    width: 100%;
-    height: 300%;
-    left: 0;
-    top: -270%;
-    border-radius: 20vw;
-}
-
-.container.active .toggle-box::before{
-    top: 70%;
-    left: 0;
-}
-
-.container.active .toggle-panel.toggle-left{
-    left: 0;
-    top: -30%;
-}
-
-.toggle-panel{
-    width: 100%;
-    height: 30%;
-}
-
-.toggle-panel.toggle-left{
-    top: 0;
-}
-
-.toggle-panel.toggle-right{
-    right: 0;
-    bottom: -30%;
-}
-
-.container.active .toggle-panel.toggle-right{
-    bottom: 0;
-}
-
+/* Animation */
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style>

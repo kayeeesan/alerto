@@ -1,0 +1,406 @@
+<script setup>
+import { ref, reactive, watch, onMounted, computed } from "vue";
+import { useRouter } from 'vue-router';
+import useStaffs from "../../composables/staff";
+import useRegions from "../../composables/region";
+import useProvinces from "../../composables/province";
+import useMunicipalities from "../../composables/municipality";
+import useRivers from "../../composables/river";
+import useRoles from "../../composables/roles";
+import { get } from "@vueuse/core";
+
+const props = defineProps({
+    staff: Object
+});
+
+const emit = defineEmits(["reloadStaffs", "input"]);
+const router = useRouter();
+
+const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
+const { roles, getRoles } = useRoles();
+const { regions, getMultiselectRegions } = useRegions();
+const { provinces, getMultiselectProvinces } = useProvinces();
+const { municipalities, getMultiselectMunicipalities } = useMunicipalities();
+const { rivers, getRivers } = useRivers();
+
+const initialState = {
+    id: null,
+    username: "",
+    first_name: "",
+    last_name: "",
+    mobile_number: "",
+    role: null,
+    region: null,
+    province: null,
+    municipality: null,
+    river: null,
+    fb_lgu: null,
+    password: "",
+    password_confirmation: ""
+};
+const form = reactive({ ...initialState });
+
+watch(
+    () => props.staff,
+    (value) => {
+        if (value) {
+            Object.assign(form, { ...value });
+        }
+    },
+    { deep: true }
+);
+
+const resetForm = () => {
+    Object.assign(form, { ...initialState });
+};
+
+const save = async () => {
+    form.role = roles.value.find(role => role.slug === 'project-staff');
+    
+    if (props.staff?.id) {
+        await updateStaff({ ...form });
+    } else {
+        await storeWalkinStaff({ ...form });
+    }
+
+    if (is_success.value) {
+        emit("reloadStaffs");
+        emit("input", false);
+        resetForm();
+        router.push('/');
+    }
+};
+
+watch(
+    () => form.region,
+    () => {
+        form.province = null; 
+    }
+);
+watch(
+    () => form.province,
+    () => {
+        form.municipality = null;
+    }
+);
+watch(
+    () => form.municipality,
+    () => {
+        form.river = null;
+    }
+)
+
+onMounted(() => {
+    getRoles();
+    getMultiselectProvinces();
+    getMultiselectMunicipalities();
+    getRivers();
+    getMultiselectRegions();
+});
+
+const filteredProvinces = computed(() => {
+    if (!form.region || !form.region.id) return [];
+    return provinces.value.filter(p => p.region.id === form.region.id);
+});
+
+const filteredMunicipalities = computed(() => {
+    if (!form.province || !form.province.id) return [];
+    return municipalities.value.filter(m => m.province.id === form.province.id);
+});
+
+const filteredRivers = computed(() => {
+    if (!form.municipality || !form.municipality.id) return [];
+    return rivers.value.filter(r => r.municipality.id === form.municipality.id);
+});
+
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+</script>
+
+<template>
+  <div class="registration-container">
+    <div class="registration-card hidden-scroll">
+      <div class="avatar">
+        <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
+      </div>
+      <v-card-title class="text-h5 text-md-h5 text-lg-h5 font-weight-bold text-primary">
+            Member<span class="d-sm-none"><br></span> Registration
+        </v-card-title>
+        <v-card-subtitle class="text-caption">Please fill out all <span class="d-sm-none"><br></span> required fields</v-card-subtitle>
+      <v-card-text>
+        <v-form>
+          <!-- Personal Information Section -->
+           <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                <v-card-title class="text-subtitle-1 font-weight-bold">Personal Information</v-card-title>
+                    <v-row>
+                        <v-col cols="12" sm="6">
+                            <div class="d-flex">
+                                <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-account</v-icon>
+                                    <v-text-field 
+                                                v-model="form.first_name"
+                                                label="First Name*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.first_name || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^[a-zA-Z\s]+$/.test(v) || 'Only letters are allowed',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                                ></v-text-field>
+                            </div>
+                                            
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                            <div class="d-flex">
+                                <v-icon class="mt-3 mr-3" style="color: #6E92C1;"> mdi-account</v-icon>
+                                            <v-text-field 
+                                            v-model="form.last_name" 
+                                            label="Last Name*" 
+                                            variant="outlined"
+                                            density="comfortable"
+                                            :error-messages="errors.last_name || []"
+                                            bg-color="white"
+                                            class="dark-input"
+                                ></v-text-field>
+                            </div>
+                                            
+                        </v-col>
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="12" sm="6">
+                            <div class="d-flex">
+                                    <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-email</v-icon>
+                                     <v-text-field
+                                                v-model="form.username"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /.+@.+\..+/.test(v) || 'Invalid email address',
+                                                ]"
+                                                label="Email*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.username || []"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            ></v-text-field>
+                            </div>
+                                           
+                        </v-col>
+                        <v-col cols="12" sm="6">
+                            <div class="d-flex">
+                               <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-phone</v-icon>
+                                    <v-text-field 
+                                                v-model="form.mobile_number" 
+                                                label="Mobile Number*" 
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :error-messages="errors.mobile_number || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => /^09\d{9}$/.test(v) || 'Invalid phone number format',
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                    ></v-text-field>
+                            </div>
+                                            
+                        </v-col>
+                    </v-row>
+                </v-card>
+
+                            <!-- Location Information Section -->
+            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                <v-card-title class="text-subtitle-1 font-weight-bold">Location Information</v-card-title>
+                    <v-row>
+                        <v-col>
+                            <v-input prepend-icon="mdi-map" v-model="form.region">
+                                        <vue-multiselect 
+                                        v-model="form.region" 
+                                        :options="regions" 
+                                        placeholder="Select Region"
+                                        label="name" 
+                                        track-by="name"/>
+                                    </v-input>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                                <v-input prepend-icon="mdi-map" v-model="form.province">
+                                            <vue-multiselect
+                                            v-model="form.province"
+                                            :options="filteredProvinces"
+                                            :disabled="!form.region"
+                                            placeholder="Select Province"
+                                            label="name"
+                                            track-by="name"/>      
+                                        </v-input>
+                                    </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <v-input prepend-icon="mdi-city" v-model="form.municipality" >
+                                    <vue-multiselect 
+                                            v-model="form.municipality" 
+                                            :options="filteredMunicipalities"
+                                            :disabled="!form.province"
+                                            placeholder="Select Municipality" 
+                                            label="name" 
+                                            track-by="name"/>
+                                        </v-input>
+
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <v-input  prepend-icon="mdi-waves" v-model="form.river">
+                                            <vue-multiselect 
+                                            v-model="form.river" 
+                                            :options="filteredRivers" 
+                                            :disabled="!form.municipality"
+                                            placeholder="Select River" 
+                                            label="name"
+                                            track-by="name"/>
+                            </v-input>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                                <v-text-field 
+                                        v-model="form.fb_lgu" 
+                                        prepend-icon="mdi-account"
+                                        label="Facebook LGU*" 
+                                        variant="outlined"
+                                        :error-messages="errors.fb_lgu || []">
+                                        </v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card>
+
+                <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+                    <v-card-title class="text-subtitle-1 font-weight-bold">Set Password</v-card-title>
+                        <v-row>
+                            <v-col cols="12" sm="6">
+                                    <div class="d-flex">
+                                        <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-lock</v-icon>
+                                        <v-text-field
+                                                v-model="form.password"
+                                                label="Password*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :type="showPassword ? 'text' : 'password'"  
+                                                :error-messages="errors.password || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => v.length >= 6 || 'Must be at least 6 characters'
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            >
+                                     <template v-slot:append-inner>
+                                                <v-icon
+                                                    :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                                                    @click="showPassword = !showPassword"
+                                                    style="cursor: pointer;"
+                                                ></v-icon>
+                                    </template>
+                                </v-text-field>
+                             </div>
+                        </v-col>
+
+                        <v-col cols="12" sm="6">
+                            <div class="d-flex">
+                                <v-icon class="mt-3 mr-3" style="color: #6E92C1;">mdi-lock</v-icon>
+                                <v-text-field
+                                                v-model="form.password_confirmation"
+                                                label="Confirm Password*"
+                                                variant="outlined"
+                                                density="comfortable"
+                                                :type="showConfirmPassword ? 'text' : 'password'" 
+                                                :error-messages="errors.password_confirmation || []"
+                                                :rules="[
+                                                    (v) => !!v || 'This field is required',
+                                                    (v) => v === form.password || 'Passwords do not match'
+                                                ]"
+                                                bg-color="white"
+                                                class="dark-input"
+                                            >
+                                    <template v-slot:append-inner>
+                                        <v-icon
+                                                    :icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                                                    @click="showConfirmPassword = !showConfirmPassword"
+                                                    style="cursor: pointer;"
+                                                ></v-icon>
+                                    </template>
+                            </v-text-field>
+                             </div>
+                        </v-col>
+                    </v-row>
+
+            </v-card>
+
+        </v-form>
+        <v-card-actions class="justify-end">
+        <v-btn color="red-darken-2" variant="flat" @click="$emit('input', false)">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-btn color="orange-darken-2" variant="flat" @click="resetForm">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn color="blue-darken-4" variant="flat" :loading="is_loading" @click="save">
+          <v-icon>mdi-content-save</v-icon>
+        </v-btn>
+      </v-card-actions>
+      </v-card-text>
+
+    </div>
+
+  </div>
+</template>
+
+<style scoped>
+.registration-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #011a6e, #5487ca);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.registration-card {
+  width: 800px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: fadeInUp 0.6s ease;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  margin: -90px auto 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: auto;
+}
+
+
+
+</style>
