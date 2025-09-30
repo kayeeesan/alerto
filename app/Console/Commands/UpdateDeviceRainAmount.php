@@ -20,8 +20,7 @@ class UpdateDeviceRainAmount extends Command
 
     public function handle()
     {
-        $this->info('Starting device data update process...');
-        Log::info('Starting device data update process');
+        $this->info('Starting rain device data update process...');
 
         try {
             $this->info('Fetching latest device data from API...');
@@ -194,7 +193,7 @@ class UpdateDeviceRainAmount extends Command
             return 0;
 
         } catch (\Exception $e) {
-            $errorMessage = 'Error during device data update: ' . $e->getMessage();
+            $errorMessage = 'Error during rain device data update: ' . $e->getMessage();
             $this->error($errorMessage);
             Log::error($errorMessage, [
                 'exception' => $e->getMessage(),
