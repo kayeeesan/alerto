@@ -124,7 +124,7 @@ const close = () => {
 
 <template>
   <div class="registration-container">
-    <div class="registration-card hidden-scroll">
+    <div class="registration-card hidden-scroll bg-blue-grey-lighten-5">
       <div class="avatar">
         <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
       </div>
@@ -134,8 +134,7 @@ const close = () => {
         <v-card-subtitle class="text-caption">Please fill out all <span class="d-sm-none"><br></span> required fields</v-card-subtitle>
       <v-card-text>
         <v-form>
-          <!-- Personal Information Section -->
-           <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+           <v-card variant="outlined" class="mb-6 pa-4 bg-white" color="blue-darken-4">
                 <v-card-title class="text-subtitle-1 font-weight-bold">Personal Information</v-card-title>
                     <v-row>
                         <v-col cols="12" sm="6">
@@ -214,10 +213,9 @@ const close = () => {
                                             
                         </v-col>
                     </v-row>
-                </v-card>
+            </v-card>
 
-                            <!-- Location Information Section -->
-            <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+            <v-card variant="outlined" class="mb-6 pa-4 bg-white" color="blue-darken-4">
                 <v-card-title class="text-subtitle-1 font-weight-bold">Location Information</v-card-title>
                     <v-row>
                         <v-col>
@@ -282,9 +280,9 @@ const close = () => {
                                         </v-text-field>
                         </v-col>
                     </v-row>
-                </v-card>
+            </v-card>
 
-                <v-card variant="outlined" class="mb-6 pa-4" color="blue-darken-4">
+            <v-card variant="outlined" class="mb-6 pa-4 bg-white" color="blue-darken-4">
                     <v-card-title class="text-subtitle-1 font-weight-bold">Set Password</v-card-title>
                         <v-row>
                             <v-col cols="12" sm="6">
@@ -347,18 +345,24 @@ const close = () => {
             </v-card>
 
         </v-form>
-        <v-card-actions class="justify-end">
-        <v-btn color="red-darken-2" variant="flat" @click="close">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-btn color="orange-darken-2" variant="flat" @click="resetForm">
-          <v-icon>mdi-refresh</v-icon>
-        </v-btn>
-        <v-btn color="blue-darken-4" variant="flat" :loading="is_loading" @click="save">
-          <v-icon>mdi-content-save</v-icon>
-        </v-btn>
-      </v-card-actions>
       </v-card-text>
+
+      <v-card-actions class="button-group">
+        <button type="button" class="btn btn-secondary" @click="close">
+            <i class="mdi mdi-close"></i> Close
+        </button>
+        <button type="button" class="btn btn-warning" @click="resetForm">
+            <i class="mdi mdi-refresh"></i> Reset
+        </button>
+        <button type="button" class="btn btn-primary" :disabled="is_loading" @click="save">
+            <span v-if="is_loading">
+            <i class="mdi mdi-loading mdi-spin"></i> Saving...
+            </span>
+            <span v-else>
+            <i class="mdi mdi-content-save"></i> Save
+            </span>
+        </button>
+    </v-card-actions>
 
     </div>
 
@@ -436,6 +440,66 @@ const close = () => {
 .registration-card .v-card-text::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.25);
   border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn {
+  flex: 1;
+  max-width: 140px;
+  padding: 12px;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #fff; 
+  border: none; 
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Warning (Reset) */
+.btn-warning {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  color: #fff; /* always white */
+}
+.btn-warning:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffb74d, #ffc947);
+  color: #0c0c0c; /* keep white text */
+}
+
+/* Secondary (Close) */
+.btn-secondary {
+  background: linear-gradient(135deg, #e57373, #ef9a9a);
+  color: #fff; /* always white */
+}
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ef9a9a, #ffcdd2);
+  color: #0c0c0c; /* keep white text */
+}
+
+/* Primary (Save) */
+.btn-primary {
+  background: linear-gradient(135deg, #011a6e, #2a5da8);
+  color: #fff; /* always white */
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2a5da8, #5487ca);
+  color: #0c0c0c; /* keep white text */
 }
 
 </style>
