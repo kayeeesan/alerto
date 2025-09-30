@@ -1,19 +1,56 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const weatherData = ref(null);
+const loading = ref(true);
+const error = ref(null);
+
+onMounted(async () => {
+  try {
+    // ✅ Call your Laravel API, not WeatherLink directly
+    const res = await axios.get("/api/adzu-weather"); 
+    weatherData.value = res.data;
+
+  } catch (err) {
+    error.value = "Failed to fetch weather data";
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+});
+</script>
+
+
 <template>
   <v-col class="threshold-container">
     <v-sheet class="threshold-sheet" rounded="lg">
+      <!-- keep your header intact -->
       <div class="header-container">
         <div class="alert-indicator"></div>
         <h1 class="section-title">ADZU WEATHER DATA</h1>
         <p class="section-subtitle">Weather Updates</p>
       </div>
-      
+
       <v-divider class="divider"></v-divider>
-      
+
       <div class="weather-data-content">
-        <!-- Add your weather data components here -->
-        <div class="empty-state">
-          <v-icon size="64" color="grey-darken-1">mdi-weather-cloudy</v-icon>
-          <p class="empty-text">Weather data will appear here</p>
+        <div v-if="loading" class="empty-state">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          <p class="empty-text">Loading weather data...</p>
+        </div>
+
+        <div v-else-if="error" class="empty-state">
+          <v-icon size="64" color="red">mdi-alert-circle</v-icon>
+          <p class="empty-text">{{ error }}</p>
+        </div>
+
+        <div v-else class="weather-info">
+          <p><strong>Temperature:</strong> {{ weatherData.temp_f }} °F</p>
+          <p><strong>Humidity:</strong> {{ weatherData.relative_humidity }} %</p>
+          <p><strong>Wind:</strong> {{ weatherData.wind_mph }} mph</p>
+          <p><strong>Rain (24hr):</strong> {{ weatherData.rain_24_in }} in</p>
+          <p><strong>Pressure:</strong> {{ weatherData.pressure_in }} inHg</p>
         </div>
       </div>
     </v-sheet>

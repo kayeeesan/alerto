@@ -24,6 +24,7 @@ use App\Http\Controllers\SyncController;
 use App\Http\Controllers\SensorHistoryController;
 use App\Http\Controllers\WeatherController;
 use App\Http\Controllers\EarthQuakeController;
+use App\Http\Controllers\ADZUWeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/sync/{model}', [SyncController::class, 'receive']);
@@ -48,6 +49,7 @@ Route::get('/form/multiselect/municipalities', [MunicipalityController::class, '
 Route::get('/thunderstorm-advisory', [WeatherController::class, 'getThunderstormAdvisory']);
 Route::get('/rain-advisory', [WeatherController::class, 'getRainfallAdvisory']);
 Route::get('/earthquakes', [EarthQuakeController::class, 'getEarthQuakeData']);
+Route::get('/adzu-weather', [ADZUWeatherController::class, 'getWeather']);
 
 Route::middleware('auth:sanctum')->group(function  () {
    
