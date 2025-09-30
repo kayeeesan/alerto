@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import Login from "../../views/auth/loginII.vue";
+import RegistrationDialog from "../../views/clientRegistration/RegistrationDialog.vue";
 
 const isDialogActive = ref(false);
+const isRegistrationDialogActive = ref(false);
 </script>
 
 <template>
@@ -43,17 +45,25 @@ const isDialogActive = ref(false);
 
         <Login @closeDialog="isDialogActive = false" />
       </v-dialog>
+
+      <v-dialog v-model="isRegistrationDialogActive" max-width="900">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            class="text-none register-btn mr-5"
+            color="white"
+            rounded="lg"
+            variant="flat"
+            size="large"
+          >
+            <span class="btn-text">Registration</span>
+          </v-btn>
+        </template>
+
+        <RegistrationDialog @close="isRegistrationDialogActive = false" @input="isRegistrationDialogActive = false" />
+      </v-dialog>
+
       
-      <v-btn
-        to="/registration"
-        class="text-none register-btn mr-5"
-        color="white"
-        rounded="lg"
-        variant="flat"
-        size="large"
-      >
-        <span class="btn-text">Registration</span>
-      </v-btn>
     </div>
   </v-app-bar>
 </template>

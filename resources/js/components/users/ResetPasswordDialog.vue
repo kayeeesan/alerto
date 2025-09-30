@@ -208,11 +208,11 @@ const handleClose = () => {
 .btn-secondary {
     background: #f5f5f5;
     color: #555;
-    border: 1px solid #ddd;
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: #e0e0e0;
+    background: #bbbae7;
+    color: #0d0d0d;
 }
 
 /* Animation */
