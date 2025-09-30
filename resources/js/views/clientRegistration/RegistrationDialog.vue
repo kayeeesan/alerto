@@ -13,7 +13,7 @@ const props = defineProps({
     staff: Object
 });
 
-const emit = defineEmits(["reloadStaffs", "input"]);
+const emit = defineEmits(["reloadStaffs", "input", "close"]);
 const router = useRouter();
 
 const { errors, is_loading, is_success, storeWalkinStaff, updateStaff } = useStaffs();
@@ -66,6 +66,7 @@ const save = async () => {
     if (is_success.value) {
         emit("reloadStaffs");
         emit("input", false);
+        emit("close");
         resetForm();
         router.push('/');
     }
@@ -115,6 +116,10 @@ const filteredRivers = computed(() => {
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
+const close = () => {
+    emit("input", false);
+    emit("close");
+};
 </script>
 
 <template>
@@ -343,7 +348,7 @@ const showConfirmPassword = ref(false);
 
         </v-form>
         <v-card-actions class="justify-end">
-        <v-btn color="red-darken-2" variant="flat" @click="$emit('input', false)">
+        <v-btn color="red-darken-2" variant="flat" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-btn color="orange-darken-2" variant="flat" @click="resetForm">
