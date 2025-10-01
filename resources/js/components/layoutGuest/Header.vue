@@ -149,4 +149,6 @@ const isRegistrationDialogActive = ref(false);
     font-size: 0.8125rem;
   }
 }
+
+
 </style>

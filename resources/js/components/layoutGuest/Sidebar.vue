@@ -20,8 +20,6 @@ const itemsInDashboard = [
   { title: "Weather Updates", icon: "mdi-weather-cloudy", route: "/weather-updates" },
   { title: "AdZU Weather Station", icon: "mdi-weather-sunny", route: "/adzu-weather" },
   { title: "Earthquake Bulletin", icon: "mdi-earth", route: "/earthquake" },
-  // { title: "Visualization Map", icon: "mdi-map", route: "/visualization-map" },
-  // { title: "Historical Data Extraction", icon: "mdi-database", route: "/history-data-extraction" },
 ];
 
 const items = [
@@ -47,16 +45,30 @@ watch(
     width="300"
     class="sidebar"
   >
+    <!-- Background Bubbles -->
+    <div class="bubble-container">
+      <div class="bubble bubble-1"></div>
+      <div class="bubble bubble-2"></div>
+      <div class="bubble bubble-3"></div>
+      <div class="bubble bubble-4"></div>
+      <div class="bubble bubble-5"></div>
+    </div>
+
     <!-- Header -->
     <div class="sidebar-header">
       <RouterLink to="/" class="sidebar-logo">
         <div class="logo-container">
-          <v-avatar
-            size="60"
-            image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
-            class="logo-avatar"
-          ></v-avatar>
-          <span class="logo-text">ALERTO</span>
+          <div class="logo-bubble">
+            <v-avatar
+              size="50"
+              image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+              class="logo-avatar"
+            ></v-avatar>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">ALERTO</span>
+            <span class="brand-tagline">Disaster Monitoring System</span>
+          </div>
         </div>
       </RouterLink>
     </div>
@@ -67,12 +79,14 @@ watch(
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
-            class="sidebar-item"
+            class="sidebar-item bubble-item"
             :to="'/'"
             prepend-icon="mdi-view-dashboard"
           >
             <template v-slot:prepend>
-              <v-icon class="sidebar-icon"></v-icon>
+              <div class="icon-bubble">
+                <v-icon class="sidebar-icon"></v-icon>
+              </div>
             </template>
             <span class="sidebar-text">Dashboard</span>
           </v-list-item>
@@ -82,11 +96,13 @@ watch(
           v-for="item in itemsInDashboard"
           :key="item.title"
           :to="item.route"
-          class="sidebar-subitem"
+          class="sidebar-subitem bubble-subitem"
           link
         >
           <template v-slot:prepend>
-            <v-icon class="subitem-icon">{{ item.icon }}</v-icon>
+            <div class="subitem-icon-bubble">
+              <v-icon class="subitem-icon">{{ item.icon }}</v-icon>
+            </div>
           </template>
           <span class="sidebar-text">{{ item.title }}</span>
         </v-list-item>
@@ -96,12 +112,14 @@ watch(
         v-for="item in items"
         :key="item.title"
         :to="item.route"
-        class="sidebar-item"
+        class="sidebar-item bubble-item"
         link
         :prepend-icon="item.icon"
       >
         <template v-slot:prepend>
-          <v-icon class="sidebar-icon"></v-icon>
+          <div class="icon-bubble">
+            <v-icon class="sidebar-icon"></v-icon>
+          </div>
         </template>
         <span class="sidebar-text">{{ item.title }}</span>
       </v-list-item>
@@ -114,14 +132,18 @@ watch(
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
-            class="sidebar-item"
+            class="sidebar-item bubble-item"
             prepend-icon="mdi-folder-outline"
           >
             <template v-slot:prepend>
-              <v-icon class="sidebar-icon"></v-icon>
+              <div class="icon-bubble">
+                <v-icon class="sidebar-icon"></v-icon>
+              </div>
             </template>
             <span class="sidebar-text">Libraries</span>
-            <v-icon class="dropdown-arrow">mdi-chevron-down</v-icon>
+            <div class="dropdown-bubble">
+              <v-icon class="dropdown-arrow">mdi-chevron-down</v-icon>
+            </div>
           </v-list-item>
         </template>
       </v-list-group>
@@ -131,16 +153,16 @@ watch(
     <div class="sidebar-footer">
       <p class="footer-text">Supported by our partners</p>
       <div class="partner-logos">
-        <div class="logo-item">
+        <div class="logo-item logo-bubble-item">
           <img src="https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" alt="RDRRMC9" />
         </div>
-        <div class="logo-item">
+        <div class="logo-item logo-bubble-item">
           <img src="https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" alt="OCD" />
         </div>
-        <div class="logo-item">
+        <div class="logo-item logo-bubble-item">
           <img src="https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" alt="DOST9" />
         </div>
-        <div class="logo-item">
+        <div class="logo-item logo-bubble-item">
           <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" alt="DILG" />
         </div>
       </div>
@@ -156,13 +178,90 @@ watch(
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Bubbles */
+.bubble-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  animation: float 15s infinite ease-in-out;
+}
+
+.bubble-1 {
+  width: 120px;
+  height: 120px;
+  top: 10%;
+  left: -30px;
+  animation-delay: 0s;
+}
+
+.bubble-2 {
+  width: 80px;
+  height: 80px;
+  top: 40%;
+  right: -20px;
+  animation-delay: 3s;
+}
+
+.bubble-3 {
+  width: 60px;
+  height: 60px;
+  bottom: 30%;
+  left: 10%;
+  animation-delay: 6s;
+}
+
+.bubble-4 {
+  width: 100px;
+  height: 100px;
+  bottom: 10%;
+  right: -40px;
+  animation-delay: 9s;
+}
+
+.bubble-5 {
+  width: 70px;
+  height: 70px;
+  top: 20%;
+  right: 20%;
+  animation-delay: 12s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(5px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-5px) translateX(3px);
+  }
 }
 
 .sidebar-header {
-  padding: 24px 20px 20px;
+  padding: 8px 20px 8px;
   background: rgba(0, 26, 110, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-logo {
@@ -179,92 +278,110 @@ watch(
   gap: 12px;
 }
 
-.logo-avatar {
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.logo-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
-.logo-avatar:hover {
+.logo-bubble:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.logo-text {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: white;
-  letter-spacing: 1.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.logo-subtitle {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.5px;
-  margin-top: 4px;
+.logo-avatar {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
 }
 
 .sidebar-list {
   background: transparent;
   padding: 16px 8px;
   flex-grow: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-item {
   color: white;
   margin: 6px 8px;
-  border-radius: 10px;
+  border-radius: 15px;
   min-height: 46px;
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
-.sidebar-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px;
-  background: rgba(255, 255, 255, 0.5);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+.bubble-item {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-item:hover {
+.bubble-item:hover {
   background: rgba(255, 255, 255, 0.12);
   transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.sidebar-item:hover::before {
-  opacity: 1;
-}
-
-.sidebar-item.v-list-item--active {
+.bubble-item.v-list-item--active {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.sidebar-item.v-list-item--active::before {
-  opacity: 1;
-  background: #fff;
+.icon-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  margin-right: 12px;
+  transition: all 0.3s ease;
+}
+
+.bubble-item:hover .icon-bubble {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
 }
 
 .sidebar-icon {
   color: white;
-  margin-right: 16px;
   font-size: 1.25rem;
+}
+
+.dropdown-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  margin-left: auto;
+  transition: all 0.3s ease;
 }
 
 .dropdown-arrow {
   color: rgba(255, 255, 255, 0.7);
-  margin-left: auto;
   transition: transform 0.3s ease;
 }
 
 .sidebar-group.v-list-group--active .dropdown-arrow {
   transform: rotate(180deg);
+}
+
+.sidebar-group.v-list-group--active .dropdown-bubble {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-text {
@@ -275,8 +392,8 @@ watch(
 
 .sidebar-group :deep(.v-list-group__items) {
   background: rgba(0, 0, 0, 0.15);
-  margin: 4px 0;
-  border-radius: 0 0 10px 10px;
+  margin: 0 0;
+  border-radius: 0 0 15px 15px;
   overflow: hidden;
 }
 
@@ -288,14 +405,34 @@ watch(
   transition: all 0.2s ease;
 }
 
-.sidebar-subitem:hover {
+.bubble-subitem {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bubble-subitem:hover {
   background: rgba(255, 255, 255, 0.08);
   padding-left: 60px !important;
 }
 
+.subitem-icon-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  margin-right: 16px;
+  transition: all 0.3s ease;
+}
+
+.bubble-subitem:hover .subitem-icon-bubble {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
 .subitem-icon {
   font-size: 1.15rem;
-  margin-right: 16px;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -304,6 +441,8 @@ watch(
   background: rgba(0, 26, 110, 0.5);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
 
 .footer-text {
@@ -325,15 +464,20 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 8px;
   transition: all 0.3s ease;
 }
 
-.logo-item:hover {
+.logo-bubble-item {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.logo-bubble-item:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .logo-item img {
@@ -354,5 +498,31 @@ watch(
   text-align: center;
   font-size: 0.75rem;
   margin-top: 8px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 8px;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.brand-tagline {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.sidebar :deep(.v-list-item__prepend) {
+  margin-inline-end: 0 !important;
 }
 </style>
