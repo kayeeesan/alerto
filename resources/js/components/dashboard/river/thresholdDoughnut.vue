@@ -20,14 +20,15 @@ const tab = ref(0);
 const chartRefs = [ref(null), ref(null)];
 const chartInstances = [null, null];
 
-const statusLabels = ['WARNING', 'ALERT', 'CRITICAL'];
+const statusLabels = ['NORMAL', 'ALERT', 'CRITICAL', 'WARNING'];
 
 // Count how many sensors per status
 const countStatus = (items) => {
   const counts = {
     WARNING: 0,
     ALERT: 0,
-    CRITICAL: 0
+    CRITICAL: 0,
+    NORMAL: 0
   };
 
   items.forEach(item => {
@@ -37,7 +38,7 @@ const countStatus = (items) => {
     }
   });
 
-  return [counts.WARNING, counts.ALERT, counts.CRITICAL];
+  return [counts.NORMAL, counts.WARNING, counts.ALERT, counts.CRITICAL];
 };
 
 // Format labels to include counts
@@ -53,7 +54,7 @@ const chartConfigs = [
       datasets: [{
         label: 'Water Status',
         data: [],
-        backgroundColor: ['#8ecae6', '#219ebc', '#023047'],
+        backgroundColor: ['#6D94C5', '#8ecae6', '#219ebc', '#023047'],
         hoverOffset: 4
       }]
     },
@@ -80,7 +81,7 @@ const chartConfigs = [
       datasets: [{
         label: 'Rain Status',
         data: [],
-        backgroundColor: ['#f3fc47', '#f98023', '#fd361e'],
+        backgroundColor: ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'],
         hoverOffset: 4
       }]
     },
@@ -159,7 +160,7 @@ watch(sensors_under_alerto, (newData) => {
         <h1 class="section-title">WARNINGING OVERVIEW</h1>
       </div>
 
-      <v-divider class="divider"></v-divider>
+      <v-divider class="divider"></v-divider> 
 
       <v-tabs v-model="tab" background-color="white" grow>
         <v-tab>Water</v-tab>
