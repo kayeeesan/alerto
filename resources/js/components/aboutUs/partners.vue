@@ -1,9 +1,14 @@
 <script setup>
+import ndrrmcLogo from '../../../img/logo/NDRRMC_logo.svg.png';
+import ocdLogo from '../../../img/logo/ocd.svg';
+import dostLogo from '../../../img/logo/dost.png';
+import diglLogo from '../../../img/logo/dilg.png';
+
 const partners = [
-  { name: "RDRRMC 9", src: "https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" },
-  { name: "OCD 9", src: "https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" },
-  { name: "DOST 9", src: "https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" },
-  { name: "DILG 9", src: "https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" },
+  { name: "RDRRMC 9", src: ndrrmcLogo },
+  { name: "OCD 9", src: ocdLogo },
+  { name: "DOST 9", src: dostLogo },
+  { name: "DILG 9", src: diglLogo },
 ];
 </script>
 
