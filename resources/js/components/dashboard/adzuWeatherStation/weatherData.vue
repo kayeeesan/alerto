@@ -1,28 +1,42 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
 
 const weatherData = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
-onMounted(async () => {
+let refreshInterval = null;
+
+async function fetchWeatherData() {
+  loading.value = true;
   try {
     const res = await axios.get("/api/adzu-weather");
     weatherData.value = res.data;
+    console.log("Weather API Response:", res.data); 
+    error.value = null;
   } catch (err) {
     error.value = "Failed to fetch weather data";
     console.error(err);
   } finally {
     loading.value = false;
   }
+}
+
+onMounted(async () => {
+  fetchWeatherData(); 
+  refreshInterval = setInterval(fetchWeatherData, 600000);
 });
+
+onBeforeUnmount(() => {
+  if (refreshInterval)
+    clearInterval(refreshInterval);
+})
 </script>
 
 <template>
   <v-col class="threshold-container">
     <v-sheet class="threshold-sheet" rounded="lg">
-      <!-- ✅ Keep header as is -->
       <div class="header-container">
         <div class="alert-indicator"></div>
         <h1 class="section-title">ADZU WEATHER DATA</h1>
@@ -43,87 +57,109 @@ onMounted(async () => {
         </div>
 
         <div v-else class="weather-container">
+          <!-- 🌤 Main Weather Card -->
           <div class="main-weather-card">
             <div class="location-info">
               <h2 class="location">{{ weatherData.location }}</h2>
+              <p class="station-name">{{ weatherData.davis_current_observation.station_name }}</p>
               <p class="observation-time">{{ weatherData.observation_time }}</p>
             </div>
-            
+
             <div class="primary-weather">
               <div class="temperature-display">
-                <div class="temp-value">{{ weatherData.temp_f }}</div>
+                <div class="temp-value">
+                  {{ weatherData.davis_current_observation.temp_in_f }}
+                </div>
                 <div class="temp-unit">°F</div>
               </div>
               <div class="weather-icon">
                 <v-icon size="64" color="#FFA500">mdi-weather-sunny</v-icon>
               </div>
             </div>
-            
+
             <div class="weather-description">
-              <p>Feels like {{ weatherData.heat_index_f }}°F</p>
+              <p>
+                Feels like {{ weatherData.davis_current_observation.heat_index_year_high_f }}°F
+              </p>
             </div>
           </div>
 
+          <!-- 📊 Secondary Metrics -->
           <div class="secondary-metrics">
             <div class="metric-card">
               <div class="metric-icon">
                 <v-icon color="#4ECDC4">mdi-water-percent</v-icon>
               </div>
               <div class="metric-data">
-                <div class="metric-value">{{ weatherData.relative_humidity }}%</div>
+                <div class="metric-value">
+                  {{ weatherData.davis_current_observation.relative_humidity_in }}%
+                </div>
                 <div class="metric-label">Humidity</div>
               </div>
             </div>
-            
+
             <div class="metric-card">
               <div class="metric-icon">
                 <v-icon color="#45B7D1">mdi-weather-windy</v-icon>
               </div>
               <div class="metric-data">
-                <div class="metric-value">{{ weatherData.wind_mph }} mph</div>
+                <div class="metric-value">
+                  {{ weatherData.davis_current_observation.wind_month_high_mph }} mph
+                </div>
                 <div class="metric-label">Wind</div>
               </div>
             </div>
-            
+
             <div class="metric-card">
               <div class="metric-icon">
                 <v-icon color="#96CEB4">mdi-weather-rainy</v-icon>
               </div>
               <div class="metric-data">
-                <div class="metric-value">{{ weatherData.rain_24_in }} in</div>
+                <div class="metric-value">
+                  {{ weatherData.davis_current_observation.rain_day_in }} in
+                </div>
                 <div class="metric-label">Rain (24hr)</div>
               </div>
             </div>
-            
+
             <div class="metric-card">
               <div class="metric-icon">
                 <v-icon color="#FFA07A">mdi-gauge</v-icon>
               </div>
               <div class="metric-data">
-                <div class="metric-value">{{ weatherData.pressure_in }} inHg</div>
+                <div class="metric-value">
+                  {{ weatherData.pressure_in }} inHg
+                </div>
                 <div class="metric-label">Pressure</div>
               </div>
             </div>
           </div>
 
+          <!-- 🔗 Credit -->
           <div class="credit-section">
             <div class="credit-content">
               <a href="https://www.weatherlink.com/" target="_blank" class="image-credit">
-                <img src="https://www.weatherlink.com/static/img/home/davis-logo.png" alt="Davis Logo" height="30"/>
+                <img
+                  src="https://www.weatherlink.com/static/img/home/davis-logo.png"
+                  alt="Davis Logo"
+                  height="30"
+                />
               </a>
 
               <p class="credit-text">
-                Data provided by 
-                <a :href="weatherData.credit_URL" target="_blank" class="credit-link">{{ weatherData.credit }}</a>
+                Data provided by
+                <a :href="weatherData.credit_URL" target="_blank" class="credit-link">
+                  {{ weatherData.credit }}
+                </a>
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </v-sheet>
   </v-col>
 </template>
+
 
 <style scoped>
 .threshold-container {
@@ -236,6 +272,14 @@ onMounted(async () => {
 .location {
   font-size: 1.5rem;
   font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.station-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #f0f0f0; 
+  opacity: 0.9;
   margin-bottom: 4px;
 }
 
@@ -378,6 +422,14 @@ onMounted(async () => {
   .temp-value {
     font-size: 3rem;
   }
+}
+
+.station-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #f0f0f0;
+  opacity: 0.9;
+  margin-bottom: 4px;
 }
 
 </style>
