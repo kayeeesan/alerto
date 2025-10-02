@@ -2,6 +2,8 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import useContactMessages from "../../composables/contactMessage";
 
+import alertoLogo from "../../../img/logo/alerto-logo.png";
+
 const { errors, is_loading, is_success, storeContactMessage } = useContactMessages();
 
 const emit = defineEmits(["input", "reloadContactMessages"]);
@@ -60,7 +62,7 @@ const save = async () => {
           <v-col cols="12" md="6" class="info-column">
             <div class="logo-section">
               <v-img
-                src="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+                :src="alertoLogo"
                 class="logo-img"
                 max-width="180px"
                 contain
