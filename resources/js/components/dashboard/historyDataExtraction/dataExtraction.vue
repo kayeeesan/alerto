@@ -73,6 +73,7 @@ onMounted(async() => {
 });
 
 watch(sensor_histories, (newVal) => {
+  console.log("Raw sensor_histories:", newVal);
   const uniqueMap = new Map();
 
   newVal.forEach(item => {
@@ -86,7 +87,7 @@ watch(sensor_histories, (newVal) => {
 
   // Optional: Sort alphabetically by label
   options.value = Array.from(uniqueMap.values()).sort((a, b) =>
-    a.label.localeCompare(b.label)
+     (a.label || '').localeCompare(b.label || '')
   );
 });
 

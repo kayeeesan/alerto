@@ -10,7 +10,11 @@ class SensorHistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SensorsHistory::with('sensor');
+        $query = SensorsHistory::whereHas('sensor', function($q) {
+            $q->whereNull('deleted_at'); // only active sensors
+        })->with(['sensor' => function($q) {
+            $q->whereNull('deleted_at'); // only active sensors
+        }]);
 
         if ($request->has('sensor_uuid')) {
             $query->where('sensor_uuid', $request->sensor_uuid);
