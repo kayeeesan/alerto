@@ -25,7 +25,7 @@ async function fetchWeatherData() {
 
 onMounted(async () => {
   fetchWeatherData(); 
-  refreshInterval = setInterval(fetchWeatherData, 600000);
+  refreshInterval = setInterval(fetchWeatherData, 30000);
 });
 
 onBeforeUnmount(() => {
