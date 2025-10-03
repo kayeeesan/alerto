@@ -2,7 +2,7 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import useContactMessages from "../../composables/contactMessage";
 
-import alertoLogo from "../../../img/logo/alerto-logo.svg";
+import alertoLogo from "../../../img/logo/alerto-logo.png";
 
 const { errors, is_loading, is_success, storeContactMessage } = useContactMessages();
 

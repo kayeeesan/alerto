@@ -1,8 +1,8 @@
 <script setup>
-import ndrrmcLogo from '../../../img/logo/ndrrmc.svg';
+import ndrrmcLogo from '../../../img/logo/ndrrmc.png';
 import ocdLogo from '../../../img/logo/ocd.svg';
-import dostLogo from '../../../img/logo/dost.svg';
-import diglLogo from '../../../img/logo/dilg.svg';
+import dostLogo from '../../../img/logo/dost.png';
+import diglLogo from '../../../img/logo/dilg.png';
 
 const partners = [
   { name: "RDRRMC 9", src: ndrrmcLogo },
