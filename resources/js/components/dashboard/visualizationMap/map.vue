@@ -13,13 +13,12 @@ L.Icon.Default.mergeOptions({
 
 // Import components
 import { LMap, LTileLayer, LCircle, LPopup } from "@vue-leaflet/vue-leaflet";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
-// Import your composable to fetch sensors
+// Import your composables
 import useSensorsUnderAlerto from "../../../composables/SensorsUnderAlerto";
 import useSensorsUnderPh from "../../../composables/SensorsUnderPh";
 
-// Access data from both
 const { sensors_under_alerto, getSensorsUnderAlerto } = useSensorsUnderAlerto();
 const { sensors_under_ph, getSensorsUnderPh } = useSensorsUnderPh();
 
@@ -28,7 +27,7 @@ const zoom = ref(13);
 const url = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-// Determine color based on sensor's status
+// Color based on status
 function getColorForStatus(status) {
   if (status === "warning") return "yellow";
   if (status === "alert") return "orange";
@@ -36,26 +35,44 @@ function getColorForStatus(status) {
   return "blue";
 }
 
+// Helpers to filter valid coords
+function hasValidCoords(sensor) {
+  return (
+    sensor.lat &&
+    sensor.long &&
+    !isNaN(parseFloat(sensor.lat)) &&
+    !isNaN(parseFloat(sensor.long))
+  );
+}
+
+// Filtered lists (no NaN errors)
+const valid_alerto_sensors = computed(() =>
+  sensors_under_alerto.value.filter(hasValidCoords)
+);
+const valid_ph_sensors = computed(() =>
+  sensors_under_ph.value.filter(hasValidCoords)
+);
+
 onMounted(async () => {
   await getSensorsUnderAlerto({});
   await getSensorsUnderPh({});
 });
-
 </script>
 
 <template>
   <l-map style="height: 100vh;" :zoom="zoom" :center="center">
     <l-tile-layer :url="url" :attribution="attribution" />
 
-    <!-- Display Alerto Sensors -->
+    <!-- Alerto Sensors -->
     <l-circle
-      v-for="sensor in sensors_under_alerto"
+      v-for="sensor in valid_alerto_sensors"
       :key="sensor.device_id"
       :lat-lng="[parseFloat(sensor.lat), parseFloat(sensor.long)]"
       :radius="100"
       :color="getColorForStatus(sensor.status)"
       :fill-color="getColorForStatus(sensor.status)"
-      fill-opacity="0.5">
+      fill-opacity="0.5"
+    >
       <l-popup>
         <div>
           <h3>{{ sensor.name }}</h3>
@@ -66,15 +83,16 @@ onMounted(async () => {
       </l-popup>
     </l-circle>
 
-    <!-- Display pH Sensors -->
+    <!-- pH Sensors -->
     <l-circle
-      v-for="sensor in sensors_under_ph"
+      v-for="sensor in valid_ph_sensors"
       :key="sensor.device_id"
       :lat-lng="[parseFloat(sensor.lat), parseFloat(sensor.long)]"
       :radius="100"
       :color="getColorForStatus(sensor.status)"
       :fill-color="getColorForStatus(sensor.status)"
-      fill-opacity="0.5">
+      fill-opacity="0.5"
+    >
       <l-popup>
         <div>
           <h3>{{ sensor.name }}</h3>
