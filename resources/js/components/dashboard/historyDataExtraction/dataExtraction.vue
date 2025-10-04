@@ -73,7 +73,6 @@ onMounted(async() => {
 });
 
 watch(sensor_histories, (newVal) => {
-  console.log("Raw sensor_histories:", newVal);
   const uniqueMap = new Map();
 
   newVal.forEach(item => {
@@ -153,36 +152,38 @@ const exportToExcel = () => {
   });
 
   if (filtered.length === 0) {
-    alert('No data availbale for export');
+    alert('No data available for export');
     return;
   }
 
   filtered.sort((a, b) => new Date(a.recorded_at) - new Date(b.recorded_at));
 
-    const excelData = filtered.map(item => ({
-      'Sensor Name': item.sensor_name,
-      'Recorded At': new Date(item.recorded_at).toLocaleString(),
-      'Rain (mm)': item.device_rain_amount ?? 0,
-      'Water Level (m)': item.device_water_level ?? 0,
-      'Battery Level': item.device_battery_level ?? 'N/A',
-      'Signal Strength': item.device_signal_strength ?? 'N/A'
-    }));
+  const excelData = filtered.map(item => ({
+    'Sensor Name': item.sensor_name,
+    'Recorded At': new Date(item.recorded_at).toLocaleString(),
+    'Rain (mm)': item.device_rain_amount ?? 0,
+    'Water Level (m)': item.device_water_level ?? 0,
+    'Battery Level': item.device_battery_level ?? 'N/A',
+    'Signal Strength': item.device_signal_strength ?? 'N/A'
+  }));
 
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook = XLSX.utils.book_new();
 
-    const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(
-      workbook, 
-      worksheet, 
-      `${selectedOption.value.label} Data`
-    );
+  // ✅ Fix sheet name limit
+  const safeSheetName = `${selectedOption.value.label} Data`
+    .replace(/[\\/?*\[\]:]/g, '') // remove invalid characters
+    .substring(0, 31);
 
-    // Generate file name
-    const fileName = `SensorData_${selectedOption.value.label}_${fromDate.value}_to_${toDate.value}.xlsx`;
+  XLSX.utils.book_append_sheet(workbook, worksheet, safeSheetName);
 
-    // Export the file
-    XLSX.writeFile(workbook, fileName);
-}
+  const safeFileName = `SensorData_${selectedOption.value.label}_${fromDate.value}_to_${toDate.value}.xlsx`
+  .replace(/[\\/:*?"<>|]/g, '_'); // replace invalid chars with underscore
+
+  XLSX.writeFile(workbook, safeFileName);
+
+};
+
 
 </script>
 
