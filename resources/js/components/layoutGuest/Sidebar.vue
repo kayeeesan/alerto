@@ -74,8 +74,8 @@ watch(
             ></v-avatar>
           </div>
           <div class="brand-text">
-            <span class="brand-name">ALERTO</span>
-            <span class="brand-tagline">Disaster Monitoring System</span>
+            <span class="brand-name">ALeRTO</span>
+            <span class="brand-tagline">Flood Early Warning System</span>
           </div>
         </div>
       </RouterLink>
