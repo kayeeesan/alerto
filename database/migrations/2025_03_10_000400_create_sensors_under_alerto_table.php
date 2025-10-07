@@ -23,8 +23,8 @@ return new class extends Migration
             $table->float('previous_rain_amount')->nullable();
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
-            $table->decimal('long', 8, 2)->nullable();
-            $table->decimal('lat', 8, 2)->nullable();
+            $table->decimal('long', 10, 6)->nullable();
+            $table->decimal('lat', 10, 6)->nullable();
             $table->string('status')->nullable();
             $table->string('sensor_type');
             $table->softDeletes();
