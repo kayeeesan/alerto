@@ -14,7 +14,6 @@ use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\StaffController;
-use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactUsController;
@@ -79,7 +78,6 @@ Route::middleware('auth:sanctum')->group(function  () {
 
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
     Route::patch('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);
-    Route::get('/messages', [ContactMessageController::class, 'index']);
     Route::get('/user', function (\Illuminate\Http\Request $request) {
         $user = User::with('staff.river')->find($request->user()->id);
         return new UserResource($user);
