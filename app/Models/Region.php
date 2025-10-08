@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\UsesUuid;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 
 class Region extends Model
 {
@@ -20,4 +22,22 @@ class Region extends Model
         'updated_at',
         'synced_at',
     ];
+
+    protected static function triggerSync()
+    {
+        if (app()->runningInConsole()) return;
+
+        if (!Cache::has('sync_recently_triggered')) {
+            Cache::put('sync_recently_triggered', true, 10);
+            Artisan::call('sync:main', ['model' => 'regions']);
+        }
+    }
+
+    public static function booted()
+    {
+        parent::boot();
+
+        static::saved(fn() => self::triggerSync()); 
+        static::deleted(fn() => self::triggerSync());
+    }
 }

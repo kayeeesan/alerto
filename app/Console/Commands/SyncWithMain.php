@@ -19,7 +19,7 @@ use Carbon\Carbon;
 
 class SyncWithMain extends Command
 {
-    protected $signature = 'sync:main';
+    protected $signature = 'sync:main {model?}';
     protected $description = 'Synchronize local data with main server';
 
     public function handle()
@@ -32,6 +32,17 @@ class SyncWithMain extends Command
 
         $models = config('sync.models');
         $mainUrl = 'https://alerto.adzu.edu.ph/api/sync';
+        $specificModel = $this->argument('model');
+
+        if ($specificModel) {
+        if (!isset($models[$specificModel])) {
+                $this->error("Model '{$specificModel}' not found in sync config.");
+                return 0;
+            }
+
+            $models = [$specificModel => $models[$specificModel]];
+            Log::info("[Sync] Running partial sync for model: {$specificModel}");
+        }
 
         foreach ($models as $key => $modelClass) {
             Log::info("[Sync] Starting model: $key");
