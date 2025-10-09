@@ -7,7 +7,7 @@ use App\Models\Alert;
 use Carbon\Carbon;
 use App\Events\AlertUpdated;
 
-class expiredAlerts extends Command
+class ExpiredAlerts extends Command
 {
     protected $signature = 'alerts:expire';
     protected $description = 'Expire alerts that are pending for more than 2 minutes';

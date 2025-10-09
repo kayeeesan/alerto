@@ -20,7 +20,7 @@
         <!-- Weather Icon -->
         <v-col cols="4" class="d-flex justify-center">
           
-          <img src="../../../imgs/weatherIcon/sunny.svg" alt="">
+          <!-- <img src="../../../imgs/weatherIcon/sunny.svg" alt=""> -->
         </v-col>
        
         <!-- Weather Details -->
