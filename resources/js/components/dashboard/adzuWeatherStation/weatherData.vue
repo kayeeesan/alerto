@@ -8,6 +8,28 @@ const error = ref(null);
 
 let refreshInterval = null;
 
+// Convert inches to mm for rain
+function inToMm(inches) {
+  return (parseFloat(inches) * 25.4).toFixed(1);
+}
+
+// Convert mph to m/s for wind
+function mphToMs(mph) {
+  return (parseFloat(mph) * 0.44704).toFixed(1);
+}
+
+// Convert inHg to hPa for pressure
+function inHgToHpa(inHg) {
+  return (parseFloat(inHg) * 33.8639).toFixed(1);
+}
+
+// Get wind direction from degrees
+function getWindDirection(degrees) {
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const index = Math.round(degrees / 22.5) % 16;
+  return directions[index];
+}
+
 async function fetchWeatherData() {
   loading.value = true;
   try {
@@ -29,8 +51,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  if (refreshInterval)
-    clearInterval(refreshInterval);
+  if (refreshInterval) clearInterval(refreshInterval);
 })
 </script>
 
@@ -68,9 +89,9 @@ onBeforeUnmount(() => {
             <div class="primary-weather">
               <div class="temperature-display">
                 <div class="temp-value">
-                  {{ weatherData.davis_current_observation.temp_in_f }}
+                  {{ weatherData.temp_c }}
                 </div>
-                <div class="temp-unit">°F</div>
+                <div class="temp-unit">°C</div>
               </div>
               <div class="weather-icon">
                 <v-icon size="64" color="#FFA500">mdi-weather-sunny</v-icon>
@@ -79,58 +100,93 @@ onBeforeUnmount(() => {
 
             <div class="weather-description">
               <p>
-                Feels like {{ weatherData.davis_current_observation.heat_index_year_high_f }}°F
+                Feels like {{ weatherData.heat_index_c }}°C
               </p>
             </div>
           </div>
 
           <!-- 📊 Secondary Metrics -->
           <div class="secondary-metrics">
+            <!-- Rain Section -->
+            <div class="metric-card">
+              <div class="metric-icon">
+                <v-icon color="#96CEB4">mdi-weather-rainy</v-icon>
+              </div>
+              <div class="metric-data">
+                <div class="metric-header">
+                  <h3>RAIN (mm)</h3>
+                </div>
+                <div class="metric-row">
+                  <div class="metric-label-small">Now</div>
+                  <div class="metric-value-small">
+                    {{ inToMm(weatherData.davis_current_observation.rain_rate_in_per_hr) }}
+                  </div>
+                </div>
+                <div class="metric-row">
+                  <div class="metric-label-small">24hr total</div>
+                  <div class="metric-value-small">
+                    {{ inToMm(weatherData.davis_current_observation.rain_day_in) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Wind Section -->
+            <div class="metric-card">
+              <div class="metric-icon">
+                <v-icon color="#45B7D1">mdi-weather-windy</v-icon>
+              </div>
+              <div class="metric-data">
+                <div class="metric-header">
+                  <h3>WIND (m/s)</h3>
+                </div>
+                <div class="metric-value-medium">
+                  {{ mphToMs(weatherData.davis_current_observation.wind_ten_min_avg_mph) }}
+                </div>
+                <div class="metric-subtext">
+                  @ {{ getWindDirection(weatherData.wind_degrees) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Pressure Section -->
+            <div class="metric-card">
+              <div class="metric-icon">
+                <v-icon color="#FFA07A">mdi-gauge</v-icon>
+              </div>
+              <div class="metric-data">
+                <div class="metric-header">
+                  <h3>PRESSURE (hPa)</h3>
+                </div>
+                <div class="metric-value-medium">
+                  {{ inHgToHpa(weatherData.pressure_in) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Humidity -->
             <div class="metric-card">
               <div class="metric-icon">
                 <v-icon color="#4ECDC4">mdi-water-percent</v-icon>
               </div>
               <div class="metric-data">
                 <div class="metric-value">
-                  {{ weatherData.davis_current_observation.relative_humidity_in }}%
+                  {{ weatherData.relative_humidity }}%
                 </div>
                 <div class="metric-label">Humidity</div>
               </div>
             </div>
 
+            <!-- Dew Point -->
             <div class="metric-card">
               <div class="metric-icon">
-                <v-icon color="#45B7D1">mdi-weather-windy</v-icon>
+                <v-icon color="#FFA07A">mdi-weather-fog</v-icon>
               </div>
               <div class="metric-data">
                 <div class="metric-value">
-                  {{ weatherData.davis_current_observation.wind_month_high_mph }} mph
+                  {{ weatherData.dewpoint_c }}°C
                 </div>
-                <div class="metric-label">Wind</div>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon">
-                <v-icon color="#96CEB4">mdi-weather-rainy</v-icon>
-              </div>
-              <div class="metric-data">
-                <div class="metric-value">
-                  {{ weatherData.davis_current_observation.rain_day_in }} in
-                </div>
-                <div class="metric-label">Rain (24hr)</div>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon">
-                <v-icon color="#FFA07A">mdi-gauge</v-icon>
-              </div>
-              <div class="metric-data">
-                <div class="metric-value">
-                  {{ weatherData.pressure_in }} inHg
-                </div>
-                <div class="metric-label">Pressure</div>
+                <div class="metric-label">Dew Point</div>
               </div>
             </div>
           </div>
@@ -159,7 +215,6 @@ onBeforeUnmount(() => {
     </v-sheet>
   </v-col>
 </template>
-
 
 <style scoped>
 .threshold-container {
@@ -355,6 +410,15 @@ onBeforeUnmount(() => {
   flex: 1;
 }
 
+.metric-header h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .metric-value {
   font-size: 1.5rem;
   font-weight: 700;
@@ -362,7 +426,38 @@ onBeforeUnmount(() => {
   margin-bottom: 4px;
 }
 
+.metric-value-medium {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.metric-value-small {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
 .metric-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.metric-label-small {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.metric-subtext {
   font-size: 0.9rem;
   color: #666;
 }
@@ -431,5 +526,4 @@ onBeforeUnmount(() => {
   opacity: 0.9;
   margin-bottom: 4px;
 }
-
 </style>
