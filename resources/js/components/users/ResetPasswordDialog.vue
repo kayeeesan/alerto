@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 import useResetPasswordRequest from "../../composables/resetPasswordRequest";
 import Swal from "sweetalert2";
 
+import alertoLogo from '../../../img/logo/alerto-logo.png';
+
 const email = ref('');
 const router = useRouter();
 const { isLoading, sendResetLink } = useResetPasswordRequest();
@@ -34,7 +36,7 @@ const handleClose = () => {
         <div class="reset-card">
             <!-- Header Section -->
             <div class="avatar">
-                <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
+                <img :src="alertoLogo" alt="Alerto Logo" />
             </div>
 
             <h2 class="title">Reset Password</h2>
@@ -118,8 +120,10 @@ const handleClose = () => {
     overflow: hidden;
 }
 .avatar img {
-    width: 100%;
-    height: auto;
+  width: 115%;
+  height: 115%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .title {

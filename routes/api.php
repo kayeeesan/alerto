@@ -72,12 +72,12 @@ Route::middleware('auth:sanctum')->group(function  () {
     Route::get('/alerts-responded', [AlertController::class, 'responded']);
     Route::get('/alerts-expired', [AlertController::class, 'expired']);
     Route::delete('/alerts/{id}', [AlertController::class, 'destroy']);
-    Route::patch('/alerts/{id}', [AlertController::class, 'update']);
+    Route::post('/alerts/{id}', [AlertController::class, 'update']);
 
     Route::resource('/staffs', StaffController::class);
 
     Route::patch('/users/{id}/reset-password',[UserController::class, 'resetPassword']);
-    Route::patch('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);
+    Route::post('/users/{id}/manual-reset-password',[UserController::class, 'manualResetPassword']);
     Route::get('/user', function (\Illuminate\Http\Request $request) {
         $user = User::with('staff.river')->find($request->user()->id);
         return new UserResource($user);
