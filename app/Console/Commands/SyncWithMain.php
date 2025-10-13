@@ -86,6 +86,22 @@ class SyncWithMain extends Command
                     ];
                 }
 
+                if ($key === 'alerts') {
+                    return [
+                        'uuid' => $record->uuid,
+                        'threshold_uuid' => $record->threshold?->uuid,
+                        'response_uuid' => $record->response?->uuid,
+                        'user_uuid' => $record->user?->uuid,
+                        'details' => $record->details,
+                        'status' => $record->status,
+                        'expired_at' => $record->expired_at,
+                        'type' => $record->type,
+                        'created_at' => $record->created_at,
+                        'updated_at' => $record->updated_at,
+                        'deleted_at' => $record->deleted_at,
+                    ];
+                }
+
                 return $record->toArray();
             })->toArray();
 
@@ -165,6 +181,73 @@ class SyncWithMain extends Command
                 })->delete();
 
                 continue; // skip generic model sync
+            }
+
+            /** Special case for alerts */
+            if ($key === 'alerts') {
+                foreach ($dataArray as $data) {
+                    $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                    $query = $modelClass::query();
+                    if ($usesSoftDeletes) {
+                        $query = $query->withTrashed();
+                    }
+                    $existing = $query->where('uuid', $data['uuid'])->first();
+
+                    $threshold = isset($data['threshold_uuid']) ? \App\Models\Threshold::where('uuid', $data['threshold_uuid'])->first() : null;
+                    $response = isset($data['response_uuid']) ? \App\Models\Response::where('uuid', $data['response_uuid'])->first() : null;
+                    $user = isset($data['user_uuid']) ? \App\Models\User::where('uuid', $data['user_uuid'])->first() : null;
+
+                    if (!$threshold) {
+                        Log::warning("[Sync] Skipping alert {$data['uuid']}: missing threshold");
+                        continue;
+                    }
+
+                    $attributes = [
+                        'threshold_id' => $threshold->id,
+                        'response_id' => $response?->id,
+                        'user_id' => $user?->id,
+                        'details' => $data['details'] ?? '',
+                        'status' => $data['status'] ?? 'pending',
+                        'expired_at' => $data['expired_at'] ?? null,
+                        'type' => $data['type'] ?? null,
+                    ];
+
+                    $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
+                    $hasLocalUnsynced = $existing ? ($existing->synced_at === null || ($existing->updated_at && $existing->synced_at && $existing->updated_at->gt($existing->synced_at))) : false;
+                    $shouldApply = !$hasLocalUnsynced; // if no local unsynced changes, prefer remote
+                    if (!$shouldApply && $existing && $remoteUpdatedAt) {
+                        $shouldApply = $remoteUpdatedAt->gt($existing->updated_at);
+                    }
+
+                    if (!$existing) {
+                        $created = $modelClass::create(array_merge(['uuid' => $data['uuid']], $attributes, ['synced_at' => now()]));
+                        event(new AlertUpdated($created));
+                    } else {
+                        if ($shouldApply) {
+                            $existing->update(array_merge($attributes, ['synced_at' => now()]));
+                            event(new AlertUpdated($existing));
+                        }
+
+                        if ($usesSoftDeletes) {
+                            $remoteDeletedAt = $data['deleted_at'] ?? null;
+                            $remoteDeletedAt = $remoteDeletedAt ? Carbon::parse($remoteDeletedAt) : null;
+                            $existingDeletedAt = $existing->deleted_at;
+                            $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
+
+                            if ($deletedChanged) {
+                                if (!is_null($remoteDeletedAt) && !$existing->trashed()) {
+                                    $existing->delete();
+                                } elseif (is_null($remoteDeletedAt) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                    $existing->restore();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Log::info("[Sync] Model OK: $key");
+                continue;
             }
 
             /** Special case for staffs */
@@ -259,7 +342,6 @@ class SyncWithMain extends Command
                     }
                 } else {
                     $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
-                    $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
 
                     $deletedChanged = false;
                     if ($usesSoftDeletes) {
@@ -269,7 +351,14 @@ class SyncWithMain extends Command
                         $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
                     }
 
-                    if ($needsUpdate || $deletedChanged) {
+                    // Prefer remote when there are no local unsynced changes to avoid clock skew issues
+                    $hasLocalUnsynced = ($existing->synced_at === null) || ($existing->updated_at && $existing->synced_at && $existing->updated_at->gt($existing->synced_at));
+                    $shouldApply = !$hasLocalUnsynced;
+                    if (!$shouldApply && $remoteUpdatedAt) {
+                        $shouldApply = $remoteUpdatedAt->gt($existing->updated_at);
+                    }
+
+                    if ($shouldApply || $deletedChanged) {
                         $updateData = array_merge($data, ['synced_at' => now()]);
                         if (!$usesSoftDeletes) {
                             unset($updateData['deleted_at']);

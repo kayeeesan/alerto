@@ -85,7 +85,51 @@ class SyncController extends Controller
                     continue;
                 }
 
-                $record = $modelClass::updateOrCreate(['uuid' => $data['uuid']], $data);
+                // Alerts: map related UUIDs to local IDs on main
+                if ($model === 'alerts') {
+                    $threshold = \App\Models\Threshold::where('uuid', $data['threshold_uuid'] ?? null)->first();
+                    $response = isset($data['response_uuid']) ? \App\Models\Response::where('uuid', $data['response_uuid'])->first() : null;
+                    $user = isset($data['user_uuid']) ? \App\Models\User::where('uuid', $data['user_uuid'])->first() : null;
+
+                    if (!$threshold) {
+                        \Log::warning("[Sync] Skipped alerts. Missing threshold UUID: " . ($data['threshold_uuid'] ?? 'null'));
+                        continue;
+                    }
+
+                    $record = $modelClass::updateOrCreate(
+                        ['uuid' => $data['uuid']],
+                        [
+                            'threshold_id' => $threshold->id,
+                            'response_id' => $response?->id,
+                            'user_id' => $user?->id,
+                            'details' => $data['details'] ?? '',
+                            'status' => $data['status'] ?? 'pending',
+                            'expired_at' => $data['expired_at'] ?? null,
+                            'type' => $data['type'] ?? null,
+                            'created_at' => $data['created_at'] ?? null,
+                            // Intentionally ignore client 'updated_at'; server will set it
+                            'deleted_at' => $data['deleted_at'] ?? null,
+                        ]
+                    );
+
+                    event(new AlertUpdated($record));
+                    continue;
+                }
+
+                // Do not trust client-updated timestamps. Let the server own `updated_at`.
+                // This prevents clock skew issues that cause other devices to miss updates.
+                $payload = $data;
+                unset($payload['updated_at']);
+
+                $existing = $modelClass::where('uuid', $data['uuid'] ?? null)->first();
+                if ($existing) {
+                    $existing->fill($payload);
+                    $existing->save(); // Eloquent will set updated_at to server time
+                    $record = $existing;
+                } else {
+                    // For creates, allow provided created_at if any, but still ignore updated_at
+                    $record = $modelClass::create($payload);
+                }
 
                 if ($model === 'users') {
                     event(new UserCreated($record));
@@ -135,6 +179,23 @@ class SyncController extends Controller
                     'province_uuid' => $item->province->uuid ?? null,
                     'municipality_uuid' => $item->municipality->uuid ?? null,
                     'river_uuid' => $item->river->uuid ?? null,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                    'deleted_at' => $item->deleted_at,
+                    'synced_at' => $item->synced_at ?? null,
+                ];
+            });
+        } else if ($model === 'alerts') {
+            $data = $modelClass::withTrashed()->with(['threshold','response','user'])->get()->map(function ($item) {
+                return [
+                    'uuid' => $item->uuid,
+                    'threshold_uuid' => $item->threshold->uuid ?? null,
+                    'response_uuid' => $item->response->uuid ?? null,
+                    'user_uuid' => $item->user->uuid ?? null,
+                    'details' => $item->details,
+                    'status' => $item->status,
+                    'expired_at' => $item->expired_at,
+                    'type' => $item->type,
                     'created_at' => $item->created_at,
                     'updated_at' => $item->updated_at,
                     'deleted_at' => $item->deleted_at,
