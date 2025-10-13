@@ -191,7 +191,7 @@ export default function useUsers() {
         
             try {
                 await axios
-                    .patch(`/api/users/${id}/manual-reset-password`, {
+                    .post(`/api/users/${id}/manual-reset-password`, {
                         password,
                         password_confirmation,
                     })

@@ -79,7 +79,7 @@ class AlertController extends Controller
     public function update($id, AlertResponseRequest $request){
         try {
             $alert = Alert::findOrFail($id);
-            $alert->response_id = $request->response['id'];
+            $alert->response_id = $request->response['id'] ?? $request->response_id;
               // Fetch the user ID from the request or authenticated user
             $userId = Auth::id();
             $alert->user_id = $userId;

@@ -2,6 +2,12 @@
 import { ref, watch, computed } from "vue";
 import store from "@/store";
 
+import ndrrmcLogo from '../../../img/logo/ndrrmc.png';
+import ocdLogo from '../../../img/logo/ocd.svg';
+import dostLogo from '../../../img/logo/dost.png';
+import diglLogo from '../../../img/logo/dilg.png';
+import alertoLogo from '../../../img/logo/alerto-logo.png';
+
 const props = defineProps({
   drawer: {
     type: Boolean,
@@ -91,7 +97,7 @@ watch(
           <div class="logo-bubble">
             <v-avatar
               size="50"
-              image="https://rdrrmc9-alerto.com/assets/images/logo3.png"
+              :image="alertoLogo"
               class="logo-avatar"
             ></v-avatar>
           </div>
@@ -231,16 +237,16 @@ watch(
       <p class="footer-text">Supported by our partners</p>
       <div class="partner-logos">
         <div class="logo-item logo-bubble-item">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/rdrrmc9.png" alt="RDRRMC9" />
+          <img :src="ndrrmcLogo" alt="RDRRMC9" />
         </div>
         <div class="logo-item logo-bubble-item">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/ocd.png" alt="OCD" />
+          <img :src="ocdLogo" alt="OCD" />
         </div>
         <div class="logo-item logo-bubble-item">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/dost9.png" alt="DOST9" />
+          <img :src="dostLogo" alt="DOST9" />
         </div>
         <div class="logo-item logo-bubble-item">
-          <img src="https://rdrrmc9-alerto.com/assets/images/partners/dilg.png" alt="DILG" />
+          <img :src="diglLogo" alt="DILG" />
         </div>
       </div>
       <div class="copyright">© 2025 ALERTO System</div>

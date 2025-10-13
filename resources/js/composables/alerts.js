@@ -124,7 +124,7 @@ export default function useAlerts() {
 
         try {
             await axios
-                .patch(`/api/alerts/${alert.value.id}`, alert.value)
+                .post(`/api/alerts/${alert.value.id}`, alert.value)
                 .then((response) => {
                     Swal.fire({
                         title: "Success",

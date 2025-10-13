@@ -4,6 +4,8 @@ import useAuth from "../../composables/auth";
 import ResetPassword from "../../components/users/ResetPasswordDialog.vue";
 import RegistrationDialog from "../clientRegistration/RegistrationDialog.vue";
 
+import alertoLogo from '../../../img/logo/alerto-logo.png';
+
 const { error, is_loading, login } = useAuth();
 
 const form = reactive({
@@ -24,7 +26,7 @@ const handleSubmit = async () => {
   <div class="login-container">
     <div v-if="!resetDialog" class="login-card">
       <div class="avatar">
-        <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
+        <img :src="alertoLogo" alt="Alerto Logo"/>
       </div>
 
       <h2 class="title">Welcome Back</h2>
@@ -116,9 +118,12 @@ const handleSubmit = async () => {
   overflow: hidden;
 }
 .avatar img {
-  width: 100%;
-  height: auto;
+  width: 115%;
+  height: 115%;
+  object-fit: cover;
+  object-position: center;
 }
+
 
 .title {
   font-size: 22px;
