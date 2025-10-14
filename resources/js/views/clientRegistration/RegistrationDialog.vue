@@ -9,6 +9,8 @@ import useRivers from "../../composables/river";
 import useRoles from "../../composables/roles";
 import { get } from "@vueuse/core";
 
+import alertoLogo from '../../../img/logo/alerto-logo.png';
+
 const props = defineProps({
     staff: Object
 });
@@ -126,7 +128,7 @@ const close = () => {
   <div class="registration-container">
     <div class="registration-card hidden-scroll bg-blue-grey-lighten-5">
       <div class="avatar">
-        <img src="https://rdrrmc9-alerto.com/assets/images/logo3.png" alt="Alerto Logo" />
+        <img :src="alertoLogo"  alt="Alerto Logo" />
       </div>
       <v-card-title class="text-h5 text-md-h5 text-lg-h5 font-weight-bold text-primary">
             Member<span class="d-sm-none"><br></span> Registration
@@ -409,8 +411,8 @@ const close = () => {
   align-self: center; /* guard against cross-axis stretching */
 }
 .avatar img {
-  width: 100%;
-  height: 100%;
+  width: 115%;
+  height: 115%;
   object-fit: contain; /* preserve aspect ratio without cropping */
   object-position: center;
   display: block; /* remove inline-gap artifacts */
