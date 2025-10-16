@@ -16,9 +16,25 @@ const form = reactive({
 const visible = ref(false);
 const resetDialog = ref(false); 
 const registrationDialog = ref(false);
+const loginError = ref("");
 
 const handleSubmit = async () => {
+  loginError.value = ""; // Clear previous errors
   await login({ ...form });
+
+  if (error.value) {
+    const errorMessage = error.value.message || error.value;
+    
+    if (errorMessage.includes('Incorrect credentials')) {
+      loginError.value = "Invalid username or password";
+    } else if (errorMessage.includes('Account is pending')) {
+      loginError.value = "Your account is pending.";
+    } else if (errorMessage.includes('Account is disabled')) {
+      loginError.value = "Your account has been disabled. Please contact administrator.";
+    } else {
+      loginError.value = "An error occurred during login. Please try again.";
+    }
+  }
 };
 </script>
 
@@ -32,6 +48,11 @@ const handleSubmit = async () => {
       <h2 class="title">Welcome Back</h2>
       <p class="subtitle">Please login to continue</p>
 
+      <div v-if="loginError" class="error-message">
+        <i class="mdi mdi-alert-circle-outline"></i>
+        {{ loginError }}
+      </div>
+
       <form @submit.prevent="handleSubmit" class="form">
         <div class="input-box">
           <i class="mdi mdi-email-outline input-icon"></i>
@@ -40,6 +61,7 @@ const handleSubmit = async () => {
             type="text"
             placeholder="Email"
             required
+            :class="{ 'error': loginError }"
           />
         </div>
 
@@ -50,6 +72,7 @@ const handleSubmit = async () => {
             :type="visible ? 'text' : 'password'"
             placeholder="Password"
             required
+            :class="{ 'error': loginError }"
           />
           <span class="toggle-password" @click="visible = !visible">
             <i :class="visible ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></i>
@@ -143,6 +166,30 @@ const handleSubmit = async () => {
   flex-direction: column;
 }
 
+.error-message {
+  background: #ffe6e6;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  color: #d63031;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: shake 0.5s ease-in-out;
+}
+
+.error-message i {
+  font-size: 18px;
+}
+
+.input-box input.error {
+  border-color: #d63031;
+  box-shadow: 0 0 8px rgba(214, 48, 49, 0.2);
+}
+
 .input-box {
   position: relative;
   margin: 15px 0;
@@ -227,5 +274,11 @@ const handleSubmit = async () => {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 </style>
