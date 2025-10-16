@@ -20,6 +20,8 @@ const loginError = ref("");
 
 const handleSubmit = async () => {
   loginError.value = ""; // Clear previous errors
+  error.value = null; // Clear previous error from useAuth
+  
   await login({ ...form });
 
   if (error.value) {
