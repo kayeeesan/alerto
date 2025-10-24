@@ -38,8 +38,8 @@ class UserRole extends Model
     {
         if (app()->runningInConsole()) return;
 
-        if (!Cache::has('sync_recently_triggered')) {
-            Cache::put('sync_recently_triggered', true, 10);
+        if (!Cache::has('sync_recently_triggered_user_roles')) {
+            Cache::put('sync_recently_triggered_user_roles', true, 10);
             Artisan::call('sync:main', ['model' => 'user_roles']);
         }
     }
