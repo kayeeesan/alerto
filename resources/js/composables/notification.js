@@ -73,7 +73,7 @@ export default function useNotifications() {
 
   const markAsRead = async (id) => {
     try {
-      await axios.patch(`/api/notifications/${id}/read`);
+      await axios.post(`/api/notifications/${id}/read`);
       const notif = notifications.value.find((n) => n.id === id);
       if (notif) {
         notif.read_at = new Date().toISOString();
@@ -103,7 +103,7 @@ export default function useNotifications() {
 
   const markAllAsRead = async () => {
     try {
-      await axios.patch('/api/notifications/mark-all-read');
+      await axios.post('/api/notifications/mark-all-read');
       notifications.value.forEach(n => n.read_at = new Date().toISOString());
       unread_count.value = 0;
     } catch (error) {
