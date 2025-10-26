@@ -35,6 +35,7 @@ class SensorUnderAlerto extends Model
         'updated_at',
         'deleted_at',
         'synced_at',
+        'api_last_updated_at'
     ];
 
     public function river()

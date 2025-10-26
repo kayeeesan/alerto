@@ -66,6 +66,7 @@ class UpdateWeatherLink extends Command
             foreach ([$alerto, $ph] as $sensor) {
                 if ($sensor) {
                     $sensor->device_rain_amount = $rainDay;
+                    $sensor->api_last_updated_at = $recordedAt;
                     $sensor->save();
 
                     SensorsHistory::create([
@@ -88,7 +89,7 @@ class UpdateWeatherLink extends Command
                         'rain_day_in' => $rainDay,
                         'rain_storm_in' => $rainStorm,
                         'rain_year_in' => $rainYear,
-                        'updated_at' => now(),
+                        'api_last_updated_at' => $recordedAt,
                     ]);
                 }
             }

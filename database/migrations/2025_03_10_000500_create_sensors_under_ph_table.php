@@ -27,6 +27,7 @@ return new class extends Migration
             $table->decimal('lat', 10, 6)->nullable();
             $table->string('status')->nullable();
             $table->string('sensor_type');
+            $table->timestamp('api_last_updated_at')->nullable();
             $table->softDeletes();
         });
     }

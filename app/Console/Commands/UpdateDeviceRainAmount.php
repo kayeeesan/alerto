@@ -101,6 +101,7 @@ class UpdateDeviceRainAmount extends Command
                     $alerto = $alertoSensors->get($sensorId);
                     if ($alerto) {
                         $alerto->device_rain_amount = $rainAmount;
+                         $alerto->api_last_updated_at = $recordedAt; 
                         $alerto->save();
 
                         SensorsHistory::create([
@@ -140,6 +141,7 @@ class UpdateDeviceRainAmount extends Command
                     $ph = $phSensors->get($sensorId);
                     if ($ph) {
                         $ph->device_rain_amount = $rainAmount;
+                        $ph->api_last_updated_at = $recordedAt; 
                         $ph->save();
 
                         SensorsHistory::create([

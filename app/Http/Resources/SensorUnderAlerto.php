@@ -39,6 +39,7 @@ class SensorUnderAlerto extends JsonResource
             'status' => $this->status,
             'sensor_type' => $this->sensor_type,
             'updated_at' => $this->updated_at?->toDateTimeString(),
+            'api_last_updated_at' => $this->api_last_updated_at,
         ];
     }
 }
