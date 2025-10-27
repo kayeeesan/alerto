@@ -16,8 +16,8 @@ import { LMap, LTileLayer, LCircle, LPopup } from "@vue-leaflet/vue-leaflet";
 import { ref, onMounted, computed } from "vue";
 
 // Import your composables
-import useSensorsUnderAlerto from "../../../composables/SensorsUnderAlerto";
-import useSensorsUnderPh from "../../../composables/SensorsUnderPh";
+import useSensorsUnderAlerto from "../../../composables/sensorsUnderAlerto";
+import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
 const { sensors_under_alerto, getSensorsUnderAlerto } = useSensorsUnderAlerto();
 const { sensors_under_ph, getSensorsUnderPh } = useSensorsUnderPh();

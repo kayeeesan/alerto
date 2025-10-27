@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import Map from '@/components/dashboard/visualizationMap/Map.vue';
+import Map from '@/components/dashboard/visualizationMap/map.vue';
 import "leaflet/dist/leaflet.css";
 
 
