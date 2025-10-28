@@ -45,16 +45,16 @@ const countStatus = (items) => {
 const labelWithCount = (counts) =>
   statusLabels.map((label, i) => `${label} (${counts[i]})`);
 
-// Initial chart configs
+// Initial chart configs (Rain first, Water second)
 const chartConfigs = [
   {
     type: 'doughnut',
     data: {
       labels: [],
       datasets: [{
-        label: 'Water Status',
+        label: 'Rain Status',
         data: [],
-        backgroundColor: ['#6D94C5', '#8ecae6', '#219ebc', '#023047'],
+        backgroundColor: ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'],
         hoverOffset: 4
       }]
     },
@@ -79,9 +79,9 @@ const chartConfigs = [
     data: {
       labels: [],
       datasets: [{
-        label: 'Rain Status',
+        label: 'Water Status',
         data: [],
-        backgroundColor: ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'],
+        backgroundColor: ['#6D94C5', '#8ecae6', '#219ebc', '#023047'],
         hoverOffset: 4
       }]
     },
@@ -123,16 +123,17 @@ onMounted(async () => {
   await getSensorsUnderPh();
   await getSensorsUnderAlerto();
 
-  const phCounts = countStatus(sensors_under_ph.value);
+  // Rain chart first
   const alertoCounts = countStatus(sensors_under_alerto.value);
+  const phCounts = countStatus(sensors_under_ph.value);
 
-  chartConfigs[0].data.datasets[0].data = phCounts;
-  chartConfigs[0].data.labels = labelWithCount(phCounts);
+  chartConfigs[0].data.datasets[0].data = alertoCounts;
+  chartConfigs[0].data.labels = labelWithCount(alertoCounts);
 
-  chartConfigs[1].data.datasets[0].data = alertoCounts;
-  chartConfigs[1].data.labels = labelWithCount(alertoCounts);
+  chartConfigs[1].data.datasets[0].data = phCounts;
+  chartConfigs[1].data.labels = labelWithCount(phCounts);
 
-  createChart(0);
+  createChart(0); // Create first (Rain)
 });
 
 // Create chart for other tab when selected
@@ -141,14 +142,14 @@ watch(tab, (newIndex) => {
 });
 
 // Watch data for real-time updates
-watch(sensors_under_ph, (newData) => {
-  const counts = countStatus(newData);
-  updateChart(0, counts);
-});
-
 watch(sensors_under_alerto, (newData) => {
   const counts = countStatus(newData);
-  updateChart(1, counts);
+  updateChart(0, counts); // Rain
+});
+
+watch(sensors_under_ph, (newData) => {
+  const counts = countStatus(newData);
+  updateChart(1, counts); // Water
 });
 </script>
 
@@ -157,14 +158,15 @@ watch(sensors_under_alerto, (newData) => {
     <v-sheet class="threshold-sheet" rounded="lg">
       <div class="header-container">
         <div class="alert-indicator"></div>
-        <h1 class="section-title">WARNINGING OVERVIEW</h1>
+        <h1 class="section-title">WARNING OVERVIEW</h1>
       </div>
 
       <v-divider class="divider"></v-divider> 
 
+      <!-- Swap tab order -->
       <v-tabs v-model="tab" background-color="white" grow>
-        <v-tab>Water</v-tab>
         <v-tab>Rain</v-tab>
+        <v-tab>Water</v-tab>
       </v-tabs>
 
       <v-window v-model="tab">
