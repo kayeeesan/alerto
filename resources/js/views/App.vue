@@ -155,10 +155,11 @@ const getAlertRoute = (notification) => {
   <v-app>
     <div class="layout-wrapper">
       <!-- Sidebar -->
-      <Sidebar 
-        v-model:drawer="drawer" 
-        class="sidebar" 
+      <Sidebar
+        v-model:drawer="drawer"
+        class="sidebar"
         :temporary="isMobile"
+        :key="isMobile ? 'mobile' : 'desktop'"
       />
 
       <!-- Main Content -->
@@ -412,8 +413,8 @@ const getAlertRoute = (notification) => {
 }
 
 .main-content.expanded {
-  margin-left: 270px;
-  width: calc(100% - 270px);
+  margin-left: 300px;
+  width: calc(100% - 300px);
 }
 
 /* Notification Styles */
