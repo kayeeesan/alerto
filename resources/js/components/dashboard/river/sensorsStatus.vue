@@ -32,7 +32,7 @@ const headers = [
   { key: "status", title: "Status" },
   { key: "api_last_updated_at", title: "Last Update" },
   { key: "device_water_level", title: "Water Level" },
-  { key: "device_rain_amount", title: "Rain" }
+  { key: "device_rain_amount", title: "Rain (mm)" }
 ];
 
 const all_sensors = computed(() => [
