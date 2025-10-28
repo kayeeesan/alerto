@@ -24,6 +24,9 @@ const statusLabels = ['NORMAL', 'ALERT', 'CRITICAL', 'WARNING'];
 
 // Count how many sensors per status
 const countStatus = (items) => {
+
+  if (!items || items.length === 0) return null;
+
   const counts = {
     WARNING: 0,
     ALERT: 0,
@@ -110,31 +113,62 @@ const createChart = (index) => {
   }
 };
 
-// Update chart data and labels dynamically
 const updateChart = (index, dataCounts) => {
-  if (chartInstances[index]) {
-    chartInstances[index].data.datasets[0].data = dataCounts;
+  if (!chartInstances[index]) return;
+
+  if (!dataCounts || dataCounts.every(v => v === 0)) {
+    // No data → show gray chart
+    chartInstances[index].data.labels = ["No Data"];
+    chartInstances[index].data.datasets[0].data = [1];
+    chartInstances[index].data.datasets[0].backgroundColor = ["#C0C0C0"];
+  } else {
+    // Normal data
     chartInstances[index].data.labels = labelWithCount(dataCounts);
-    chartInstances[index].update();
+    chartInstances[index].data.datasets[0].data = dataCounts;
+
+    // Restore default colors per chart
+    if (index === 0) {
+      // Rain chart colors
+      chartInstances[index].data.datasets[0].backgroundColor = ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'];
+    } else {
+      // Water chart colors
+      chartInstances[index].data.datasets[0].backgroundColor = ['#6D94C5', '#8ecae6', '#219ebc', '#023047'];
+    }
   }
+
+  chartInstances[index].update();
 };
 
 onMounted(async () => {
   await getSensorsUnderPh();
   await getSensorsUnderAlerto();
 
-  // Rain chart first
   const alertoCounts = countStatus(sensors_under_alerto.value);
   const phCounts = countStatus(sensors_under_ph.value);
 
-  chartConfigs[0].data.datasets[0].data = alertoCounts;
-  chartConfigs[0].data.labels = labelWithCount(alertoCounts);
+  // Rain chart (index 0)
+  if (!alertoCounts || alertoCounts.every(v => v === 0)) {
+    chartConfigs[0].data.datasets[0].data = [1];
+    chartConfigs[0].data.labels = ["No Data"];
+    chartConfigs[0].data.datasets[0].backgroundColor = ["#C0C0C0"];
+  } else {
+    chartConfigs[0].data.datasets[0].data = alertoCounts;
+    chartConfigs[0].data.labels = labelWithCount(alertoCounts);
+  }
 
-  chartConfigs[1].data.datasets[0].data = phCounts;
-  chartConfigs[1].data.labels = labelWithCount(phCounts);
+  // Water chart (index 1)
+  if (!phCounts || phCounts.every(v => v === 0)) {
+    chartConfigs[1].data.datasets[0].data = [1];
+    chartConfigs[1].data.labels = ["No Data"];
+    chartConfigs[1].data.datasets[0].backgroundColor = ["#C0C0C0"];
+  } else {
+    chartConfigs[1].data.datasets[0].data = phCounts;
+    chartConfigs[1].data.labels = labelWithCount(phCounts);
+  }
 
-  createChart(0); // Create first (Rain)
+  createChart(0); // create Rain first
 });
+
 
 // Create chart for other tab when selected
 watch(tab, (newIndex) => {
