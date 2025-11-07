@@ -11,7 +11,7 @@ export default function useSensorHistories() {
      * @param {Object} params - Query parameters for the request
      * @param {String} type - Optional type. If "auth", it will use the authenticated URL
      */
-    const getSensorHistories = async (params = {}) => {
+    const getSensorHistories = async (params = {}, type = '') => {
         is_loading.value = true;
         error.value = null;
 
