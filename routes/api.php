@@ -90,5 +90,5 @@ Route::middleware('auth:sanctum')->group(function  () {
     });
      Route::get('/fetch-devices/alerto', [SensorUnderAlertoController::class, 'fetchDevices']);
      Route::get('/fetch-devices/ph', [SensorUnderPhController::class, 'fetchDevices']);
-     Route::get('/sensor-histories', [SensorHistoryController::class, 'index']);
+    //  Route::get('/sensor-histories', [SensorHistoryController::class, 'index']);
 });

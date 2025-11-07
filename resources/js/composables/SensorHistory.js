@@ -11,12 +11,13 @@ export default function useSensorHistories() {
      * @param {Object} params - Query parameters for the request
      * @param {String} type - Optional type. If "auth", it will use the authenticated URL
      */
-    const getSensorHistories = async (params = {}, type = '') => {
+    const getSensorHistories = async (params = {}) => {
         is_loading.value = true;
         error.value = null;
 
         // Set URL depending on whether it's for authenticated or public access
-        const url = type === '/sensor-histories' ? '/api/sensor-histories' : '/api/form/sensor-histories';
+        // const url = type === '/sensor-histories' ? '/api/sensor-histories' : '/api/form/sensor-histories';
+        const url = '/api/form/sensor-histories';
 
         try {
             const response = await axios.get(url, { params });
