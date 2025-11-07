@@ -102,8 +102,8 @@ const filteredRivers = computed(() => {
 
 const fetchDevices = async () => {
     try {
-        const response = await axios.get('/api/fetch-devices');
-        devices.value = response.data;
+        const response = await axios.get('/api/fetch-devices/ph');
+        devices.value = Array.isArray(response.data) ? response.data : [];
     } catch (error) {
         console.error("Failed to fetch devices:", error);
         devices.value = [];
