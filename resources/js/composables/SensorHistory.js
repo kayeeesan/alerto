@@ -16,11 +16,10 @@ export default function useSensorHistories() {
         error.value = null;
 
         // Set URL depending on whether it's for authenticated or public access
-        // const url = type === '/sensor-histories' ? '/api/sensor-histories' : '/api/form/sensor-histories';
-        const url = '/api/form/sensor-histories';
+        const url = type === '/sensor-histories' ? '/api/sensor-histories' : '/api/form/sensor-histories';
 
         try {
-            const response = await axios.get(url, { params });
+            const response = await axios.get(url, { params }, type = '');
             sensor_histories.value = response.data.data;
         } catch (err) {
             error.value = err;
