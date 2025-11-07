@@ -88,7 +88,7 @@ Route::middleware('auth:sanctum')->group(function  () {
         Route::post('/{notification}/seen', [NotificationController::class, 'markAsSeen']);
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
     });
-     Route::get('/fetch-devices', [SensorUnderAlertoController::class, 'fetchDevices']);
-     Route::get('/fetch-devices', [SensorUnderPhController::class, 'fetchDevices']);
+     Route::get('/fetch-devices/alerto', [SensorUnderAlertoController::class, 'fetchDevices']);
+     Route::get('/fetch-devices/ph', [SensorUnderPhController::class, 'fetchDevices']);
      Route::get('/sensor-histories', [SensorHistoryController::class, 'index']);
 });
