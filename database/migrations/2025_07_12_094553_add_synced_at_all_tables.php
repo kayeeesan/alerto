@@ -28,7 +28,6 @@ return new class extends Migration
         'staffs',  
         'notifications', 
         'series',
-        'sensors_histories'
     ];
 
     foreach ($tables as $table) {

@@ -42,11 +42,15 @@ class AlertService
         $previousWater = $sensor->previous_water_level;
         $previousRain = $sensor->previous_rain_amount;
 
-        // --- Water Level Alert ---
-        if ($currentWater !== null && $currentWater != $previousWater) {
+        // --- Water Level Status & Alert ---
+        $waterStatus = null;
+        if ($currentWater !== null) {
             $waterStatus = $this->checkWaterLevelStatus($currentWater, $threshold, $river);
             if ($waterStatus) {
                 $statuses[] = $waterStatus['type'];
+            }
+            // Only create alert when value changed and status is active
+            if ($currentWater != $previousWater && $waterStatus) {
                 $this->createAlertAndNotify(
                     $threshold,
                     $riverId,
@@ -54,16 +58,20 @@ class AlertService
                     $waterStatus['type'],
                     'water_level'
                 );
-                // Update previous value
+                // Update previous value after creating alert
                 $sensor->previous_water_level = $currentWater;
             }
         }
 
-        // --- Rain Alert ---
-        if ($currentRain !== null && $currentRain != $previousRain) {
+        // --- Rain Status & Alert ---
+        $rainStatus = null;
+        if ($currentRain !== null) {
             $rainStatus = $this->checkRainStatus($currentRain, $river);
             if ($rainStatus) {
                 $statuses[] = $rainStatus['type'];
+            }
+            // Only create alert when value changed and status is active
+            if ($currentRain != $previousRain && $rainStatus) {
                 $this->createAlertAndNotify(
                     $threshold,
                     $riverId,
@@ -71,7 +79,6 @@ class AlertService
                     $rainStatus['type'],
                     'rain'
                 );
-                // Update previous value
                 \Log::info("Alert created for sensor {$sensor->id} (rain)", [
                     'rain' => $currentRain,
                     'type' => $rainStatus['type'],
@@ -80,8 +87,14 @@ class AlertService
             }
         }
 
+        // Also consider any active (pending & not expired) alerts for this threshold
+        $activeAlertType = $this->getActiveAlertType($threshold);
+        if ($activeAlertType) {
+            $statuses[] = $activeAlertType;
+        }
+
         if (empty($statuses)) {
-            \Log::info("No alerts created for sensor {$sensor->id}", [
+            \Log::info("No alerts or active statuses for sensor {$sensor->id}", [
                 'current_water' => $currentWater,
                 'previous_water' => $previousWater,
                 'current_rain' => $currentRain,
@@ -89,7 +102,7 @@ class AlertService
             ]);
         }
 
-        // Update sensor status if any alerts were created
+        // Update sensor status based on current readings and any active alerts
         $this->updateSensorStatus($sensor, $statuses);
 
         $sensor->save();
@@ -158,6 +171,24 @@ class AlertService
         } elseif (in_array('warning', $statuses)) {
             $sensor->status = 'warning';
         }
+    }
+
+    private function getActiveAlertType(Threshold $threshold)
+    {
+        // Find highest severity active alert (pending and not expired) for this threshold
+        $active = Alert::where('threshold_id', $threshold->id)
+            ->where('status', 'pending')
+            ->where('expired_at', '>', now())
+            ->pluck('type')
+            ->toArray();
+
+        if (empty($active)) {
+            return null;
+        }
+        if (in_array('critical', $active, true)) return 'critical';
+        if (in_array('alert', $active, true)) return 'alert';
+        if (in_array('warning', $active, true)) return 'warning';
+        return null;
     }
 
     private function createAlertAndNotify(Threshold $threshold, $riverId, $details, $type, $alertType)
