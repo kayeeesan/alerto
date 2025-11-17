@@ -144,7 +144,7 @@ const updateChart = (index, dataCounts) => {
         ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'];
     } else {
       chartInstances[index].data.datasets[0].backgroundColor =
-        ['#6D94C5', '#8ecae6', '#219ebc', '#023047'];
+        ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'];
     }
   }
 
