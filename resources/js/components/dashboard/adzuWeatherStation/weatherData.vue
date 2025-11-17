@@ -10,23 +10,36 @@ let refreshInterval = null;
 
 // Convert inches to mm for rain
 function inToMm(inches) {
-  return (parseFloat(inches) * 25.4).toFixed(1);
+  const num = parseFloat(inches);
+  if (isNaN(num)) return 0;
+  return (num * 25.4).toFixed(1);
 }
 
 // Convert mph to m/s for wind
 function mphToMs(mph) {
-  return (parseFloat(mph) * 0.44704).toFixed(1);
+  const num = parseFloat(mph);
+  if (isNaN(num)) return 0;
+  return (num * 0.44704).toFixed(1);
 }
 
 // Convert inHg to hPa for pressure
 function inHgToHpa(inHg) {
-  return (parseFloat(inHg) * 33.8639).toFixed(1);
+  const num = parseFloat(inHg);
+  if (isNaN(num)) return 0;
+  return (num * 33.8639).toFixed(1);
 }
 
 // Get wind direction from degrees
 function getWindDirection(degrees) {
-  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-  const index = Math.round(degrees / 22.5) % 16;
+  const num = parseFloat(degrees);
+  if (isNaN(num)) return "N/A";
+
+  const directions = [
+    'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+    'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'
+  ];
+
+  const index = Math.round(num / 22.5) % 16;
   return directions[index];
 }
 
