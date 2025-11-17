@@ -6,13 +6,11 @@ import useSensorsUnderPh from "../../../composables/sensorsUnderPh";
 
 const {
   sensors_under_alerto,
-  is_loading: alertoLoading,
   getSensorsUnderAlerto
 } = useSensorsUnderAlerto();
 
 const {
   sensors_under_ph,
-  is_loading: phLoading,
   getSensorsUnderPh
 } = useSensorsUnderPh();
 
@@ -20,35 +18,59 @@ const tab = ref(0);
 const chartRefs = [ref(null), ref(null)];
 const chartInstances = [null, null];
 
-const statusLabels = ['NORMAL', 'ALERT', 'CRITICAL', 'WARNING'];
+const statusLabels = ['NORMAL', 'WARNING', 'ALERT', 'CRITICAL'];
 
-// Count how many sensors per status
+// Count status occurrences
 const countStatus = (items) => {
-
   if (!items || items.length === 0) return null;
 
   const counts = {
+    NORMAL: 0,
     WARNING: 0,
     ALERT: 0,
-    CRITICAL: 0,
-    NORMAL: 0
+    CRITICAL: 0
   };
 
   items.forEach(item => {
-    const status = item.status?.toUpperCase();
-    if (counts[status] !== undefined) {
-      counts[status]++;
-    }
+    const s = item.status?.toUpperCase();
+    if (counts[s] !== undefined) counts[s]++;
   });
 
-  return [counts.NORMAL, counts.WARNING, counts.ALERT, counts.CRITICAL];
+  return [
+    counts.NORMAL,
+    counts.WARNING,
+    counts.ALERT,
+    counts.CRITICAL,
+  ];
 };
 
-// Format labels to include counts
+// Labels with counts
 const labelWithCount = (counts) =>
   statusLabels.map((label, i) => `${label} (${counts[i]})`);
 
-// Initial chart configs (Rain first, Water second)
+// -------------------------
+// FILTER FUNCTIONS
+// -------------------------
+
+// Rain = ARG + TANDEM
+const getRainSensors = () => {
+  return [
+    ...sensors_under_alerto.value,
+    ...sensors_under_ph.value
+  ].filter(s => ['ARG', 'TANDEM'].includes(s.sensor_type));
+};
+
+// Water = WLMS + TANDEM
+const getWaterSensors = () => {
+  return [
+    ...sensors_under_alerto.value,
+    ...sensors_under_ph.value
+  ].filter(s => ['WLMS', 'TANDEM'].includes(s.sensor_type));
+};
+
+// -------------------------
+
+// Chart configurations
 const chartConfigs = [
   {
     type: 'doughnut',
@@ -68,11 +90,7 @@ const chartConfigs = [
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            boxWidth: 12,
-            padding: 20,
-            font: { size: 12 }
-          }
+          labels: { boxWidth: 12, padding: 20, font: { size: 12 } }
         }
       }
     }
@@ -84,7 +102,7 @@ const chartConfigs = [
       datasets: [{
         label: 'Water Status',
         data: [],
-        backgroundColor: ['#6D94C5', '#8ecae6', '#219ebc', '#023047'],
+        backgroundColor: ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'],
         hoverOffset: 4
       }]
     },
@@ -95,95 +113,85 @@ const chartConfigs = [
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            boxWidth: 12,
-            padding: 20,
-            font: { size: 12 }
-          }
+          labels: { boxWidth: 12, padding: 20, font: { size: 12 } }
         }
       }
     }
   }
 ];
 
-// Create chart instance
+// Create chart
 const createChart = (index) => {
   if (chartRefs[index].value && !chartInstances[index]) {
     chartInstances[index] = new Chart(chartRefs[index].value, chartConfigs[index]);
   }
 };
 
+// Update chart with new data
 const updateChart = (index, dataCounts) => {
   if (!chartInstances[index]) return;
 
   if (!dataCounts || dataCounts.every(v => v === 0)) {
-    // No data → show gray chart
     chartInstances[index].data.labels = ["No Data"];
     chartInstances[index].data.datasets[0].data = [1];
     chartInstances[index].data.datasets[0].backgroundColor = ["#C0C0C0"];
   } else {
-    // Normal data
     chartInstances[index].data.labels = labelWithCount(dataCounts);
     chartInstances[index].data.datasets[0].data = dataCounts;
 
-    // Restore default colors per chart
     if (index === 0) {
-      // Rain chart colors
-      chartInstances[index].data.datasets[0].backgroundColor = ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'];
+      chartInstances[index].data.datasets[0].backgroundColor =
+        ['#6D94C5', '#f3fc47', '#f98023', '#fd361e'];
     } else {
-      // Water chart colors
-      chartInstances[index].data.datasets[0].backgroundColor = ['#6D94C5', '#8ecae6', '#219ebc', '#023047'];
+      chartInstances[index].data.datasets[0].backgroundColor =
+        ['#6D94C5', '#8ecae6', '#219ebc', '#023047'];
     }
   }
 
   chartInstances[index].update();
 };
 
+// -------------------------
+
 onMounted(async () => {
   await getSensorsUnderPh();
   await getSensorsUnderAlerto();
 
-  const alertoCounts = countStatus(sensors_under_alerto.value);
-  const phCounts = countStatus(sensors_under_ph.value);
+  const rainCounts = countStatus(getRainSensors());
+  const waterCounts = countStatus(getWaterSensors());
 
-  // Rain chart (index 0)
-  if (!alertoCounts || alertoCounts.every(v => v === 0)) {
+  // Init Rain chart
+  if (!rainCounts || rainCounts.every(v => v === 0)) {
     chartConfigs[0].data.datasets[0].data = [1];
     chartConfigs[0].data.labels = ["No Data"];
     chartConfigs[0].data.datasets[0].backgroundColor = ["#C0C0C0"];
   } else {
-    chartConfigs[0].data.datasets[0].data = alertoCounts;
-    chartConfigs[0].data.labels = labelWithCount(alertoCounts);
+    chartConfigs[0].data.datasets[0].data = rainCounts;
+    chartConfigs[0].data.labels = labelWithCount(rainCounts);
   }
 
-  // Water chart (index 1)
-  if (!phCounts || phCounts.every(v => v === 0)) {
+  // Init Water chart
+  if (!waterCounts || waterCounts.every(v => v === 0)) {
     chartConfigs[1].data.datasets[0].data = [1];
     chartConfigs[1].data.labels = ["No Data"];
     chartConfigs[1].data.datasets[0].backgroundColor = ["#C0C0C0"];
   } else {
-    chartConfigs[1].data.datasets[0].data = phCounts;
-    chartConfigs[1].data.labels = labelWithCount(phCounts);
+    chartConfigs[1].data.datasets[0].data = waterCounts;
+    chartConfigs[1].data.labels = labelWithCount(waterCounts);
   }
 
-  createChart(0); // create Rain first
+  createChart(0);
 });
 
-
-// Create chart for other tab when selected
+// Tab switching
 watch(tab, (newIndex) => {
   createChart(newIndex);
 });
 
-// Watch data for real-time updates
-watch(sensors_under_alerto, (newData) => {
-  const counts = countStatus(newData);
-  updateChart(0, counts); // Rain
-});
-
-watch(sensors_under_ph, (newData) => {
-  const counts = countStatus(newData);
-  updateChart(1, counts); // Water
+// Real-time updates
+watch([sensors_under_alerto, sensors_under_ph], () => {
+  updateChart(0, countStatus(getRainSensors()));  // Rain
+  updateChart(1, countStatus(getWaterSensors())); // Water
 });
 </script>
 
@@ -197,7 +205,6 @@ watch(sensors_under_ph, (newData) => {
 
       <v-divider class="divider"></v-divider> 
 
-      <!-- Swap tab order -->
       <v-tabs v-model="tab" background-color="white" grow>
         <v-tab>Rain</v-tab>
         <v-tab>Water</v-tab>
@@ -215,15 +222,13 @@ watch(sensors_under_ph, (newData) => {
 </template>
 
 <style scoped>
-.threshold-container {
-  padding: 0 !important;
-}
+.threshold-container { padding: 0 !important; }
 
 .threshold-sheet {
   padding: 0;
   border: 1px solid #E0E0E0;
   background: #FFFFFF;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -238,10 +243,8 @@ watch(sensors_under_ph, (newData) => {
 
 .alert-indicator {
   position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px;
+  left: 0; top: 0;
+  height: 100%; width: 4px;
   background: var(--primary-color);
 }
 
@@ -249,22 +252,15 @@ watch(sensors_under_ph, (newData) => {
   font-size: 1.25rem;
   font-weight: 700;
   color: #333;
-  margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.divider {
-  margin: 0;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-}
+.divider { margin: 0; }
 
 .doughnut-container {
   padding: 8px 16px 16px;
-  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   min-height: 400px;
 }
