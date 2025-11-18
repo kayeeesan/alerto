@@ -141,6 +141,25 @@ class SyncController extends Controller
                     'synced_at' => $item->synced_at ?? null,
                 ];
             });
+        } else if ($model === 'thresholds') {
+            // Include sensorable UUID so local can resolve sensorable_id reliably
+            $data = $modelClass::withTrashed()->with(['sensorable'])->get()->map(function ($item) {
+                return [
+                    'uuid' => $item->uuid,
+                    'sensorable_type' => $item->sensorable_type,
+                    'sensorable_uuid' => optional($item->sensorable)->uuid,
+                    'sensorable_id' => $item->sensorable_id, // legacy, optional
+                    'baseline' => $item->baseline,
+                    'sixty_percent' => $item->sixty_percent,
+                    'eighty_percent' => $item->eighty_percent,
+                    'one_hundred_percent' => $item->one_hundred_percent,
+                    'xs_date' => $item->xs_date,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                    'deleted_at' => $item->deleted_at,
+                    'synced_at' => $item->synced_at ?? null,
+                ];
+            });
         } else if (in_array(SoftDeletes::class, class_uses_recursive($modelClass))) {
             $data = $modelClass::withTrashed()->get();
         } else {
