@@ -87,6 +87,12 @@ class SyncWithMain extends Command
                     ];
                 }
 
+                if ($key === 'thresholds') {
+                    return array_merge($record->toArray(), [
+                        'sensorable_uuid' => $record->sensorable?->uuid,
+                    ]);
+                }
+
                 return $record->toArray();
             })->toArray();
 
@@ -245,6 +251,29 @@ class SyncWithMain extends Command
             /** Generic model sync (for everything except user_roles) */
             foreach ($dataArray as $data) {
                 $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                // Resolve sensorable linkage for thresholds using sensorable_uuid from main
+                if ($key === 'thresholds') {
+                    $sensorableUuid = $data['sensorable_uuid'] ?? null;
+                    $sensorableType = $data['sensorable_type'] ?? null;
+                    if ($sensorableUuid && $sensorableType) {
+                        try {
+                            if (class_exists($sensorableType)) {
+                                $sensor = $sensorableType::where('uuid', $sensorableUuid)->first();
+                                if ($sensor) {
+                                    $data['sensorable_id'] = $sensor->id;
+                                } else {
+                                    Log::warning("[Sync] Threshold {$data['uuid']} linking skipped: missing sensor {$sensorableUuid}");
+                                }
+                            } else {
+                                Log::warning("[Sync] Threshold {$data['uuid']} has unknown sensorable_type {$sensorableType}");
+                            }
+                        } catch (\Throwable $e) {
+                            Log::error("[Sync] Threshold {$data['uuid']} link error: {$e->getMessage()}");
+                        }
+                    }
+                    unset($data['sensorable_uuid']);
+                }
 
                 $query = $modelClass::query();
                 if ($usesSoftDeletes) {
@@ -457,6 +486,264 @@ class SyncWithMain extends Command
             /** Generic model sync (for everything except user_roles) */
             foreach ($dataArray as $data) {
                 $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                // Resolve sensorable linkage for thresholds using sensorable_uuid from main
+                if ($key === 'thresholds') {
+                    $sensorableUuid = $data['sensorable_uuid'] ?? null;
+                    $sensorableType = $data['sensorable_type'] ?? null;
+                    if ($sensorableUuid && $sensorableType) {
+                        try {
+                            if (class_exists($sensorableType)) {
+                                $sensor = $sensorableType::where('uuid', $sensorableUuid)->first();
+                                if ($sensor) {
+                                    $data['sensorable_id'] = $sensor->id;
+                                } else {
+                                    Log::warning("[Sync] Threshold {$data['uuid']} linking skipped: missing sensor {$sensorableUuid}");
+                                }
+                            } else {
+                                Log::warning("[Sync] Threshold {$data['uuid']} has unknown sensorable_type {$sensorableType}");
+                            }
+                        } catch (\Throwable $e) {
+                            Log::error("[Sync] Threshold {$data['uuid']} link error: {$e->getMessage()}");
+                        }
+                    }
+                    unset($data['sensorable_uuid']);
+                }
+
+                $query = $modelClass::query();
+                if ($usesSoftDeletes) {
+                    $query = $query->withTrashed();
+                }
+                $existing = $query->where('uuid', $data['uuid'])->first();
+
+                if (!$existing) {
+                    $createData = array_merge($data, ['synced_at' => now()]);
+                    if (!$usesSoftDeletes) {
+                        unset($createData['deleted_at']);
+                    }
+                    $newRecord = $modelClass::create($createData);
+
+                    if ($key === 'users') {
+                        event(new UserCreated($newRecord));
+                    }
+
+                    if ($key === 'alerts') {
+                        event(new AlertUpdated($newRecord));
+                    }
+                } else {
+                    $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
+                    $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
+
+                    $deletedChanged = false;
+                    if ($usesSoftDeletes) {
+                        $remoteDeletedAt = $data['deleted_at'] ?? null;
+                        $remoteDeletedAt = $remoteDeletedAt ? Carbon::parse($remoteDeletedAt) : null;
+                        $existingDeletedAt = $existing->deleted_at;
+                        $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
+                    }
+
+                    // Force update when domain data differs (main is authoritative)
+                    $ignore = ['id','synced_at','created_at','updated_at','deleted_at'];
+                    $localComparable = Arr::except($existing->getAttributes(), $ignore);
+                    $remoteComparable = Arr::except($data, $ignore);
+                    ksort($localComparable);
+                    ksort($remoteComparable);
+                    $domainDiffers = $localComparable != $remoteComparable;
+
+                    if ($needsUpdate || $deletedChanged || $domainDiffers) {
+                        $updateData = array_merge($data, ['synced_at' => now()]);
+                        if (!$usesSoftDeletes) {
+                            unset($updateData['deleted_at']);
+                        }
+                        $existing->update($updateData);
+
+                        if ($key === 'users') {
+                            event(new UserCreated($existing));
+                        }
+
+                        if ($key === 'alerts') {
+                            event(new AlertUpdated($existing));
+                        }
+
+                        if ($usesSoftDeletes) {
+                            if (!is_null($data['deleted_at']) && !$existing->trashed()) {
+                                $existing->delete();
+                            }
+
+                            if (is_null($data['deleted_at']) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                $existing->restore();
+                            }
+                        }
+                    }
+                }
+            }
+
+            Log::info("[Sync] Model OK: $key");
+        }
+
+        // Second pull-only pass to catch cross-device updates pushed during this run
+        foreach ($models as $key => $modelClass) {
+            Log::info("[Sync] Starting second pull-only pass for model: $key");
+
+            /** --------------------------------
+             *  PULL: Main → Local
+             * --------------------------------*/
+            $response = Http::timeout(60)->get("{$mainUrl}/{$key}");
+
+            if ($response->failed()) {
+                $this->error("❌ Failed to pull $key");
+                Log::error("[Sync] Pull failed for $key. Status: {$response->status()}");
+                continue;
+            }
+
+            $dataArray = $response->json();
+            if (!is_array($dataArray)) {
+                $this->error("❌ Invalid response for $key");
+                Log::error("[Sync] Invalid JSON for $key: " . $response->body());
+                continue;
+            }
+
+            $pulledCount = count($dataArray);
+            $this->info("⬇️ Pulled {$pulledCount} record(s) for $key");
+            Log::info("[Sync] Pulled {$pulledCount} record(s) for $key");
+
+            if ($pulledCount === 0) {
+                Log::warning("[Sync] No data returned for $key. Response: " . $response->body());
+            }
+            
+            /** Special case for user_roles */
+            if ($key === 'user_roles') {
+                $mainPairs = [];
+
+                foreach ($dataArray as $data) {
+                    $user = User::where('uuid', $data['user_uuid'])->first();
+                    $role = Role::where('uuid', $data['role_uuid'])->first();
+
+                    if (!$user || !$role) {
+                        Log::warning("[Sync] Skipping user_role: missing user/role");
+                        continue;
+                    }
+
+                    $mainPairs[] = [$user->id, $role->id];
+
+                    $modelClass::updateOrCreate(
+                        ['user_id' => $user->id, 'role_id' => $role->id],
+                        ['created_at' => $data['created_at'], 'updated_at' => $data['updated_at']]
+                    );
+                }
+
+                // Delete local roles not present in main (guard when empty to avoid wiping table)
+                if (!empty($mainPairs)) {
+                    $modelClass::whereNot(function ($q) use ($mainPairs) {
+                        foreach ($mainPairs as [$uid, $rid]) {
+                            $q->orWhere(function ($sub) use ($uid, $rid) {
+                                $sub->where('user_id', $uid)->where('role_id', $rid);
+                            });
+                        }
+                    })->delete();
+                }
+
+                continue; // skip generic model sync
+            }
+
+            /** Special case for staffs */
+            if ($key === 'staffs') {
+                foreach ($dataArray as $data) {
+                    $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                    $query = $modelClass::query();
+                    if ($usesSoftDeletes) {
+                        $query = $query->withTrashed();
+                    }
+                    $existing = $query->where('uuid', $data['uuid'])->first();
+
+                    $user = isset($data['user_uuid']) ? User::where('uuid', $data['user_uuid'])->first() : null;
+                    $role = isset($data['role_uuid']) ? Role::where('uuid', $data['role_uuid'])->first() : null;
+                    $region = isset($data['region_uuid']) ? Region::where('uuid', $data['region_uuid'])->first() : null;
+                    $province = isset($data['province_uuid']) ? Province::where('uuid', $data['province_uuid'])->first() : null;
+                    $municipality = isset($data['municipality_uuid']) ? Municipality::where('uuid', $data['municipality_uuid'])->first() : null;
+                    $river = isset($data['river_uuid']) ? River::where('uuid', $data['river_uuid'])->first() : null;
+
+                    if (!$user || !$role || !$region || !$province || !$municipality || !$river) {
+                        Log::warning("[Sync] Skipping staff {$data['uuid']}: missing relations");
+                        continue;
+                    }
+
+                    $attributes = [
+                        'user_id' => $user->id,
+                        'mobile_number' => $data['mobile_number'] ?? '',
+                        'role_id' => $role->id,
+                        'region_id' => $region->id,
+                        'province_id' => $province->id,
+                        'municipality_id' => $municipality->id,
+                        'river_id' => $river->id,
+                        'fb_lgu' => $data['fb_lgu'] ?? '',
+                    ];
+
+                    if (!$existing) {
+                        $createData = array_merge(['uuid' => $data['uuid']], $attributes, ['synced_at' => now()]);
+                        $modelClass::create($createData);
+                    } else {
+                        $remoteUpdatedAt = isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null;
+                        $needsUpdate = $remoteUpdatedAt ? $remoteUpdatedAt->gt($existing->updated_at) : false;
+
+                        // Force update when domain data differs (main is authoritative)
+                        $domainDiffers = false;
+                        foreach ($attributes as $k => $v) {
+                            if ($existing->{$k} != $v) { $domainDiffers = true; break; }
+                        }
+
+                        if ($needsUpdate || $domainDiffers) {
+                            $existing->update(array_merge($attributes, ['synced_at' => now()]));
+                        }
+
+                        if ($usesSoftDeletes) {
+                            $remoteDeletedAt = $data['deleted_at'] ?? null;
+                            $remoteDeletedAt = $remoteDeletedAt ? Carbon::parse($remoteDeletedAt) : null;
+                            $existingDeletedAt = $existing->deleted_at;
+                            $deletedChanged = $remoteDeletedAt != $existingDeletedAt;
+
+                            if ($deletedChanged) {
+                                if (!is_null($remoteDeletedAt) && !$existing->trashed()) {
+                                    $existing->delete();
+                                } elseif (is_null($remoteDeletedAt) && method_exists($existing, 'restore') && $existing->trashed()) {
+                                    $existing->restore();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Log::info("[Sync] Model OK: $key");
+                continue;
+            }
+
+            /** Generic model sync (for everything except user_roles) */
+            foreach ($dataArray as $data) {
+                $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($modelClass));
+
+                // Resolve sensorable linkage for thresholds using sensorable_uuid from main
+                if ($key === 'thresholds') {
+                    $sensorableUuid = $data['sensorable_uuid'] ?? null;
+                    $sensorableType = $data['sensorable_type'] ?? null;
+                    if ($sensorableUuid && $sensorableType) {
+                        try {
+                            if (class_exists($sensorableType)) {
+                                $sensor = $sensorableType::where('uuid', $sensorableUuid)->first();
+                                if ($sensor) {
+                                    $data['sensorable_id'] = $sensor->id;
+                                } else {
+                                    Log::warning("[Sync] Threshold {$data['uuid']} linking skipped: missing sensor {$sensorableUuid}");
+                                }
+                            } else {
+                                Log::warning("[Sync] Threshold {$data['uuid']} has unknown sensorable_type {$sensorableType}");
+                            }
+                        } catch (\Throwable $e) {
+                            Log::error("[Sync] Threshold {$data['uuid']} link error: {$e->getMessage()}");
+                        }
+                    }
+                    unset($data['sensorable_uuid']);
+                }
 
                 $query = $modelClass::query();
                 if ($usesSoftDeletes) {
