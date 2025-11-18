@@ -22,9 +22,25 @@ const filteredPopUpAlerts = computed(() => {
     });
   }
 
-  return filtered
+  // Only show the latest unseen notification per river
+  const unseen = filtered
     .filter(notif => !notif.seen_at)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const seenRivers = new Set();
+  const latestPerRiver = [];
+
+  for (const n of unseen) {
+    const rid = n.river_id || n.river?.id;
+    if (!rid) continue;
+    const key = String(rid);
+    if (!seenRivers.has(key)) {
+      seenRivers.add(key);
+      latestPerRiver.push(n);
+    }
+  }
+
+  return latestPerRiver;
 });
 
 const showAlert = async (alert) => {
@@ -36,6 +52,8 @@ const showAlert = async (alert) => {
 
   visibleAlerts.value.push(alert);
   await markAsSeen(alert.id);
+  // Also mark any older unseen notifications for the same river as seen
+  await markOlderSameRiverAsSeen(alert);
 
   // Set timeout to auto-remove after 4 seconds
   alertTimeouts.value[alert.id] = setTimeout(() => {
@@ -55,6 +73,21 @@ const closeAlert = (id) => {
   const index = visibleAlerts.value.findIndex(a => a.id === id);
   if (index !== -1) {
     visibleAlerts.value.splice(index, 1);
+  }
+};
+
+// Mark any older unseen notifications for the same river as seen
+const markOlderSameRiverAsSeen = async (current) => {
+  const rid = current.river_id || current.river?.id;
+  if (!rid) return;
+  const currentTime = new Date(current.created_at).getTime();
+  const toMark = notifications.value.filter(n => {
+    const nrid = n.river_id || n.river?.id;
+    if (!nrid) return false;
+    return !n.seen_at && Number(nrid) === Number(rid) && n.id !== current.id && new Date(n.created_at).getTime() <= currentTime;
+  });
+  for (const n of toMark) {
+    await markAsSeen(n.id);
   }
 };
 
