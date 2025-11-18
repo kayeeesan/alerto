@@ -87,10 +87,14 @@ class AlertService
             }
         }
 
-        // Also consider any active (pending & not expired) alerts for this threshold
-        $activeAlertType = $this->getActiveAlertType($threshold);
-        if ($activeAlertType) {
-            $statuses[] = $activeAlertType;
+        // Also consider any active (pending & not expired) alerts only if we have no
+        // current statuses derived from the latest readings. This avoids outdated
+        // active alerts forcing a higher severity than the current data indicates.
+        if (empty($statuses)) {
+            $activeAlertType = $this->getActiveAlertType($threshold);
+            if ($activeAlertType) {
+                $statuses[] = $activeAlertType;
+            }
         }
 
         if (empty($statuses)) {
@@ -115,17 +119,18 @@ class AlertService
 
     private function checkWaterLevelStatus($waterLevel, $threshold, $river)
     {
-        if ($waterLevel >= $threshold->one_hundred_percent) {
+        // For descending scales (lower is worse), use <= comparisons
+        if ($waterLevel <= $threshold->one_hundred_percent) {
             return [
                 'details' => $river->name . ' is at critical water level: ' . $waterLevel . 'm',
                 'type' => 'critical'
             ];
-        } elseif ($waterLevel >= $threshold->eighty_percent) {
+        } elseif ($waterLevel <= $threshold->eighty_percent) {
             return [
                 'details' => $river->name . ' is on alert. Water level: ' . $waterLevel . 'm',
                 'type' => 'alert'
             ];
-        } elseif ($waterLevel >= $threshold->sixty_percent) {
+        } elseif ($waterLevel <= $threshold->sixty_percent) {
             return [
                 'details' => 'Please monitor ' . $river->name . '. Water level: ' . $waterLevel . 'm',
                 'type' => 'warning'
