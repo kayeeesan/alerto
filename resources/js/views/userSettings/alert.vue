@@ -156,7 +156,7 @@ watch(
 
 onMounted(() => {
   getAlerts({ status: tab.value });
-  setInterval(() => getAlerts({ status: tab.value }), 5000);
+  // setInterval(() => getAlerts({ status: tab.value }), 5000);
 });
 </script>
 
