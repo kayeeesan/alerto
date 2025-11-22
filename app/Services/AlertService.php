@@ -198,6 +198,14 @@ class AlertService
 
     private function createAlertAndNotify(Threshold $threshold, $riverId, $details, $type, $alertType)
     {
+        // Get users assigned to this river
+        $usersByRiver = User::whereHas('staff', function ($query) use ($riverId) {
+            $query->where('river_id', $riverId);
+        })->get();
+
+        // Determine the user to assign to the alert (only from river users, leave unassigned if none)
+        $assignedUser = $usersByRiver->first();
+
         // Create the alert
         $alert = Alert::create([
             'threshold_id' => $threshold->id,
@@ -206,17 +214,8 @@ class AlertService
             'type' => $type,
             'expired_at' => now()->addMinutes(30),
             'alert_type' => $alertType,
+            'user_id' => $assignedUser ? $assignedUser->id : null,
         ]);
-
-        // Get users assigned to this river
-        $usersByRiver = User::whereHas('staff', function ($query) use ($riverId) {
-            $query->where('river_id', $riverId);
-        })->get();
-
-        // Get admin users
-        // $adminUsers = User::whereHas('roles', function ($query) {
-        //     $query->where('slug', 'administrator');
-        // })->get();
 
         // Merge and remove duplicates
         $usersToNotify = $usersByRiver->merge($this->adminUsers)->unique('id');
