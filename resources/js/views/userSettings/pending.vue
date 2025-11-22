@@ -19,7 +19,7 @@ const headers = [
     { title: "Location", key: "threshold.sensorable.municipality.name", width: "15%" },
     { title: "River", key: "threshold.sensorable.river.name", width: "15%" },
     { title: "Status", key: "status", width: "10%" },
-    { title: "Assigned", key: "assigned_user_names", width: "10%" },
+    // { title: "Assigned", key: "assigned_user_names", width: "10%" },
     { title: "Time/date", key: "created_at", width: "10%" },
     { title: "Actions", key: "actions", sortable: false, align: "end", width: "10%" }
 ];
