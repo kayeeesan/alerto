@@ -78,6 +78,18 @@ const formatDateTime = (isoString) => {
         hour12: false
     }).format(date);
 };
+
+const itemsPerPage = ref(10);
+
+const paginatedSensors = computed(() => {
+  const start = (query.value.page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredSensors.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredSensors.value.length / itemsPerPage);
+});
 </script>
 
 <template>
@@ -153,7 +165,9 @@ const formatDateTime = (isoString) => {
               <div class="d-flex flex-column flex-md-row justify-space-between align-center pa-4">
                 <div class="text-caption text-medium-emphasis mb-2 mb-md-0">
                   <span v-if="filteredSensors.length">
-                    Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }} entries
+                    Showing {{ (query.page - 1) * itemsPerPage + 1 }}
+                    to {{ Math.min(query.page * itemsPerPage, filteredSensors.length) }}
+                    of {{ filteredSensors.length }} entries
                   </span>
                   <span v-else>
                     No entries found
