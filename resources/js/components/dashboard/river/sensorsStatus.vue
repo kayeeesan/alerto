@@ -33,6 +33,8 @@ const headers = [
   { key: "api_last_updated_at", title: "Last Update" },
   { key: "device_water_level", title: "Water Level" },
   { key: "total_acc", width: "8%", title: "Total Acc (mm)" },
+  { key: "event_acc", width: "8%", title: "Event Acc" },
+  { key: "recent_acc", width: "8%", title: "Recent Acc" },
   { key: "device_rain_amount", title: "Rain (mm)" }
 ];
 

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->float('previous_water_level')->nullable();
             $table->float('previous_rain_amount')->nullable();
             $table->float('total_acc')->nullable();
+            $table->float('event_acc')->nullable(); 
+            $table->float('recent_acc')->nullable();
             $table->foreignId('river_id')->constrained('rivers')->onDelete('cascade');
             $table->foreignId('municipality_id')->constrained('municipalities')->onDelete('cascade');
             $table->decimal('long', 10, 6)->nullable();
