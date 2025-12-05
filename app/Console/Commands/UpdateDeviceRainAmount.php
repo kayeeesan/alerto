@@ -82,12 +82,14 @@ class UpdateDeviceRainAmount extends Command
                     $sensorId = $deviceEvent['sensor_id'];
                     $eventTime = $deviceEvent['created_at'] ?? 'Unknown time';
                     $rainAmount = $deviceEvent['rain_int'];
+                    $totalAcc = $deviceEvent['total_acc'];
                     
                     $this->info("Processing sensor: {$sensorId} - Last update: {$eventTime}");
                     Log::info("Processing sensor", [
                         'sensor_id' => $sensorId,
                         'last_update_time' => $eventTime,
-                        'rain_amount' => $rainAmount
+                        'rain_amount' => $rainAmount,
+                        'total_acc' => $totalAcc
                     ]);
 
                     $recordedAt = !empty($deviceEvent['created_at'])
@@ -101,7 +103,8 @@ class UpdateDeviceRainAmount extends Command
                     $alerto = $alertoSensors->get($sensorId);
                     if ($alerto) {
                         $alerto->device_rain_amount = $rainAmount;
-                         $alerto->api_last_updated_at = $recordedAt; 
+                        $alerto->total_acc = $totalAcc; 
+                        $alerto->api_last_updated_at = $recordedAt; 
                         $alerto->save();
 
                         SensorsHistory::create([
@@ -117,7 +120,8 @@ class UpdateDeviceRainAmount extends Command
                         Log::info("Calling AlertService for SensorUnderAlerto", [
                             'sensor_id' => $alerto->id,
                             'threshold' => $alerto->threshold,
-                            'rain_amount' => $rainAmount
+                            'rain_amount' => $rainAmount,
+                            'total_acc' => $totalAcc
                         ]);
 
                         if ($alerto && $alerto->threshold) {
@@ -141,6 +145,7 @@ class UpdateDeviceRainAmount extends Command
                     $ph = $phSensors->get($sensorId);
                     if ($ph) {
                         $ph->device_rain_amount = $rainAmount;
+                        $ph->total_acc = $totalAcc;
                         $ph->api_last_updated_at = $recordedAt; 
                         $ph->save();
 
@@ -157,7 +162,8 @@ class UpdateDeviceRainAmount extends Command
                         Log::info("Calling AlertService for SensorUnderPh", [
                             'sensor_id' => $ph->id,
                             'threshold' => $ph->threshold,
-                            'rain_amount' => $rainAmount
+                            'rain_amount' => $rainAmount,
+                            'total_acc' => $totalAcc
                         ]);
                         if ($ph && $ph->threshold) {
                             $alertService->createAlertIfNeeded($ph->threshold);
