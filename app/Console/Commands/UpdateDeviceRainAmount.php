@@ -26,7 +26,8 @@ class UpdateDeviceRainAmount extends Command
             $this->info('Fetching latest device data from API...');
             Log::info('Making API request to fetch device data');
             
-            $response = Http::retry(3, 500)->timeout(10)->get('https://alertofews.com/api/api-awls/get_arg_data.php');
+            // $response = Http::retry(3, 500)->timeout(10)->get('https://alertofews.com/api/api-awls/get_arg_data.php');
+            $response = Http::timeout(30)->retry(2, 2000)->get('https://alertofews.com/api/api-awls/get_arg_data.php');
 
             if (!$response->successful()) {
                 $errorMessage = 'API request failed with status: ' . $response->status();
