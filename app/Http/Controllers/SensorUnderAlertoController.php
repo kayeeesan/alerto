@@ -64,7 +64,7 @@ class SensorUnderAlertoController extends Controller
                                 'created_at' => $item['created_at'] ?? null,
                                 'acc' => $item['acc'] ?? null,
                                 'event_acc' => $item['event_acc'] ?? null,
-                                'recent_acc' => $item['event_acc'] ?? null,
+                                'recent_acc' => $item['recent_acc'] ?? null,
                                 'total_acc' => $item['total_acc'] ?? null,
                                 'source' => 'alertofews',
                             ];
