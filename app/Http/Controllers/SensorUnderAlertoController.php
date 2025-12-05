@@ -64,6 +64,7 @@ class SensorUnderAlertoController extends Controller
                                 'created_at' => $item['created_at'] ?? null,
                                 'acc' => $item['acc'] ?? null,
                                 'event_acc' => $item['event_acc'] ?? null,
+                                'recent_acc' => $item['event_acc'] ?? null,
                                 'total_acc' => $item['total_acc'] ?? null,
                                 'source' => 'alertofews',
                             ];
@@ -112,36 +113,6 @@ class SensorUnderAlertoController extends Controller
             } catch (\Exception $e) {
                 \Log::error('Failed to fetch from weatherlink.com: ' . $e->getMessage());
             }
-
-            // Third API - AWLS (Water Level Sensors)
-            try {
-                $response3 = Http::get('https://alertofews.com/api/api-awls/get_awls_data.php');
-
-                if ($response3->successful()) {
-                    $awlsData = collect($response3->json()['data'] ?? [])
-                        ->sortByDesc('created_at')
-                        ->unique('sensor_id')
-                        ->map(function ($item) {
-                            return [
-                                'name' => 'AWLS ' . $item['sensor_id'],
-                                'device_id' => $item['sensor_id'],
-                                'device_rain_amount' => null,
-                                'device_water_level' => $item['distance_cm'] ?? null,
-                                'created_at' => $item['created_at'] ?? null,
-                                'vbat' => $item['vbat'] ?? null,
-                                'rssi' => $item['rssi'] ?? null,
-                                'snr'  => $item['snr'] ?? null,
-                                'alert_level' => $item['alert_level'] ?? null,
-                                'source' => 'awls',
-                            ];
-                        });
-
-                    $sensorData = $sensorData->merge($awlsData);
-                }
-            } catch (\Exception $e) {
-                \Log::error('Failed to fetch from AWLS API: ' . $e->getMessage());
-            }
-
 
             // Final processing
             $sensorData = $sensorData->sortByDesc('created_at')
