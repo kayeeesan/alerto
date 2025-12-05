@@ -25,6 +25,7 @@ class SensorUnderAlerto extends Model
         'device_water_level',
         'previous_water_level',
         'previous_rain_amount',  
+         'total_acc',
         'river_id',
         'municipality_id',
         'long',
