@@ -24,7 +24,7 @@ const sensor_tabs = ref([
   { id: 3, name: "TANDEM", value: "TANDEM" }
 ]);
 
-const headers = [
+const allHeaders = [
   { key: "river.name", title: "River" },
   { key: "municipality.name", title: "Region" },
   { key: "name", title: "Sensor Name" },
@@ -37,6 +37,15 @@ const headers = [
   { key: "recent_acc", width: "8%", title: "Recent Acc" },
   { key: "device_rain_amount", title: "Rain (mm)" }
 ];
+
+const headers = computed(() => {
+  const hideByType = {
+    WLMS: ["total_acc", "event_acc", "recent_acc", "device_rain_amount"],
+    ARG: ["device_water_level"],
+  };
+  const toHide = hideByType[sensor_type.value] || [];
+  return allHeaders.filter(h => !toHide.includes(h.key));
+});
 
 const all_sensors = computed(() => [
   ...sensors_under_alerto.value,
